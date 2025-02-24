@@ -1,5 +1,5 @@
 <script>
-	import { parseColor } from './solWebglUtils';
+	import { parseColor, getTimestamp } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
@@ -130,10 +130,6 @@
 	let gl;
 	let isContextLost = $state(false);
 	const fps = 60;
-
-	function getTimestamp() {
-		return performance.now() / 1000;
-	}
 
 	function initWebGL() {
 		gl = canvas?.getContext('webgl2');
@@ -272,4 +268,4 @@
 <canvas
 	bind:this={canvas}
 	style="width: 100%; height: 100%; display: {!isContextLost ? 'block' : 'none'};"
-/>
+></canvas>

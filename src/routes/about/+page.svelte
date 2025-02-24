@@ -1,6 +1,7 @@
 <script>
 	import DotGrid from '$lib/components/solConvert/webgl/DotGrid.svelte';
 	import GLinear from '$lib/components/solConvert/webgl/GLinear.svelte';
+	import GPerlin from '$lib/components/solConvert/webgl/GPerlin.svelte';
 	import GPerlinWave from '$lib/components/solConvert/webgl/GPerlinWave.svelte';
 	import GRadial from '$lib/components/solConvert/webgl/GRadial.svelte';
 	import Tiles from '$lib/components/solConvert/webgl/Tiles.svelte';
@@ -39,6 +40,19 @@
 				{ color: '#000042', position: 1 }
 			]}
 			waveSpeed={2}
+		/>
+	</div>
+	<div class="webgl-item">
+		<GPerlin
+			width={100}
+			height={100}
+			colors={[
+				{ color: '#ffb8c8', position: 0.25 },
+				{ color: '#af3db3', position: 0.4 },
+				{ color: '#42006b', position: 0.6 },
+				{ color: '#1d0156', position: 0.75 }
+			]}
+			noiseSpeed={10}
 		/>
 	</div>
 	<div class="webgl-item">

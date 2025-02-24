@@ -1,5 +1,5 @@
 <script>
-	import { parseColor, degToRad } from './solWebglUtils';
+	import { parseColor, degToRad, getTimestamp, mapRange } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
@@ -175,19 +175,11 @@
 	let canvas;
 	let gl;
 	let isContextLost = $state(false);
+	const fps = 60;
+
 	let gridSize = { x: 0, y: 0 };
 	let mouseArea = 0;
 	let magnetValue = 0;
-	const fps = 60;
-
-	function mapRange(value) {
-		const t = (value - 1) / (10 - 1);
-		return (1 - t) * 10 + t * 1;
-	}
-
-	function getTimestamp() {
-		return performance.now() / 1000;
-	}
 
 	function initWebGL() {
 		gl = canvas?.getContext('webgl2');
@@ -383,4 +375,4 @@
 <canvas
 	bind:this={canvas}
 	style="width: 100%; height: 100%; display: {!isContextLost ? 'block' : 'none'};"
-/>
+></canvas>

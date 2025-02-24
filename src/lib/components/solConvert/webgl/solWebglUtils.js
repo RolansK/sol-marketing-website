@@ -12,3 +12,12 @@ export function parseColor(color) {
 	document.body.removeChild(div);
 	return [r / 255, g / 255, b / 255, a ?? 1];
 }
+
+export function getTimestamp() {
+	return performance.now() / 1000;
+}
+
+export function mapRange(value, min = 1, max = 10) {
+	const t = (value - min) / (max - min);
+	return (1 - t) * 10 + t * 1;
+}
