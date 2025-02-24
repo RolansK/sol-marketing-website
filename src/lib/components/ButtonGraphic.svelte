@@ -1,5 +1,5 @@
 <script>
-	import GPerlinWave from './GPerlinWave.svelte';
+	import GPerlinWave from './solConvert/webgl/GPerlinWave.svelte';
 
 	let {
 		text = 'Sol',

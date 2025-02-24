@@ -1,7 +1,8 @@
-<script>
-	import { onMount, onDestroy } from 'svelte';
+import { useState, useRef, useEffect } from 'react';
+import { useIsStaticRenderer } from 'framer';
+import { parseColor } from './solWebglUtils';
 
-	const vertexShader = `#version 300 es
+const vertexShader = `#version 300 es
     in vec2 position;
     out vec2 vPixelCoord;
     uniform vec2 uResolution;
@@ -10,7 +11,7 @@
         vPixelCoord = (vec2(position.x, -position.y) * 0.5 + 0.5) * uResolution;
     }`;
 
-	const fragmentShader = `#version 300 es
+const fragmentShader = `#version 300 es
     precision highp float;
     in vec2 vPixelCoord;
     out vec4 fragColor;
@@ -169,55 +170,58 @@
     fragColor = colorRamp(linearLight(waveNoise, grain, uGrainStr).r);
 }`;
 
-	function parseColor(color) {
-		const div = document.createElement('div');
-		div.style.color = color;
-		document.body.appendChild(div);
-		const [r, g, b, a] = getComputedStyle(div)
-			.color.match(/\d+(\.\d+)?/g)
-			.map(Number);
-		document.body.removeChild(div);
-		return [r / 255, g / 255, b / 255, a ?? 1];
-	}
+const SYNC_GL = 'gl-sync';
 
-	const SYNC_GL = 'gl-sync';
+export default function GPerlinWave({
+	width = 100,
+	height = 100,
+	colors = [
+		{ color: '#fae6e6', position: 0 },
+		{ color: '#e03100', position: 0.35 },
+		{ color: '#6e008a', position: 0.87 },
+		{ color: '#0e0014', position: 1 }
+	],
+	grainScale = 1,
+	grainSpeed = 50,
+	grainStr = 0.1,
+	noiseScale = 1,
+	noiseSpeed = 10,
+	waveType = 0,
+	waveScale = 40,
+	waveSpeed = 0,
+	pixelate = 0,
+	pixelScale = 20
+}) {
+	const canvasRef = useRef(null);
+	const glRef = useRef(null);
+	const [isContextLost, setIsContextLost] = useState(false);
+	const staticRender = useIsStaticRenderer();
+	const fps = 60;
 
-	let {
-		width = 100,
-		height = 100,
-		colors = [
-			{ color: '#fae6e6', position: 0 },
-			{ color: '#e03100', position: 0.35 },
-			{ color: '#6e008a', position: 0.87 },
-			{ color: '#0e0014', position: 1 }
-		],
-		grainScale = 1,
-		grainSpeed = 50,
-		grainStr = 0.1,
-		noiseScale = 1,
-		noiseSpeed = 10,
-		waveType = 0,
-		waveScale = 40,
-		waveSpeed = 0,
-		pixelate = 0,
-		pixelScale = 20,
-		dpi = 2
-	} = $props();
+	useEffect(() => {
+		render();
+	}, [
+		width,
+		height,
+		colors,
+		grainScale,
+		grainSpeed,
+		grainStr,
+		noiseScale,
+		noiseSpeed,
+		waveType,
+		waveScale,
+		waveSpeed,
+		pixelate,
+		pixelScale
+	]);
 
-	let canvas;
-	let gl;
-	let isContextLost = $state(false);
-	let fps = 60;
-	let timeoutId;
+	const getTimestamp = () => (staticRender ? 0 : performance.now() / 1000);
 
-	function getTimestamp() {
-		return performance.now() / 1000;
-	}
-
-	function initWebGL() {
-		gl = canvas?.getContext('webgl2', { alpha: true });
+	const initWebGL = () => {
+		const gl = canvasRef.current?.getContext('webgl2');
 		if (!gl) return null;
-
+		glRef.current = gl;
 		gl.loseContextHandler = gl.getExtension('WEBGL_lose_context');
 		const program = gl.createProgram();
 		[gl.VERTEX_SHADER, gl.FRAGMENT_SHADER].forEach((type, i) => {
@@ -256,13 +260,14 @@
 			uPixelScale: gl.getUniformLocation(program, 'uPixelScale')
 		};
 		return true;
-	}
+	};
 
-	function setUniforms() {
-		if (!canvas || !gl) return;
+	const setUniforms = () => {
+		if (!canvasRef.current || !glRef.current) return;
 
+		const gl = glRef.current;
 		const loc = gl.uniformLocations;
-		const { width: canvasWidth, height: canvasHeight } = canvas;
+		const { width: canvasWidth, height: canvasHeight } = canvasRef.current;
 
 		const sortedColors = [...colors].sort((a, b) => a.position - b.position);
 		const colorValues = sortedColors.map((c) => parseColor(c.color)).flat();
@@ -283,44 +288,43 @@
 		gl.uniform1f(loc.uWaveType, waveType);
 		gl.uniform1i(loc.uPixelate, pixelate);
 		gl.uniform1f(loc.uPixelScale, pixelScale);
-	}
+	};
 
-	function render() {
-		if (!gl || isContextLost) return;
+	const render = () => {
+		if (!glRef.current || isContextLost) return;
+
 		setUniforms();
-		gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-	}
+		glRef.current.drawArrays(glRef.current.TRIANGLE_FAN, 0, 4);
+	};
 
-	$effect(() => {
-		if (gl && !isContextLost) {
-			render();
-		}
-	});
-
-	onMount(() => {
+	useEffect(() => {
 		if (!initWebGL()) return;
+
+		const canvas = canvasRef.current;
+		const gl = glRef.current;
+		const loseContextHandler = gl.loseContextHandler;
 
 		const resizeObserver = new ResizeObserver(() => {
 			if (!canvas || !gl) return;
-			canvas.width = canvas.clientWidth * dpi;
-			canvas.height = canvas.clientHeight * dpi;
+			canvas.width = canvas.clientWidth;
+			canvas.height = canvas.clientHeight;
 			gl.viewport(0, 0, canvas.width, canvas.height);
 			render();
 		});
 
 		const handleContextLost = (e) => {
 			e.preventDefault();
-			isContextLost = true;
+			setIsContextLost(true);
 		};
 
 		const handleContextRestored = () => {
-			isContextLost = false;
+			setIsContextLost(false);
 			initWebGL();
 		};
 
 		const handleSync = (e) => {
 			if (e.data?.type === SYNC_GL) {
-				gl.loseContextHandler?.[e.data.action === 'restore' ? 'restoreContext' : 'loseContext']();
+				loseContextHandler?.[e.data.action === 'restore' ? 'restoreContext' : 'loseContext']();
 			}
 		};
 
@@ -329,8 +333,8 @@
 		canvas.addEventListener('webglcontextrestored', handleContextRestored);
 		window.addEventListener('message', handleSync);
 
-		timeoutId = setInterval(() => {
-			render();
+		const timeoutId = setInterval(() => {
+			if (!staticRender) render();
 		}, 1000 / fps);
 
 		return () => {
@@ -339,13 +343,41 @@
 			canvas.removeEventListener('webglcontextrestored', handleContextRestored);
 			window.removeEventListener('message', handleSync);
 			clearInterval(timeoutId);
-			gl?.loseContextHandler?.loseContext();
+			gl.loseContextHandler?.loseContext();
 			window.postMessage({ type: SYNC_GL, action: 'restore' }, '*');
 		};
-	});
-</script>
+	}, []);
 
-<canvas
-	bind:this={canvas}
-	style="width: {width}px; height: {height}px; display: {!isContextLost ? 'block' : 'none'};"
-></canvas>
+	return (
+		<>
+			{isContextLost && (
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						textAlign: 'center',
+						background: '#9595951A',
+						border: '1px solid #95959526',
+						borderRadius: 6,
+						height: '100%',
+						padding: 15,
+						fontSize: 11,
+						color: '#a5a5a5'
+					}}
+				>
+					Too many WebGL components. <br />
+					Please delete some of them
+				</div>
+			)}
+			<canvas
+				ref={canvasRef}
+				style={{
+					width: '100%',
+					height: '100%',
+					display: !isContextLost ? 'block' : 'none'
+				}}
+			/>
+		</>
+	);
+}

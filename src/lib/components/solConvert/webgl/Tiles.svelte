@@ -1,80 +1,50 @@
 <script>
-	import { parseColor } from './solWebglUtils';
+	import { parseColor, degToRad } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
     in vec2 position;
-    out vec2 vPixelCoord;
-    uniform vec2 uResolution;
-    void main() {
-        gl_Position = vec4(position, 0.0, 1.0);
-        vPixelCoord = (vec2(position.x, -position.y) * 0.5 + 0.5) * uResolution;
-    }`;
 
-	const fragmentShader = `#version 300 es
-    precision highp float;
-    in vec2 vPixelCoord;
-    out vec4 fragColor;
-    
+    out vec2 vPosition;
+    out float vNoiseInfluence;
+    out float vCornerRadius;
+    out float vSize;
+
+    uniform vec2 uDisplaySize;
+    uniform vec2 uGridSize;
     uniform float uTime;
-    uniform vec2 uResolution;
 
-    uniform vec4 uColors[16];
-    uniform float uPositions[16];
-    uniform int uColorCount;
+    uniform float uGap;
 
-    uniform float uGrainScale;
-    uniform float uGrainSpeed;
-    uniform float uGrainStr;
+    uniform vec2 uSize;
+
+    uniform vec2 uRadius;
+
+    uniform float uRowOffset;
+
+    uniform vec2 uRotateX;
+    uniform vec2 uRotateY;
+    uniform vec2 uRotateZ;
 
     uniform float uNoiseScale;
     uniform float uNoiseSpeed;
-
-    uniform float uWaveScale;
-    uniform float uWaveSpeed;
-    uniform float uWaveType;
-
-    uniform bool uPixelate;
-    uniform float uPixelScale;
-
-    vec4 colorRamp(float t) {
-        if (uColorCount == 0) return vec4(0.0);
-        if (t <= uPositions[0]) return uColors[0];
-        for (int i = 1; i < uColorCount; i++) {
-            if (t <= uPositions[i]) {
-                return mix(uColors[i-1], uColors[i], 
-                    (t - uPositions[i-1]) / (uPositions[i] - uPositions[i-1]));
-            }
-        }
-        return uColors[uColorCount - 1];
-    }
+    uniform float uNoiseType;
 
     vec3 linearLight(vec3 base, vec3 blend, float factor) {
-        vec3 result = base + 2.0 * (blend - 0.5);
-        return mix(base, clamp(result, 0.0, 1.0), factor);
+       vec3 result = base + 2.0 * (blend - 0.5);
+       return mix(base, clamp(result, 0.0, 1.0), factor);
     }
 
-    float wave(float x, float scale, float offset, float waveType) {
-        float t = (x - offset) * scale * 6.28318;
-        if (waveType < 0.5) {
-            return cos(t) * 0.5 + 0.5; 
-        } else if (waveType < 1.5) {
-            return abs(fract(t / 6.28318) * 2.0 - 1.0); 
-        } else {
-            return fract(t / 6.28318); 
-        }
-    }
-
-    float white(vec2 coord, float scale, float seed) {
-        float baseScale = 1.7 / scale;
-        vec2 blockCoord = floor(coord * baseScale);
+    float whiteNoise(vec2 coord, float scale, float seed) {
+        vec2 scaledCoord = coord * scale;
+        vec2 blockCoord = floor(scaledCoord);
         vec2 wrappedCoord = vec2(mod(blockCoord.x, 16384.0), mod(blockCoord.y, 16384.0));
         
         vec3 p3 = fract(vec3(wrappedCoord.xyx) * vec3(0.1031, 0.1030, 0.0973));
         p3 += dot(p3, p3.yzx + 33.33);
         return fract((p3.x + p3.y) * p3.z + seed);
     }
-    
+
     vec4 permute(vec4 x) {
         return mod((x * 34.0 + 1.0) * x, 289.0);
     }
@@ -146,28 +116,83 @@
     }
 
     void main() {
-    vec2 coord = vPixelCoord;
+        int row = gl_InstanceID / int(uGridSize.x);
+        int col = gl_InstanceID % int(uGridSize.x);
+
+        float rowOffset = fract(uRowOffset * float(row)) * (uSize.x * 2.0 + uGap);
+
+        vec2 instanceCenter = vec2(
+            float(col) * (uSize.x * 2.0 + uGap) + uSize.x + (uDisplaySize.x - (uGridSize.x * uSize.x * 2.0 + (uGridSize.x - 1.0) * uGap)) * 0.5 + rowOffset,
+            float(row) * (uSize.x * 2.0 + uGap) + uSize.x + (uDisplaySize.y - (uGridSize.y * uSize.x * 2.0 + (uGridSize.y - 1.0) * uGap)) * 0.5
+        );
+
+        float combinedNoise = clamp(perlin(vec3(instanceCenter * (0.01 / uNoiseScale), uTime * uNoiseSpeed * 0.025)), 0.0, 1.0);
+        if(uNoiseType == 1.0) {
+            combinedNoise = clamp(whiteNoise(instanceCenter, 0.02 / uNoiseScale, uTime * uNoiseSpeed * 0.025), 0.0, 1.0);
+        }
+
+        float instanceSize = mix(uSize.x, uSize.y, combinedNoise);
+
+        float rotationX = mix(uRotateX.x, uRotateX.y, combinedNoise);
+        float rotationY = mix(uRotateY.x, uRotateY.y, combinedNoise);
+        float rotationZ = mix(uRotateZ.x, uRotateZ.y, combinedNoise);
+
+        mat4 rotationMatrix = mat4(
+            cos(rotationY) * cos(rotationZ), 
+            cos(rotationY) * sin(rotationZ), 
+            -sin(rotationY), 
+            0.0,
+            sin(rotationX) * sin(rotationY) * cos(rotationZ) - cos(rotationX) * sin(rotationZ),
+            sin(rotationX) * sin(rotationY) * sin(rotationZ) + cos(rotationX) * cos(rotationZ),
+            sin(rotationX) * cos(rotationY),
+            0.0,
+            cos(rotationX) * sin(rotationY) * cos(rotationZ) + sin(rotationX) * sin(rotationZ),
+            cos(rotationX) * sin(rotationY) * sin(rotationZ) - sin(rotationX) * cos(rotationZ),
+            cos(rotationX) * cos(rotationY),
+            0.0,
+            0.0, 0.0, 0.0, 1.0
+        );
+
+        vec4 rotatedPosition = rotationMatrix * vec4(position * instanceSize, 0.0, 1.0);
+
+        vec2 clipSpace = (rotatedPosition.xy + instanceCenter) / uDisplaySize * 2.0 - 1.0;
+        gl_Position = vec4(clipSpace, 0.0, 1.0);
+
+        float radiusA = uRadius.x / 100.0;
+        float radiusB = uRadius.y / 100.0;
+
+        float cornerRadius = mix(radiusA, radiusB, combinedNoise);
         
-    if (uPixelate) {
-        vec2 pixelSize = vec2(max(1.0, floor(uPixelScale)));
-        coord = floor(vPixelCoord / pixelSize) * pixelSize + pixelSize * 0.5;
+        vPosition = position;
+        vNoiseInfluence = combinedNoise;
+        vCornerRadius = cornerRadius;
+        vSize = mix(uSize.x, uSize.y, combinedNoise);
+    }`;
+
+	const fragmentShader = `#version 300 es
+    precision mediump float;
+
+    uniform vec4 uColorA;
+    uniform vec4 uColorB;
+
+    in vec2 vPosition;
+    in float vNoiseInfluence;
+    in float vCornerRadius;
+    in float vSize;
+
+    out vec4 fragColor;
+
+    float squareSDF(vec2 p, float size, float radius) {
+        vec2 d = abs(p) - size + radius;
+        return length(max(d, 0.0)) - radius;
     }
 
-    float grainScale = uGrainScale * 0.5;
-    float grainSpeed = uGrainSpeed * 0.02;
-
-    float noiseScale = 0.002 / uNoiseScale;
-    float noiseSpeed = uTime * uNoiseSpeed * 0.01;
-
-    float waveScale = 100.0 / uWaveScale;
-    float waveSpeed = uTime * uWaveSpeed * 0.1;
+    void main() {
+    vec4 insideColor = mix(uColorA, uColorB, vNoiseInfluence);
     
-    float baseNoise = perlin(vec3(coord * noiseScale, noiseSpeed));
-    vec3 grain = vec3(white(coord, grainScale, uTime * grainSpeed));
-
-    vec3 waveNoise = vec3(wave(0.5 * waveScale * baseNoise, 1.0, mod(waveSpeed, 1.0), uWaveType));
-    
-    fragColor = colorRamp(linearLight(waveNoise, grain, uGrainStr).r);
+    float smoothing = 1.0 / vSize;
+    float dist = squareSDF(vPosition, 1.0 - smoothing, vCornerRadius * (1.0-smoothing));
+    fragColor = mix(insideColor, vec4(0.0), smoothstep(0.0, smoothing, dist));
 }`;
 
 	const SYNC_GL = 'gl-sync';
@@ -175,28 +200,35 @@
 	let {
 		width = 100,
 		height = 100,
-		colors = [
-			{ color: '#fae6e6', position: 0 },
-			{ color: '#e03100', position: 0.35 },
-			{ color: '#6e008a', position: 0.87 },
-			{ color: '#0e0014', position: 1 }
-		],
-		grainScale = 1,
-		grainSpeed = 50,
-		grainStr = 0.1,
-		noiseScale = 1,
-		noiseSpeed = 10,
-		waveType = 0,
-		waveScale = 40,
-		waveSpeed = 0,
-		pixelate = 0,
-		pixelScale = 20,
-		dpi = 2
+		gap = 3.5,
+		offsetToggle = 'row',
+		offsetPercent = 0,
+		offsetRow = 2,
+		state1 = {
+			color: '#ffab94',
+			size: 1.75,
+			radius: 100,
+			rotX: 0,
+			rotY: 0,
+			rotZ: 0
+		},
+		state2 = {
+			color: '#de24ad',
+			size: 3,
+			radius: 100,
+			rotX: 0,
+			rotY: 0,
+			rotZ: 0
+		},
+		noiseType = 0,
+		noiseScale = 0.1,
+		noiseSpeed = 0
 	} = $props();
 
 	let canvas;
 	let gl;
 	let isContextLost = $state(false);
+	let gridSize = { x: 0, y: 0 };
 	const fps = 60;
 
 	function getTimestamp() {
@@ -227,21 +259,21 @@
 		gl.enable(gl.BLEND);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		gl.uniformLocations = {
-			uColors: gl.getUniformLocation(program, 'uColors'),
-			uPositions: gl.getUniformLocation(program, 'uPositions'),
-			uColorCount: gl.getUniformLocation(program, 'uColorCount'),
+			uSize: gl.getUniformLocation(program, 'uSize'),
+			uGap: gl.getUniformLocation(program, 'uGap'),
+			uRowOffset: gl.getUniformLocation(program, 'uRowOffset'),
+			uDisplaySize: gl.getUniformLocation(program, 'uDisplaySize'),
+			uRadius: gl.getUniformLocation(program, 'uRadius'),
+			uRotateX: gl.getUniformLocation(program, 'uRotateX'),
+			uRotateY: gl.getUniformLocation(program, 'uRotateY'),
+			uRotateZ: gl.getUniformLocation(program, 'uRotateZ'),
+			uColorA: gl.getUniformLocation(program, 'uColorA'),
+			uColorB: gl.getUniformLocation(program, 'uColorB'),
+			uGridSize: gl.getUniformLocation(program, 'uGridSize'),
 			uTime: gl.getUniformLocation(program, 'uTime'),
-			uResolution: gl.getUniformLocation(program, 'uResolution'),
-			uGrainScale: gl.getUniformLocation(program, 'uGrainScale'),
-			uGrainSpeed: gl.getUniformLocation(program, 'uGrainSpeed'),
-			uGrainStr: gl.getUniformLocation(program, 'uGrainStr'),
 			uNoiseScale: gl.getUniformLocation(program, 'uNoiseScale'),
 			uNoiseSpeed: gl.getUniformLocation(program, 'uNoiseSpeed'),
-			uWaveScale: gl.getUniformLocation(program, 'uWaveScale'),
-			uWaveSpeed: gl.getUniformLocation(program, 'uWaveSpeed'),
-			uWaveType: gl.getUniformLocation(program, 'uWaveType'),
-			uPixelate: gl.getUniformLocation(program, 'uPixelate'),
-			uPixelScale: gl.getUniformLocation(program, 'uPixelScale')
+			uNoiseType: gl.getUniformLocation(program, 'uNoiseType')
 		};
 		return true;
 	}
@@ -250,33 +282,39 @@
 		if (!canvas || !gl) return;
 
 		const loc = gl.uniformLocations;
-		const { width: canvasWidth, height: canvasHeight } = canvas;
+		const { clientWidth, clientHeight } = canvas;
 
-		const sortedColors = [...colors].sort((a, b) => a.position - b.position);
-		const colorValues = sortedColors.map((c) => parseColor(c.color)).flat();
-		const positions = sortedColors.map((c) => c.position);
+		const cellSize = state1.size + gap;
 
-		gl.uniform4fv(loc.uColors, new Float32Array(colorValues));
-		gl.uniform1fv(loc.uPositions, new Float32Array(positions));
-		gl.uniform1i(loc.uColorCount, sortedColors.length);
+		gridSize = {
+			x: Math.floor(clientWidth / cellSize) * 2,
+			y: Math.floor(clientHeight / cellSize) * 2
+		};
+
+		const rowOffset = offsetToggle === 'row' ? 1 / offsetRow : offsetPercent / 100;
+
+		gl.uniform2f(loc.uSize, state1.size, state2.size);
+		gl.uniform1f(loc.uGap, gap);
+		gl.uniform1f(loc.uRowOffset, rowOffset);
+		gl.uniform2f(loc.uDisplaySize, clientWidth, clientHeight);
+		gl.uniform2f(loc.uGridSize, gridSize.x, gridSize.y);
+		gl.uniform2f(loc.uRadius, state1.radius, state2.radius);
+		gl.uniform2f(loc.uRotateX, degToRad(state1.rotX), degToRad(state2.rotX));
+		gl.uniform2f(loc.uRotateY, degToRad(state1.rotY), degToRad(state2.rotY));
+		gl.uniform2f(loc.uRotateZ, degToRad(state1.rotZ), degToRad(state2.rotZ));
+		gl.uniform4fv(loc.uColorA, parseColor(state1.color || '#0000'));
+		gl.uniform4fv(loc.uColorB, parseColor(state2.color || '#0000'));
 		gl.uniform1f(loc.uTime, getTimestamp());
-		gl.uniform2f(loc.uResolution, canvasWidth, canvasHeight);
-		gl.uniform1f(loc.uGrainScale, grainScale);
-		gl.uniform1f(loc.uGrainSpeed, grainSpeed);
-		gl.uniform1f(loc.uGrainStr, grainStr);
 		gl.uniform1f(loc.uNoiseScale, noiseScale);
 		gl.uniform1f(loc.uNoiseSpeed, noiseSpeed);
-		gl.uniform1f(loc.uWaveScale, waveScale);
-		gl.uniform1f(loc.uWaveSpeed, waveSpeed);
-		gl.uniform1f(loc.uWaveType, waveType);
-		gl.uniform1i(loc.uPixelate, pixelate);
-		gl.uniform1f(loc.uPixelScale, pixelScale);
+		gl.uniform1f(loc.uNoiseType, noiseType);
 	}
 
 	function render() {
 		if (!gl || isContextLost) return;
+
 		setUniforms();
-		gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
 	}
 
 	$effect(() => {
@@ -288,9 +326,10 @@
 
 		const resizeObserver = new ResizeObserver(() => {
 			if (!canvas || !gl) return;
-			canvas.width = canvas.clientWidth * dpi;
-			canvas.height = canvas.clientHeight * dpi;
+			canvas.width = canvas.clientWidth * 2;
+			canvas.height = canvas.clientHeight * 2;
 			gl.viewport(0, 0, canvas.width, canvas.height);
+			setUniforms();
 			render();
 		});
 
@@ -342,5 +381,5 @@
 
 <canvas
 	bind:this={canvas}
-	style="width: {width}px; height: {height}px; display: {!isContextLost ? 'block' : 'none'};"
-></canvas>
+	style="width: 100%; height: 100%; display: {!isContextLost ? 'block' : 'none'};"
+/>
