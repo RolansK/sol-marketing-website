@@ -1,7 +1,6 @@
 <script>
 	import { parseColor } from '../webgl/solWebglUtils';
-
-	const RADIANS = Math.PI / 180;
+	import { RADIANS } from './solSvgUtils';
 
 	function getPathParamsForCorner(cornerRadius, cornerSmoothing, maxRadius) {
 		const clampedRadius = Math.min(cornerRadius, maxRadius);

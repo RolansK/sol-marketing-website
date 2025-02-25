@@ -1,7 +1,6 @@
 <script>
 	import { parseColor } from '../webgl/solWebglUtils';
-
-	const RADIANS = Math.PI / 180;
+	import { RADIANS } from './solSvgUtils';
 
 	function generatePath(width, height, m, n1, n2, n3, ratio) {
 		const segments = 7560;
