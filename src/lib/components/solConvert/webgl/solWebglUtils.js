@@ -51,9 +51,7 @@ export function parseColor(color) {
 	return [r / 255, g / 255, b / 255, a ?? 1];
 }
 
-export function getTimestamp() {
-	return performance.now() / 1000;
-}
+export const getTimestamp = () => performance.now() / 1000;
 
 export function mapRange(value, min = 1, max = 10) {
 	const t = (value - min) / (max - min);
@@ -159,12 +157,12 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 		uniforms.state2 &&
 		set.vec4('uColorB', parseColor(uniforms.state2.color || '#0000'));
 
-	if (loc.uRowOffset && uniforms.offsetToggle !== undefined) {
+	loc.uRowOffset &&
+		uniforms.offsetToggle !== undefined &&
 		set.float(
 			'uRowOffset',
 			uniforms.offsetToggle === 'row' ? 1 / uniforms.offsetRow : uniforms.offsetPercent / 100
 		);
-	}
 
 	loc.uMagnet &&
 		uniforms.magnetValue != null &&
@@ -196,10 +194,10 @@ export function setupWebGLComponent({
 	fps = 60
 }) {
 	const SYNC_GL = 'gl-sync';
-	let gl = null;
-	let isContextLost = false;
-	let timeoutId = null;
-	let resizeObserver = null;
+	let gl = null,
+		isContextLost = false,
+		timeoutId = null,
+		resizeObserver = null;
 
 	const extractedUniformNames = [
 		...extractUniformNames(vertexShader),
@@ -239,7 +237,6 @@ export function setupWebGLComponent({
 		resizeObserver.observe(canvas);
 
 		timeoutId = setInterval(() => renderFunction(gl, isContextLost), 1000 / fps);
-
 		return true;
 	};
 
@@ -253,10 +250,5 @@ export function setupWebGLComponent({
 		window.postMessage({ type: SYNC_GL, action: 'restore' }, '*');
 	};
 
-	return {
-		setup,
-		cleanup,
-		getGL: () => gl,
-		isContextLost: () => isContextLost
-	};
+	return { setup, cleanup, getGL: () => gl, isContextLost: () => isContextLost };
 }
