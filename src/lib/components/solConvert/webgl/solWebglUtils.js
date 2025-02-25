@@ -40,129 +40,110 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 		}
 	}
 
-	const uniformSetters = {
-		// Basic uniforms
-		uResolution: () => gl.uniform2f(loc.uResolution, canvas.width, canvas.height),
-		uTime: () => gl.uniform1f(loc.uTime, getTimestamp()),
-		uDisplaySize: () => gl.uniform2f(loc.uDisplaySize, clientWidth, clientHeight),
-
-		// Color uniforms
-		uColors: () => {
-			if (uniforms.colors && loc.uPositions && loc.uColorCount) {
-				const sortedColors = [...uniforms.colors].sort((a, b) => a.position - b.position);
-				const colorValues = sortedColors.map((c) => parseColor(c.color)).flat();
-				const positions = sortedColors.map((c) => c.position);
-
-				gl.uniform4fv(loc.uColors, new Float32Array(colorValues));
-				gl.uniform1fv(loc.uPositions, new Float32Array(positions));
-				gl.uniform1i(loc.uColorCount, sortedColors.length);
-			}
-		},
-
-		// Grain properties
-		uGrainScale: () =>
-			uniforms.grainScale !== undefined && gl.uniform1f(loc.uGrainScale, uniforms.grainScale),
-		uGrainSpeed: () =>
-			uniforms.grainSpeed !== undefined && gl.uniform1f(loc.uGrainSpeed, uniforms.grainSpeed),
-		uGrainStr: () =>
-			uniforms.grainStr !== undefined && gl.uniform1f(loc.uGrainStr, uniforms.grainStr),
-
-		// Wave properties
-		uWaveType: () =>
-			uniforms.waveType !== undefined && gl.uniform1f(loc.uWaveType, uniforms.waveType),
-		uWaveScale: () =>
-			uniforms.waveScale !== undefined && gl.uniform1f(loc.uWaveScale, uniforms.waveScale),
-		uWaveSpeed: () =>
-			uniforms.waveSpeed !== undefined && gl.uniform1f(loc.uWaveSpeed, uniforms.waveSpeed),
-		uWaveAngle: () =>
-			uniforms.waveAngle !== undefined && gl.uniform1f(loc.uWaveAngle, uniforms.waveAngle),
-
-		// Noise properties
-		uNoiseScale: () =>
-			uniforms.noiseScale !== undefined && gl.uniform1f(loc.uNoiseScale, uniforms.noiseScale),
-		uNoiseSpeed: () =>
-			uniforms.noiseSpeed !== undefined && gl.uniform1f(loc.uNoiseSpeed, uniforms.noiseSpeed),
-		uNoiseType: () =>
-			uniforms.noiseType !== undefined && gl.uniform1f(loc.uNoiseType, uniforms.noiseType),
-
-		// Pixelation
-		uPixelate: () =>
-			uniforms.pixelate !== undefined && gl.uniform1i(loc.uPixelate, uniforms.pixelate),
-		uPixelScale: () =>
-			uniforms.pixelScale !== undefined && gl.uniform1f(loc.uPixelScale, uniforms.pixelScale),
-
-		// State properties (for Tiles component)
-		uSize: () =>
-			uniforms.state1 &&
-			uniforms.state2 &&
-			gl.uniform2f(loc.uSize, uniforms.state1.size, uniforms.state2.size),
-		uRadius: () =>
-			uniforms.state1 &&
-			uniforms.state2 &&
-			gl.uniform2f(loc.uRadius, uniforms.state1.radius, uniforms.state2.radius),
-		uRotateX: () =>
-			uniforms.state1 &&
-			uniforms.state2 &&
-			gl.uniform2f(loc.uRotateX, degToRad(uniforms.state1.rotX), degToRad(uniforms.state2.rotX)),
-		uRotateY: () =>
-			uniforms.state1 &&
-			uniforms.state2 &&
-			gl.uniform2f(loc.uRotateY, degToRad(uniforms.state1.rotY), degToRad(uniforms.state2.rotY)),
-		uRotateZ: () =>
-			uniforms.state1 &&
-			uniforms.state2 &&
-			gl.uniform2f(loc.uRotateZ, degToRad(uniforms.state1.rotZ), degToRad(uniforms.state2.rotZ)),
-		uColorA: () =>
-			uniforms.state1 && gl.uniform4fv(loc.uColorA, parseColor(uniforms.state1.color || '#0000')),
-		uColorB: () =>
-			uniforms.state2 && gl.uniform4fv(loc.uColorB, parseColor(uniforms.state2.color || '#0000')),
-
-		// DotGrid specific
-		uGap: () => uniforms.gap !== undefined && gl.uniform1f(loc.uGap, uniforms.gap),
-		uRowOffset: () => {
-			if (uniforms.offsetToggle !== undefined) {
-				const rowOffset =
-					uniforms.offsetToggle === 'row' ? 1 / uniforms.offsetRow : uniforms.offsetPercent / 100;
-				gl.uniform1f(loc.uRowOffset, rowOffset);
-			}
-		},
-		uGridSize: () =>
-			uniforms.gridSize && gl.uniform2f(loc.uGridSize, uniforms.gridSize.x, uniforms.gridSize.y),
-
-		// Other properties
-		uFalloff: () => uniforms.falloff !== undefined && gl.uniform1f(loc.uFalloff, uniforms.falloff),
-		uSteepness: () =>
-			uniforms.steepness !== undefined && gl.uniform1f(loc.uSteepness, uniforms.steepness),
-		uMagnet: () =>
-			uniforms.magnetValue !== undefined &&
-			gl.uniform2f(loc.uMagnet, uniforms.magnetValue, mapRange(uniforms.magnetSmooth)),
-		uMouseArea: () =>
-			uniforms.mouseArea !== undefined && gl.uniform1f(loc.uMouseArea, uniforms.mouseArea),
-		uMouse: () =>
-			uniforms.mousePosition &&
-			gl.uniform2f(loc.uMouse, uniforms.mousePosition.x, uniforms.mousePosition.y)
+	// Helper functions for common uniform types
+	const setters = {
+		float: (name, value) => value !== undefined && gl.uniform1f(loc[name], value),
+		int: (name, value) => value !== undefined && gl.uniform1i(loc[name], value),
+		vec2: (name, x, y) => gl.uniform2f(loc[name], x, y),
+		vec4: (name, values) => gl.uniform4fv(loc[name], values)
 	};
 
-	// Set all available uniforms
-	Object.keys(loc).forEach((uniform) => {
-		if (uniformSetters[uniform]) {
-			uniformSetters[uniform]();
-		}
+	// Basic uniforms
+	setters.vec2('uResolution', canvas.width, canvas.height);
+	setters.float('uTime', getTimestamp());
+	setters.vec2('uDisplaySize', clientWidth, clientHeight);
+
+	// Color uniforms
+	if (loc.uColors && uniforms.colors && loc.uPositions && loc.uColorCount) {
+		const sortedColors = [...uniforms.colors].sort((a, b) => a.position - b.position);
+		const colorValues = sortedColors.map((c) => parseColor(c.color)).flat();
+		const positions = sortedColors.map((c) => c.position);
+
+		gl.uniform4fv(loc.uColors, new Float32Array(colorValues));
+		gl.uniform1fv(loc.uPositions, new Float32Array(positions));
+		gl.uniform1i(loc.uColorCount, sortedColors.length);
+	}
+
+	// Simple property uniforms
+	const simpleProps = [
+		{ uniform: 'uGrainScale', prop: 'grainScale' },
+		{ uniform: 'uGrainSpeed', prop: 'grainSpeed' },
+		{ uniform: 'uGrainStr', prop: 'grainStr' },
+		{ uniform: 'uWaveType', prop: 'waveType' },
+		{ uniform: 'uWaveScale', prop: 'waveScale' },
+		{ uniform: 'uWaveSpeed', prop: 'waveSpeed' },
+		{ uniform: 'uWaveAngle', prop: 'waveAngle' },
+		{ uniform: 'uNoiseScale', prop: 'noiseScale' },
+		{ uniform: 'uNoiseSpeed', prop: 'noiseSpeed' },
+		{ uniform: 'uNoiseType', prop: 'noiseType' },
+		{ uniform: 'uFalloff', prop: 'falloff' },
+		{ uniform: 'uSteepness', prop: 'steepness' },
+		{ uniform: 'uMouseArea', prop: 'mouseArea' },
+		{ uniform: 'uGap', prop: 'gap' }
+	];
+
+	simpleProps.forEach(({ uniform, prop }) => {
+		if (loc[uniform]) setters.float(uniform, uniforms[prop]);
 	});
+
+	// Pixelation
+	if (loc.uPixelate) setters.int('uPixelate', uniforms.pixelate);
+	if (loc.uPixelScale) setters.float('uPixelScale', uniforms.pixelScale);
+
+	// State properties (for Tiles component)
+	if (uniforms.state1 && uniforms.state2) {
+		if (loc.uSize) setters.vec2('uSize', uniforms.state1.size, uniforms.state2.size);
+		if (loc.uRadius) setters.vec2('uRadius', uniforms.state1.radius, uniforms.state2.radius);
+
+		if (loc.uRotateX)
+			setters.vec2('uRotateX', degToRad(uniforms.state1.rotX), degToRad(uniforms.state2.rotX));
+		if (loc.uRotateY)
+			setters.vec2('uRotateY', degToRad(uniforms.state1.rotY), degToRad(uniforms.state2.rotY));
+		if (loc.uRotateZ)
+			setters.vec2('uRotateZ', degToRad(uniforms.state1.rotZ), degToRad(uniforms.state2.rotZ));
+	}
+
+	if (uniforms.state1 && loc.uColorA) {
+		setters.vec4('uColorA', parseColor(uniforms.state1.color || '#0000'));
+	}
+
+	if (uniforms.state2 && loc.uColorB) {
+		setters.vec4('uColorB', parseColor(uniforms.state2.color || '#0000'));
+	}
+
+	// DotGrid specific
+	if (loc.uRowOffset && uniforms.offsetToggle !== undefined) {
+		const rowOffset =
+			uniforms.offsetToggle === 'row' ? 1 / uniforms.offsetRow : uniforms.offsetPercent / 100;
+		setters.float('uRowOffset', rowOffset);
+	}
+
+	if (loc.uGridSize && uniforms.gridSize) {
+		setters.vec2('uGridSize', uniforms.gridSize.x, uniforms.gridSize.y);
+	}
+
+	// Other properties
+	if (loc.uMagnet && uniforms.magnetValue !== undefined) {
+		setters.vec2('uMagnet', uniforms.magnetValue, mapRange(uniforms.magnetSmooth));
+	}
+
+	if (loc.uMouse && uniforms.mousePosition) {
+		setters.vec2('uMouse', uniforms.mousePosition.x, uniforms.mousePosition.y);
+	}
 
 	// Handle custom uniforms
 	if (uniforms.customUniforms) {
 		Object.entries(uniforms.customUniforms).forEach(([name, value]) => {
 			if (loc[name]) {
 				if (Array.isArray(value)) {
-					if (value.length === 2) gl.uniform2f(loc[name], value[0], value[1]);
+					if (value.length === 2) setters.vec2(name, value[0], value[1]);
 					else if (value.length === 3) gl.uniform3f(loc[name], value[0], value[1], value[2]);
 					else if (value.length === 4)
 						gl.uniform4f(loc[name], value[0], value[1], value[2], value[3]);
 				} else if (typeof value === 'number') {
-					gl.uniform1f(loc[name], value);
+					setters.float(name, value);
 				} else if (typeof value === 'boolean') {
-					gl.uniform1i(loc[name], value ? 1 : 0);
+					setters.int(name, value ? 1 : 0);
 				}
 			}
 		});
