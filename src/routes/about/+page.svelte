@@ -24,75 +24,63 @@
 </section>
 
 <div class="webgl-grid">
-	<div class="webgl-item">
-		<DotGrid
-			width={100}
-			height={100}
-			state1={{ color: '#ffab94', size: 1.75, radius: 100, rotX: 0, rotY: 0, rotZ: 0 }}
-			state2={{ color: '#de24ad', size: 3, radius: 100, rotX: 45, rotY: 45, rotZ: 45 }}
-			hoverArea={120}
-			magnet={10}
-		/>
-	</div>
-	<div class="webgl-item">
-		<GLinear
-			width={100}
-			height={100}
-			colors={[
-				{ color: '#ffadd9', position: 0 },
-				{ color: '#007061', position: 0.5 },
-				{ color: '#000042', position: 1 }
-			]}
-			waveSpeed={2}
-		/>
-	</div>
-	<div class="webgl-item">
-		<GPerlin
-			width={100}
-			height={100}
-			colors={[
-				{ color: '#ffb8c8', position: 0.25 },
-				{ color: '#af3db3', position: 0.4 },
-				{ color: '#42006b', position: 0.6 },
-				{ color: '#1d0156', position: 0.75 }
-			]}
-			noiseSpeed={10}
-		/>
-	</div>
-	<div class="webgl-item">
-		<GPerlinWave
-			width={100}
-			height={100}
-			colors={[
-				{ color: '#fae6e6', position: 0 },
-				{ color: '#e03100', position: 0.35 },
-				{ color: '#6e008a', position: 0.87 },
-				{ color: '#0e0014', position: 1 }
-			]}
-			noiseSpeed={10}
-		/>
-	</div>
-	<div class="webgl-item">
-		<GRadial
-			width={100}
-			height={100}
-			colors={[
-				{ color: '#ffadd9', position: 0 },
-				{ color: '#007061', position: 0.5 },
-				{ color: '#000042', position: 1 }
-			]}
-			waveSpeed={2}
-		/>
-	</div>
-	<div class="webgl-item">
-		<Tiles
-			width={100}
-			height={100}
-			state1={{ color: '#ffab94', size: 1.75, radius: 100, rotX: 0, rotY: 0, rotZ: 0 }}
-			state2={{ color: '#de24ad', size: 3, radius: 100, rotX: 45, rotY: 45, rotZ: 45 }}
-			noiseSpeed={20}
-		/>
-	</div>
+	<DotGrid
+		width={100}
+		height={100}
+		state1={{ color: '#ffab94', size: 1.75, radius: 100, rotX: 0, rotY: 0, rotZ: 0 }}
+		state2={{ color: '#de24ad', size: 3, radius: 100, rotX: 45, rotY: 45, rotZ: 45 }}
+		hoverArea={120}
+		magnet={10}
+	/>
+	<GLinear
+		width={100}
+		height={100}
+		colors={[
+			{ color: '#ffadd9', position: 0 },
+			{ color: '#007061', position: 0.5 },
+			{ color: '#000042', position: 1 }
+		]}
+		waveSpeed={2}
+	/>
+	<GPerlin
+		width={100}
+		height={100}
+		colors={[
+			{ color: '#ffb8c8', position: 0.25 },
+			{ color: '#af3db3', position: 0.4 },
+			{ color: '#42006b', position: 0.6 },
+			{ color: '#1d0156', position: 0.75 }
+		]}
+		noiseSpeed={10}
+	/>
+	<GPerlinWave
+		width={100}
+		height={100}
+		colors={[
+			{ color: '#fae6e6', position: 0 },
+			{ color: '#e03100', position: 0.35 },
+			{ color: '#6e008a', position: 0.87 },
+			{ color: '#0e0014', position: 1 }
+		]}
+		noiseSpeed={10}
+	/>
+	<GRadial
+		width={100}
+		height={100}
+		colors={[
+			{ color: '#ffadd9', position: 0 },
+			{ color: '#007061', position: 0.5 },
+			{ color: '#000042', position: 1 }
+		]}
+		waveSpeed={2}
+	/>
+	<Tiles
+		width={100}
+		height={100}
+		state1={{ color: '#ffab94', size: 1.75, radius: 100, rotX: 0, rotY: 0, rotZ: 0 }}
+		state2={{ color: '#de24ad', size: 3, radius: 100, rotX: 45, rotY: 45, rotZ: 45 }}
+		noiseSpeed={100}
+	/>
 	<div class="webgl-item">
 		<Polygon
 			cornerCount={6}
@@ -193,7 +181,6 @@
 
 	.webgl-item {
 		aspect-ratio: 1;
-		border-radius: 12px;
 		overflow: visible;
 	}
 </style>

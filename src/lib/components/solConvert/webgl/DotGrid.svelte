@@ -361,5 +361,5 @@
 
 <canvas
 	bind:this={canvas}
-	style="width: 100%; height: 100%; display: {!isContextLost ? 'block' : 'none'};"
+	style="width: {width}px; height: {height}px; display: {!isContextLost ? 'block' : 'none'};"
 ></canvas>
