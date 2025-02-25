@@ -165,27 +165,10 @@
 	});
 
 	onMount(() => {
-		const uniformNames = [
-			'uColors',
-			'uPositions',
-			'uColorCount',
-			'uTime',
-			'uResolution',
-			'uGrainScale',
-			'uGrainSpeed',
-			'uGrainStr',
-			'uWaveType',
-			'uWaveScale',
-			'uWaveSpeed',
-			'uWaveAngle',
-			'uPixelScale'
-		];
-
 		webglComponent = setupWebGLComponent({
 			canvas,
 			vertexShader,
 			fragmentShader,
-			uniformNames,
 			renderFunction: render,
 			fps
 		});

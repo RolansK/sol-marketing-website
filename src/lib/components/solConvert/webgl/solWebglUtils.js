@@ -2,6 +2,12 @@ export function degToRad(degrees) {
 	return degrees * (Math.PI / 180);
 }
 
+export function extractUniformNames(shaderSource) {
+	const uniformRegex = /uniform\s+\w+\s+(\w+)(?:\[\d*\])?;/g;
+	const matches = [...shaderSource.matchAll(uniformRegex)];
+	return [...new Set(matches.map((match) => match[1]))];
+}
+
 export function initWebGL(canvas, vertexShader, fragmentShader, uniformNames = []) {
 	const gl = canvas?.getContext('webgl2');
 	if (!gl) return null;
@@ -88,13 +94,13 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 
 	// Unified uniform setter with safety checks
 	const set = {
-		float: (name, value) => value != null && gl.uniform1f(loc[name], value),
-		int: (name, value) => value != null && gl.uniform1i(loc[name], value),
-		vec2: (name, x, y) => gl.uniform2f(loc[name], x, y),
-		vec4: (name, values) => gl.uniform4fv(loc[name], values)
+		float: (name, value) => value != null && loc[name] && gl.uniform1f(loc[name], value),
+		int: (name, value) => value != null && loc[name] && gl.uniform1i(loc[name], value),
+		vec2: (name, x, y) => loc[name] && gl.uniform2f(loc[name], x, y),
+		vec4: (name, values) => loc[name] && gl.uniform4fv(loc[name], values)
 	};
 
-	// Core uniforms
+	// Core uniforms - always set these if they exist in the shader
 	set.vec2('uResolution', canvas.width, canvas.height);
 	set.float('uTime', getTimestamp());
 	set.vec2('uDisplaySize', clientWidth, clientHeight);
@@ -118,7 +124,7 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 		set.int('uColorCount', sortedColors.length);
 	}
 
-	// Batch set simple float uniforms
+	// Batch set simple float uniforms - only if they exist in the shader
 	[
 		['uGrainScale', 'grainScale'],
 		['uGrainSpeed', 'grainSpeed'],
@@ -139,21 +145,35 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 
 	// State properties
 	if (uniforms.state1 && uniforms.state2) {
-		['Size', 'Radius'].forEach((prop) =>
-			set.vec2(`u${prop}`, uniforms.state1[prop.toLowerCase()], uniforms.state2[prop.toLowerCase()])
-		);
-		['X', 'Y', 'Z'].forEach((axis) =>
-			set.vec2(
-				`uRotate${axis}`,
-				degToRad(uniforms.state1[`rot${axis}`]),
-				degToRad(uniforms.state2[`rot${axis}`])
-			)
-		);
+		['Size', 'Radius'].forEach((prop) => {
+			if (loc[`u${prop}`]) {
+				set.vec2(
+					`u${prop}`,
+					uniforms.state1[prop.toLowerCase()],
+					uniforms.state2[prop.toLowerCase()]
+				);
+			}
+		});
+
+		['X', 'Y', 'Z'].forEach((axis) => {
+			if (loc[`uRotate${axis}`]) {
+				set.vec2(
+					`uRotate${axis}`,
+					degToRad(uniforms.state1[`rot${axis}`]),
+					degToRad(uniforms.state2[`rot${axis}`])
+				);
+			}
+		});
 	}
 
 	// Color states
-	uniforms.state1 && set.vec4('uColorA', parseColor(uniforms.state1.color || '#0000'));
-	uniforms.state2 && set.vec4('uColorB', parseColor(uniforms.state2.color || '#0000'));
+	if (loc.uColorA && uniforms.state1) {
+		set.vec4('uColorA', parseColor(uniforms.state1.color || '#0000'));
+	}
+
+	if (loc.uColorB && uniforms.state2) {
+		set.vec4('uColorB', parseColor(uniforms.state2.color || '#0000'));
+	}
 
 	// DotGrid specific
 	if (loc.uRowOffset && uniforms.offsetToggle !== undefined) {
@@ -163,12 +183,16 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 	}
 
 	// Interaction uniforms
-	uniforms.magnetValue != null &&
+	if (loc.uMagnet && uniforms.magnetValue != null) {
 		set.vec2('uMagnet', uniforms.magnetValue, mapRange(uniforms.magnetSmooth));
-	uniforms.mousePosition && set.vec2('uMouse', ...Object.values(uniforms.mousePosition));
+	}
+
+	if (loc.uMouse && uniforms.mousePosition) {
+		set.vec2('uMouse', ...Object.values(uniforms.mousePosition));
+	}
 
 	// Custom uniforms handling
-	uniforms.customUniforms &&
+	if (uniforms.customUniforms) {
 		Object.entries(uniforms.customUniforms).forEach(([name, value]) => {
 			if (!loc[name]) return;
 			if (Array.isArray(value)) {
@@ -179,13 +203,14 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 				set.int(name, value ? 1 : 0);
 			}
 		});
+	}
 }
 
 export function setupWebGLComponent({
 	canvas,
 	vertexShader,
 	fragmentShader,
-	uniformNames,
+	uniformNames = null,
 	renderFunction,
 	fps = 60
 }) {
@@ -195,56 +220,60 @@ export function setupWebGLComponent({
 	let timeoutId = null;
 	let resizeObserver = null;
 
-	function initWebGLContext() {
-		gl = initWebGL(canvas, vertexShader, fragmentShader, uniformNames);
-		return gl !== null;
-	}
+	// Auto-extract uniform names if not provided
+	const extractedUniformNames = uniformNames || [
+		...extractUniformNames(vertexShader),
+		...extractUniformNames(fragmentShader)
+	];
 
-	function handleContextLost(e) {
-		e.preventDefault();
-		isContextLost = true;
-	}
+	const initWebGLContext = () =>
+		(gl = initWebGL(canvas, vertexShader, fragmentShader, extractedUniformNames)) !== null;
 
-	function handleContextRestored() {
-		isContextLost = false;
-		initWebGLContext();
-	}
+	const eventHandlers = {
+		contextLost: (e) => {
+			e.preventDefault();
+			isContextLost = true;
+		},
+		contextRestored: () => {
+			isContextLost = false;
+			initWebGLContext();
+		},
+		sync: (e) => {
+			if (e.data?.type === SYNC_GL) {
+				const action = e.data.action === 'restore' ? 'restoreContext' : 'loseContext';
+				gl?.loseContextHandler?.[action]?.();
+			}
+		},
+		resize: () => canvas && gl && renderFunction(gl, isContextLost)
+	};
 
-	function handleSync(e) {
-		if (e.data?.type === SYNC_GL) {
-			gl?.loseContextHandler?.[e.data.action === 'restore' ? 'restoreContext' : 'loseContext']();
-		}
-	}
-
-	function setup() {
+	const setup = () => {
 		if (!initWebGLContext()) return false;
 
-		resizeObserver = new ResizeObserver(() => {
-			if (!canvas || !gl) return;
-			renderFunction(gl, isContextLost);
-		});
+		// Set up event listeners
+		canvas.addEventListener('webglcontextlost', eventHandlers.contextLost);
+		canvas.addEventListener('webglcontextrestored', eventHandlers.contextRestored);
+		window.addEventListener('message', eventHandlers.sync);
 
-		canvas.addEventListener('webglcontextlost', handleContextLost);
-		canvas.addEventListener('webglcontextrestored', handleContextRestored);
-		window.addEventListener('message', handleSync);
+		// Set up resize observer
+		resizeObserver = new ResizeObserver(eventHandlers.resize);
 		resizeObserver.observe(canvas);
 
-		timeoutId = setInterval(() => {
-			renderFunction(gl, isContextLost);
-		}, 1000 / fps);
+		// Set up render loop
+		timeoutId = setInterval(() => renderFunction(gl, isContextLost), 1000 / fps);
 
 		return true;
-	}
+	};
 
-	function cleanup() {
+	const cleanup = () => {
 		resizeObserver?.disconnect();
-		canvas?.removeEventListener('webglcontextlost', handleContextLost);
-		canvas?.removeEventListener('webglcontextrestored', handleContextRestored);
-		window.removeEventListener('message', handleSync);
+		canvas?.removeEventListener('webglcontextlost', eventHandlers.contextLost);
+		canvas?.removeEventListener('webglcontextrestored', eventHandlers.contextRestored);
+		window.removeEventListener('message', eventHandlers.sync);
 		clearInterval(timeoutId);
 		gl?.loseContextHandler?.loseContext();
 		window.postMessage({ type: SYNC_GL, action: 'restore' }, '*');
-	}
+	};
 
 	return {
 		setup,
