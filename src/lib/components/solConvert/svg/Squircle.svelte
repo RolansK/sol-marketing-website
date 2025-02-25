@@ -175,7 +175,7 @@
 				{/each}
 				<feMerge>
 					{#each outsideShadows as _, i}
-						<feMergeName in={`shadow-${outsideShadows.length - 1 - i}`} />
+						<feMergeName in={`shadow-${outsideShadows.length - 1 - i}`}></feMergeName>
 					{/each}
 				</feMerge>
 			</filter>
@@ -201,7 +201,7 @@
 				{/each}
 				<feMerge>
 					{#each insideShadows as _, i}
-						<feMergeName in={`shadow-${insideShadows.length - 1 - i}`} />
+						<feMergeName in={`shadow-${insideShadows.length - 1 - i}`}></feMergeName>
 					{/each}
 				</feMerge>
 			</filter>
