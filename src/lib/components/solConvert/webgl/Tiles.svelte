@@ -1,5 +1,5 @@
 <script>
-	import { parseColor, degToRad, getTimestamp } from './solWebglUtils';
+	import { parseColor, degToRad, getTimestamp, setUniforms } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
@@ -275,12 +275,10 @@
 		return true;
 	}
 
-	function setUniforms() {
-		if (!canvas || !gl) return;
+	function render() {
+		if (!gl || isContextLost) return;
 
-		const loc = gl.uniformLocations;
 		const { clientWidth, clientHeight } = canvas;
-
 		const cellSize = state1.size + gap;
 
 		gridSize = {
@@ -288,29 +286,26 @@
 			y: Math.floor(clientHeight / cellSize) * 2
 		};
 
-		const rowOffset = offsetToggle === 'row' ? 1 / offsetRow : offsetPercent / 100;
+		setUniforms(
+			gl,
+			canvas,
+			{
+				gap,
+				offsetToggle,
+				offsetPercent,
+				offsetRow,
+				state1,
+				state2,
+				noiseScale,
+				noiseSpeed,
+				noiseType
+			},
+			{
+				resizeCanvas: false,
+				gridSize
+			}
+		);
 
-		gl.uniform2f(loc.uSize, state1.size, state2.size);
-		gl.uniform1f(loc.uGap, gap);
-		gl.uniform1f(loc.uRowOffset, rowOffset);
-		gl.uniform2f(loc.uDisplaySize, clientWidth, clientHeight);
-		gl.uniform2f(loc.uGridSize, gridSize.x, gridSize.y);
-		gl.uniform2f(loc.uRadius, state1.radius, state2.radius);
-		gl.uniform2f(loc.uRotateX, degToRad(state1.rotX), degToRad(state2.rotX));
-		gl.uniform2f(loc.uRotateY, degToRad(state1.rotY), degToRad(state2.rotY));
-		gl.uniform2f(loc.uRotateZ, degToRad(state1.rotZ), degToRad(state2.rotZ));
-		gl.uniform4fv(loc.uColorA, parseColor(state1.color || '#0000'));
-		gl.uniform4fv(loc.uColorB, parseColor(state2.color || '#0000'));
-		gl.uniform1f(loc.uTime, getTimestamp());
-		gl.uniform1f(loc.uNoiseScale, noiseScale);
-		gl.uniform1f(loc.uNoiseSpeed, noiseSpeed);
-		gl.uniform1f(loc.uNoiseType, noiseType);
-	}
-
-	function render() {
-		if (!gl || isContextLost) return;
-
-		setUniforms();
 		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
 	}
 
@@ -326,7 +321,6 @@
 			canvas.width = canvas.clientWidth * 2;
 			canvas.height = canvas.clientHeight * 2;
 			gl.viewport(0, 0, canvas.width, canvas.height);
-			setUniforms();
 			render();
 		});
 

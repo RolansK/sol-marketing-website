@@ -90,7 +90,7 @@
 			height={100}
 			state1={{ color: '#ffab94', size: 1.75, radius: 100, rotX: 0, rotY: 0, rotZ: 0 }}
 			state2={{ color: '#de24ad', size: 3, radius: 100, rotX: 45, rotY: 45, rotZ: 45 }}
-			noiseSpeed={1}
+			noiseSpeed={20}
 		/>
 	</div>
 	<div class="webgl-item">

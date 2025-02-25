@@ -1,5 +1,5 @@
 <script>
-	import { parseColor, degToRad, getTimestamp, mapRange } from './solWebglUtils';
+	import { parseColor, degToRad, getTimestamp, mapRange, setUniforms } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
@@ -180,6 +180,7 @@
 	let gridSize = { x: 0, y: 0 };
 	let mouseArea = 0;
 	let magnetValue = 0;
+	let mousePosition = { x: 0, y: 0 };
 
 	function initWebGL() {
 		gl = canvas?.getContext('webgl2');
@@ -225,10 +226,9 @@
 		return true;
 	}
 
-	function setUniforms() {
-		if (!canvas || !gl) return;
+	function render() {
+		if (!gl || isContextLost) return;
 
-		const loc = gl.uniformLocations;
 		const { clientWidth, clientHeight } = canvas;
 
 		if (canvas.width !== clientWidth * 2 || canvas.height !== clientHeight * 2) {
@@ -244,30 +244,29 @@
 			y: Math.floor((magnetFactor * clientHeight) / cellSize) * 2
 		};
 
-		const rowOffset = offsetToggle === 'row' ? 1 / offsetRow : offsetPercent / 100;
+		setUniforms(
+			gl,
+			canvas,
+			{
+				gap,
+				offsetToggle,
+				offsetPercent,
+				offsetRow,
+				state1,
+				state2,
+				falloff,
+				steepness,
+				magnetSmooth
+			},
+			{
+				resizeCanvas: false,
+				gridSize,
+				mouseArea,
+				magnetValue,
+				mousePosition
+			}
+		);
 
-		gl.uniform2f(loc.uSize, state1.size, state2.size);
-		gl.uniform1f(loc.uGap, gap);
-		gl.uniform1f(loc.uRowOffset, rowOffset);
-		gl.uniform2f(loc.uDisplaySize, clientWidth, clientHeight);
-		gl.uniform2f(loc.uGridSize, gridSize.x, gridSize.y);
-		gl.uniform2f(loc.uRadius, state1.radius, state2.radius);
-		gl.uniform2f(loc.uRotateX, degToRad(state1.rotX), degToRad(state2.rotX));
-		gl.uniform2f(loc.uRotateY, degToRad(state1.rotY), degToRad(state2.rotY));
-		gl.uniform2f(loc.uRotateZ, degToRad(state1.rotZ), degToRad(state2.rotZ));
-		gl.uniform4fv(loc.uColorA, parseColor(state1.color || '#0000'));
-		gl.uniform4fv(loc.uColorB, parseColor(state2.color || '#0000'));
-		gl.uniform1f(loc.uFalloff, falloff);
-		gl.uniform1f(loc.uSteepness, steepness);
-
-		gl.uniform1f(loc.uMouseArea, mouseArea);
-		gl.uniform2f(loc.uMagnet, magnetValue, mapRange(magnetSmooth));
-	}
-
-	function render() {
-		if (!gl || isContextLost) return;
-
-		setUniforms();
 		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
 	}
 
@@ -288,9 +287,11 @@
 
 		const handleMouseMove = (e) => {
 			const rect = canvas.getBoundingClientRect();
-			const x = e.clientX - rect.left;
-			const y = rect.bottom - e.clientY;
-			gl.uniform2f(gl.uniformLocations.uMouse, x, y);
+			mousePosition = {
+				x: e.clientX - rect.left,
+				y: rect.bottom - e.clientY
+			};
+			gl.uniform2f(gl.uniformLocations.uMouse, mousePosition.x, mousePosition.y);
 		};
 
 		const handleMouseEnter = () => {

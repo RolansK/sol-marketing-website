@@ -1,5 +1,5 @@
 <script>
-	import { parseColor, getTimestamp } from './solWebglUtils';
+	import { parseColor, getTimestamp, setUniforms } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
@@ -216,33 +216,25 @@
 		return true;
 	}
 
-	function setUniforms() {
-		if (!canvas || !gl) return;
-
-		const loc = gl.uniformLocations;
-		const { width: canvasWidth, height: canvasHeight } = canvas;
-
-		const sortedColors = [...colors].sort((a, b) => a.position - b.position);
-		const colorValues = sortedColors.map((c) => parseColor(c.color)).flat();
-		const positions = sortedColors.map((c) => c.position);
-
-		gl.uniform4fv(loc.uColors, new Float32Array(colorValues));
-		gl.uniform1fv(loc.uPositions, new Float32Array(positions));
-		gl.uniform1i(loc.uColorCount, sortedColors.length);
-		gl.uniform1f(loc.uTime, getTimestamp());
-		gl.uniform2f(loc.uResolution, canvasWidth, canvasHeight);
-		gl.uniform1f(loc.uGrainScale, grainScale);
-		gl.uniform1f(loc.uGrainSpeed, grainSpeed);
-		gl.uniform1f(loc.uGrainStr, grainStr);
-		gl.uniform1f(loc.uNoiseScale, noiseScale);
-		gl.uniform1f(loc.uNoiseSpeed, noiseSpeed);
-		gl.uniform1i(loc.uPixelate, pixelate);
-		gl.uniform1f(loc.uPixelScale, pixelScale);
-	}
-
 	function render() {
 		if (!gl || isContextLost) return;
-		setUniforms();
+
+		setUniforms(
+			gl,
+			canvas,
+			{
+				colors,
+				grainScale,
+				grainSpeed,
+				grainStr,
+				noiseScale,
+				noiseSpeed,
+				pixelate,
+				pixelScale
+			},
+			{ dpi }
+		);
+
 		gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 	}
 
