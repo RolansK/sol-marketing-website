@@ -97,18 +97,20 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 	set.vec2('uDisplaySize', clientWidth, clientHeight);
 
 	if (loc.uGridSize && uniforms.state1 && uniforms.gap !== undefined) {
-		const cellSize = uniforms.state1.size + uniforms.gap;
-		uniforms.gridSize = calculateGridSize(canvas, cellSize, uniforms.magnetValue ?? 0);
+		uniforms.gridSize = calculateGridSize(
+			canvas,
+			uniforms.state1.size + uniforms.gap,
+			uniforms.magnetValue ?? 0
+		);
 		set.vec2('uGridSize', ...Object.values(uniforms.gridSize));
 	}
 
 	if (loc.uColors && loc.uPositions && loc.uColorCount && uniforms.colors) {
 		const sortedColors = [...uniforms.colors].sort((a, b) => a.position - b.position);
 		const colorValues = sortedColors.flatMap((c) => parseColor(c.color));
-		const positions = sortedColors.map((c) => c.position);
 
 		set.vec4('uColors', colorValues);
-		gl.uniform1fv(loc.uPositions, new Float32Array(positions));
+		gl.uniform1fv(loc.uPositions, new Float32Array(sortedColors.map((c) => c.position)));
 		set.int('uColorCount', sortedColors.length);
 	}
 
@@ -132,12 +134,9 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 
 	if (uniforms.state1 && uniforms.state2) {
 		['Size', 'Radius'].forEach((prop) => {
+			const lowerProp = prop.toLowerCase();
 			loc[`u${prop}`] &&
-				set.vec2(
-					`u${prop}`,
-					uniforms.state1[prop.toLowerCase()],
-					uniforms.state2[prop.toLowerCase()]
-				);
+				set.vec2(`u${prop}`, uniforms.state1[lowerProp], uniforms.state2[lowerProp]);
 		});
 
 		['X', 'Y', 'Z'].forEach((axis) => {
