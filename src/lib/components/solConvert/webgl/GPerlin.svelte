@@ -4,7 +4,8 @@
 		getTimestamp,
 		setUniforms,
 		initWebGL,
-		setupWebGLComponent
+		setupWebGLComponent,
+		render
 	} from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -181,30 +182,22 @@
 	const fps = 60;
 	let webglComponent;
 
-	function render(gl, contextLost) {
-		if (!gl || contextLost) return;
-
-		const uniforms = {
-			colors,
-			grainScale,
-			grainSpeed,
-			grainStr,
-			noiseScale,
-			noiseSpeed,
-			pixelScale,
-			dpi
-		};
-
-		setUniforms(gl, canvas, uniforms);
-
-		gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-	}
+	const uniforms = {
+		colors,
+		grainScale,
+		grainSpeed,
+		grainStr,
+		noiseScale,
+		noiseSpeed,
+		pixelScale,
+		dpi
+	};
 
 	$effect(() => {
 		if (webglComponent) {
 			gl = webglComponent.getGL();
 			isContextLost = webglComponent.isContextLost();
-			render(gl, isContextLost);
+			render(gl, canvas, isContextLost, uniforms);
 		}
 	});
 
@@ -213,7 +206,7 @@
 			canvas,
 			vertexShader,
 			fragmentShader,
-			renderFunction: render,
+			renderFunction: (gl, contextLost) => render(gl, canvas, contextLost, uniforms),
 			fps
 		});
 

@@ -5,7 +5,8 @@
 		getTimestamp,
 		setUniforms,
 		initWebGL,
-		setupWebGLComponent
+		setupWebGLComponent,
+		render
 	} from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -239,34 +240,24 @@
 
 	let gridSize = { x: 0, y: 0 };
 
-	function render(gl, contextLost) {
-		if (!gl || contextLost) return;
-
-		const uniforms = {
-			gap,
-			offsetToggle,
-			offsetPercent,
-			offsetRow,
-			state1,
-			state2,
-			noiseScale,
-			noiseSpeed,
-			noiseType,
-			dpi
-		};
-
-		setUniforms(gl, canvas, uniforms);
-
-		gridSize = uniforms.gridSize || gridSize;
-
-		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
-	}
+	const uniforms = {
+		gap,
+		offsetToggle,
+		offsetPercent,
+		offsetRow,
+		state1,
+		state2,
+		noiseScale,
+		noiseSpeed,
+		noiseType,
+		dpi
+	};
 
 	$effect(() => {
 		if (webglComponent) {
 			gl = webglComponent.getGL();
 			isContextLost = webglComponent.isContextLost();
-			render(gl, isContextLost);
+			gridSize = render(gl, canvas, isContextLost, uniforms) || gridSize;
 		}
 	});
 
@@ -275,7 +266,9 @@
 			canvas,
 			vertexShader,
 			fragmentShader,
-			renderFunction: render,
+			renderFunction: (gl, contextLost) => {
+				gridSize = render(gl, canvas, contextLost, uniforms) || gridSize;
+			},
 			fps
 		});
 

@@ -186,6 +186,25 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 	}
 }
 
+export function render(gl, canvas, contextLost, uniforms) {
+	if (!gl || contextLost) return;
+
+	setUniforms(gl, canvas, uniforms);
+
+	// Return the gridSize for components that need it
+	const gridSize = uniforms.gridSize;
+
+	// Check if this is a grid-based component that needs instanced drawing
+	if (uniforms.state1 && uniforms.gap !== undefined && gridSize) {
+		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
+	} else {
+		// For non-grid components like GPerlin, GLinear, etc.
+		gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+	}
+
+	return gridSize;
+}
+
 export function setupWebGLComponent({
 	canvas,
 	vertexShader,
