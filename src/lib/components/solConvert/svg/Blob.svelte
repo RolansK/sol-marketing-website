@@ -85,55 +85,6 @@
 		strength = 5,
 		seed = 9
 	} = $props();
-
-	const generatePath = (width, height) => {
-		return generateBlobPath(width, height, pointCount, strength, seed);
-	};
-
-	let svg;
-	let id = crypto.randomUUID();
-
-	function updatePaths({ width, height }) {
-		if (!svg || width <= 0 || height <= 0) return;
-
-		const path = generatePath(width, height);
-
-		svg
-			.querySelectorAll('[data-clip-path],[data-fill-path],[data-stroke-path],[data-shadow]')
-			.forEach((el) => {
-				el.setAttribute('d', path);
-			});
-
-		if (fillType === 'linear') {
-			const gradient = svg.querySelector('linearGradient');
-			if (gradient) {
-				const [cx, cy] = [width / 2, height / 2];
-				const radius = Math.sqrt(width * width + height * height) / 2;
-				const angleRad = angle * RADIANS;
-				const x1 = cx + radius * Math.cos(angleRad + Math.PI / 2);
-				const y1 = cy + radius * Math.sin(angleRad + Math.PI / 2);
-				const x2 = cx + radius * Math.cos(angleRad - Math.PI / 2);
-				const y2 = cy + radius * Math.sin(angleRad - Math.PI / 2);
-
-				gradient.setAttribute('gradientUnits', 'userSpaceOnUse');
-				gradient.setAttribute('x1', x1);
-				gradient.setAttribute('y1', y1);
-				gradient.setAttribute('x2', x2);
-				gradient.setAttribute('y2', y2);
-			}
-		}
-	}
-
-	$effect(() => {
-		const observer = new ResizeObserver(([entry]) => updatePaths(entry.contentRect));
-		if (svg?.parentElement) {
-			observer.observe(svg.parentElement);
-			return () => observer.disconnect();
-		}
-	});
-
-	const outsideShadows = shadow.filter((s) => !s.outside);
-	const insideShadows = shadow.filter((s) => s.outside);
 </script>
 
 <SvgShapeBase
@@ -145,5 +96,5 @@
 	{strokeWidth}
 	{shadow}
 	shapeType="blob"
-	{generatePath}
+	generatePath={(width, height) => generateBlobPath(width, height, pointCount, strength, seed)}
 />

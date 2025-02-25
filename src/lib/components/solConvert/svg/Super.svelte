@@ -56,54 +56,6 @@
 		strokeWidth = 1,
 		shadow = []
 	} = $props();
-
-	const generatePath = (width, height) => {
-		return generateSuperPath(width, height, m, n1, n2, n3, ratio);
-	};
-
-	let svg;
-	let id = crypto.randomUUID();
-
-	function updatePaths({ width, height }) {
-		if (!svg || width <= 0 || height <= 0) return;
-
-		const path = generatePath(width, height);
-		const gradient = svg.querySelector('linearGradient');
-
-		svg
-			.querySelectorAll('[data-clip-path],[data-fill-path],[data-stroke-path],[data-shadow]')
-			.forEach((el) => {
-				el.setAttribute('d', path);
-			});
-
-		if (fillType === 'linear' && gradient) {
-			const radius = Math.sqrt(width * width + height * height) / 2;
-			const [cx, cy] = [width / 2, height / 2];
-			const [x1, y1, x2, y2] = [
-				cx + radius * Math.cos((angle * Math.PI) / 2 + Math.PI / 2),
-				cy + radius * Math.sin((angle * Math.PI) / 2 + Math.PI / 2),
-				cx + radius * Math.cos((angle * Math.PI) / 2 - Math.PI / 2),
-				cy + radius * Math.sin((angle * Math.PI) / 2 - Math.PI / 2)
-			];
-
-			gradient.setAttribute('gradientUnits', 'userSpaceOnUse');
-			gradient.setAttribute('x1', x1);
-			gradient.setAttribute('y1', y1);
-			gradient.setAttribute('x2', x2);
-			gradient.setAttribute('y2', y2);
-		}
-	}
-
-	$effect(() => {
-		const observer = new ResizeObserver(([entry]) => updatePaths(entry.contentRect));
-		if (svg?.parentElement) {
-			observer.observe(svg.parentElement);
-			return () => observer.disconnect();
-		}
-	});
-
-	const outsideShadows = shadow.filter((s) => !s.outside);
-	const insideShadows = shadow.filter((s) => s.outside);
 </script>
 
 <SvgShapeBase
@@ -115,5 +67,5 @@
 	{strokeWidth}
 	{shadow}
 	shapeType="supershape"
-	{generatePath}
+	generatePath={(width, height) => generateSuperPath(width, height, m, n1, n2, n3, ratio)}
 />

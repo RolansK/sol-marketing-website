@@ -104,6 +104,10 @@
 			pointCount={5}
 			strength={5}
 			seed={9}
+			shadow={[
+				{ x: 5, y: 5, blur: 10, color: 'rgba(235, 76, 45, 1.0)' },
+				{ x: 0, y: 0, blur: 8, color: 'rgba(0, 0, 0, 1.0)', outside: true }
+			]}
 		/>
 	</div>
 	<div class="webgl-item">
@@ -116,6 +120,10 @@
 			angle={45}
 			strokeColor="#EB4C2D"
 			strokeWidth={1}
+			shadow={[
+				{ x: 5, y: 5, blur: 10, color: 'rgba(235, 76, 45, 0.3)' },
+				{ x: 0, y: 0, blur: 8, color: 'rgba(0, 0, 0, 0.2)', outside: true }
+			]}
 		/>
 	</div>
 	<div class="webgl-item">
@@ -128,6 +136,10 @@
 			angle={45}
 			strokeColor="#EB4C2D"
 			strokeWidth={1}
+			shadow={[
+				{ x: 5, y: 5, blur: 10, color: 'rgba(235, 76, 45, 0.3)' },
+				{ x: 0, y: 0, blur: 8, color: 'rgba(0, 0, 0, 0.2)', outside: true }
+			]}
 		/>
 	</div>
 	<div class="webgl-item">
@@ -143,6 +155,10 @@
 			angle={45}
 			strokeColor="#EB4C2D"
 			strokeWidth={1}
+			shadow={[
+				{ x: 5, y: 5, blur: 10, color: 'rgba(235, 76, 45, 0.3)' },
+				{ x: 0, y: 0, blur: 8, color: 'rgba(0, 0, 0, 0.2)', outside: true }
+			]}
 		/>
 	</div>
 </div>
@@ -161,7 +177,6 @@
 	.webgl-item {
 		aspect-ratio: 1;
 		border-radius: 12px;
-		overflow: hidden;
-		background: #0000000a;
+		overflow: visible;
 	}
 </style>

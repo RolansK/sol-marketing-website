@@ -34,26 +34,6 @@
 		return commands[type];
 	}
 
-	function generateSquirclePath(
-		width,
-		height,
-		cornerRadii,
-		cornerSmoothing,
-		adjustment = 0,
-		offset = { x: 0, y: 0 }
-	) {
-		const adjustedWidth = width - 2 * adjustment;
-		const adjustedHeight = height - 2 * adjustment;
-		const maxRadius = Math.min(adjustedWidth, adjustedHeight) / 2;
-
-		const corners = cornerRadii.map((radius) =>
-			getPathParamsForCorner(radius, cornerSmoothing, maxRadius)
-		);
-		const [topLeft, topRight, bottomRight, bottomLeft] = corners;
-
-		return `M${adjustedWidth - topRight.p + offset.x},${offset.y}${drawCornerPath(topRight, 'topRight')}L${adjustedWidth + offset.x},${adjustedHeight - bottomRight.p + offset.y}${drawCornerPath(bottomRight, 'bottomRight')}L${bottomLeft.p + offset.x},${adjustedHeight + offset.y}${drawCornerPath(bottomLeft, 'bottomLeft')}L${offset.x},${topLeft.p + offset.y}${drawCornerPath(topLeft, 'topLeft')}Z`;
-	}
-
 	let {
 		borderRadius = '20px',
 		smoothing = 0.5,
@@ -71,10 +51,18 @@
 		.fill(values[0] || 0)
 		.map((v, i) => values[i] || v);
 
-	const generatePath = (width, height) => {
-		const outerPath = generateSquirclePath(width, height, cornerRadii, smoothing);
-		return outerPath;
-	};
+	function generateSquirclePath(width, height) {
+		const adjustedWidth = width;
+		const adjustedHeight = height;
+		const maxRadius = Math.min(adjustedWidth, adjustedHeight) / 2;
+
+		const corners = cornerRadii.map((radius) =>
+			getPathParamsForCorner(radius, smoothing, maxRadius)
+		);
+		const [topLeft, topRight, bottomRight, bottomLeft] = corners;
+
+		return `M${adjustedWidth - topRight.p},${0}${drawCornerPath(topRight, 'topRight')}L${adjustedWidth},${adjustedHeight - bottomRight.p}${drawCornerPath(bottomRight, 'bottomRight')}L${bottomLeft.p},${adjustedHeight}${drawCornerPath(bottomLeft, 'bottomLeft')}L${0},${topLeft.p}${drawCornerPath(topLeft, 'topLeft')}Z`;
+	}
 </script>
 
 <SvgShapeBase
@@ -86,5 +74,5 @@
 	{strokeWidth}
 	{shadow}
 	shapeType="squircle"
-	{generatePath}
+	generatePath={generateSquirclePath}
 />
