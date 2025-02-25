@@ -180,3 +180,76 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 			}
 		});
 }
+
+export function setupWebGLComponent({
+	canvas,
+	vertexShader,
+	fragmentShader,
+	uniformNames,
+	renderFunction,
+	fps = 60
+}) {
+	const SYNC_GL = 'gl-sync';
+	let gl = null;
+	let isContextLost = false;
+	let timeoutId = null;
+	let resizeObserver = null;
+
+	function initWebGLContext() {
+		gl = initWebGL(canvas, vertexShader, fragmentShader, uniformNames);
+		return gl !== null;
+	}
+
+	function handleContextLost(e) {
+		e.preventDefault();
+		isContextLost = true;
+	}
+
+	function handleContextRestored() {
+		isContextLost = false;
+		initWebGLContext();
+	}
+
+	function handleSync(e) {
+		if (e.data?.type === SYNC_GL) {
+			gl?.loseContextHandler?.[e.data.action === 'restore' ? 'restoreContext' : 'loseContext']();
+		}
+	}
+
+	function setup() {
+		if (!initWebGLContext()) return false;
+
+		resizeObserver = new ResizeObserver(() => {
+			if (!canvas || !gl) return;
+			renderFunction(gl, isContextLost);
+		});
+
+		canvas.addEventListener('webglcontextlost', handleContextLost);
+		canvas.addEventListener('webglcontextrestored', handleContextRestored);
+		window.addEventListener('message', handleSync);
+		resizeObserver.observe(canvas);
+
+		timeoutId = setInterval(() => {
+			renderFunction(gl, isContextLost);
+		}, 1000 / fps);
+
+		return true;
+	}
+
+	function cleanup() {
+		resizeObserver?.disconnect();
+		canvas?.removeEventListener('webglcontextlost', handleContextLost);
+		canvas?.removeEventListener('webglcontextrestored', handleContextRestored);
+		window.removeEventListener('message', handleSync);
+		clearInterval(timeoutId);
+		gl?.loseContextHandler?.loseContext();
+		window.postMessage({ type: SYNC_GL, action: 'restore' }, '*');
+	}
+
+	return {
+		setup,
+		cleanup,
+		getGL: () => gl,
+		isContextLost: () => isContextLost
+	};
+}

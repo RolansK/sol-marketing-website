@@ -1,5 +1,11 @@
 <script>
-	import { parseColor, getTimestamp, setUniforms, initWebGL } from './solWebglUtils';
+	import {
+		parseColor,
+		getTimestamp,
+		setUniforms,
+		initWebGL,
+		setupWebGLComponent
+	} from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
@@ -169,8 +175,6 @@
     fragColor = colorRamp(linearLight(waveNoise, grain, uGrainStr).r);
 }`;
 
-	const SYNC_GL = 'gl-sync';
-
 	let {
 		width = 100,
 		height = 100,
@@ -196,31 +200,10 @@
 	let gl;
 	let isContextLost = $state(false);
 	const fps = 60;
+	let webglComponent;
 
-	function initWebGLContext() {
-		const uniformNames = [
-			'uColors',
-			'uPositions',
-			'uColorCount',
-			'uTime',
-			'uResolution',
-			'uGrainScale',
-			'uGrainSpeed',
-			'uGrainStr',
-			'uNoiseScale',
-			'uNoiseSpeed',
-			'uWaveScale',
-			'uWaveSpeed',
-			'uWaveType',
-			'uPixelScale'
-		];
-
-		gl = initWebGL(canvas, vertexShader, fragmentShader, uniformNames);
-		return gl !== null;
-	}
-
-	function render() {
-		if (!gl || isContextLost) return;
+	function render(gl, contextLost) {
+		if (!gl || contextLost) return;
 
 		const uniforms = {
 			colors,
@@ -242,53 +225,45 @@
 	}
 
 	$effect(() => {
-		render();
+		if (webglComponent) {
+			gl = webglComponent.getGL();
+			isContextLost = webglComponent.isContextLost();
+			render(gl, isContextLost);
+		}
 	});
 
 	onMount(() => {
-		if (!initWebGLContext()) return;
+		const uniformNames = [
+			'uColors',
+			'uPositions',
+			'uColorCount',
+			'uTime',
+			'uResolution',
+			'uGrainScale',
+			'uGrainSpeed',
+			'uGrainStr',
+			'uNoiseScale',
+			'uNoiseSpeed',
+			'uWaveScale',
+			'uWaveSpeed',
+			'uWaveType',
+			'uPixelScale'
+		];
 
-		const resizeObserver = new ResizeObserver(() => {
-			if (!canvas || !gl) return;
-			canvas.width = canvas.clientWidth * dpi;
-			canvas.height = canvas.clientHeight * dpi;
-			gl.viewport(0, 0, canvas.width, canvas.height);
-			render();
+		webglComponent = setupWebGLComponent({
+			canvas,
+			vertexShader,
+			fragmentShader,
+			uniformNames,
+			renderFunction: render,
+			fps
 		});
 
-		const handleContextLost = (e) => {
-			e.preventDefault();
-			isContextLost = true;
-		};
-
-		const handleContextRestored = () => {
-			isContextLost = false;
-			initWebGLContext();
-		};
-
-		const handleSync = (e) => {
-			if (e.data?.type === SYNC_GL) {
-				gl.loseContextHandler?.[e.data.action === 'restore' ? 'restoreContext' : 'loseContext']();
-			}
-		};
-
-		resizeObserver.observe(canvas);
-		canvas.addEventListener('webglcontextlost', handleContextLost);
-		canvas.addEventListener('webglcontextrestored', handleContextRestored);
-		window.addEventListener('message', handleSync);
-
-		const timeoutId = setInterval(() => {
-			render();
-		}, 1000 / fps);
+		webglComponent.setup();
+		gl = webglComponent.getGL();
 
 		onDestroy(() => {
-			resizeObserver.disconnect();
-			canvas.removeEventListener('webglcontextlost', handleContextLost);
-			canvas.removeEventListener('webglcontextrestored', handleContextRestored);
-			window.removeEventListener('message', handleSync);
-			clearInterval(timeoutId);
-			gl?.loseContextHandler?.loseContext();
-			window.postMessage({ type: SYNC_GL, action: 'restore' }, '*');
+			webglComponent.cleanup();
 		});
 	});
 </script>

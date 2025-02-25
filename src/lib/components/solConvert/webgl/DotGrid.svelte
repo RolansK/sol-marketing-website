@@ -5,7 +5,8 @@
 		getTimestamp,
 		mapRange,
 		setUniforms,
-		initWebGL
+		initWebGL,
+		setupWebGLComponent
 	} from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -145,8 +146,6 @@
     fragColor = mix(insideColor, vec4(0.0), smoothstep(0.0, smoothing, dist));
 }`;
 
-	const SYNC_GL = 'gl-sync';
-
 	let {
 		width = 100,
 		height = 100,
@@ -184,38 +183,15 @@
 	let gl;
 	let isContextLost = $state(false);
 	const fps = 60;
+	let webglComponent;
 
 	let gridSize = { x: 0, y: 0 };
 	let mouseArea = 0;
 	let magnetValue = 0;
 	let mousePosition = { x: 0, y: 0 };
 
-	function initWebGLContext() {
-		const uniformNames = [
-			'uMouse',
-			'uSize',
-			'uGap',
-			'uRowOffset',
-			'uDisplaySize',
-			'uRadius',
-			'uRotateX',
-			'uRotateY',
-			'uRotateZ',
-			'uMouseArea',
-			'uColorA',
-			'uColorB',
-			'uGridSize',
-			'uMagnet',
-			'uFalloff',
-			'uSteepness'
-		];
-
-		gl = initWebGL(canvas, vertexShader, fragmentShader, uniformNames);
-		return gl !== null;
-	}
-
-	function render() {
-		if (!gl || isContextLost) return;
+	function render(gl, contextLost) {
+		if (!gl || contextLost) return;
 
 		const uniforms = {
 			gap,
@@ -242,16 +218,44 @@
 	}
 
 	$effect(() => {
-		render();
+		if (webglComponent) {
+			gl = webglComponent.getGL();
+			isContextLost = webglComponent.isContextLost();
+			render(gl, isContextLost);
+		}
 	});
 
 	onMount(() => {
-		if (!initWebGLContext()) return;
+		const uniformNames = [
+			'uMouse',
+			'uSize',
+			'uGap',
+			'uRowOffset',
+			'uDisplaySize',
+			'uRadius',
+			'uRotateX',
+			'uRotateY',
+			'uRotateZ',
+			'uMouseArea',
+			'uColorA',
+			'uColorB',
+			'uGridSize',
+			'uMagnet',
+			'uFalloff',
+			'uSteepness'
+		];
 
-		const resizeObserver = new ResizeObserver(() => {
-			if (!canvas || !gl) return;
-			render();
+		webglComponent = setupWebGLComponent({
+			canvas,
+			vertexShader,
+			fragmentShader,
+			uniformNames,
+			renderFunction: render,
+			fps
 		});
+
+		webglComponent.setup();
+		gl = webglComponent.getGL();
 
 		const handleMouseMove = (e) => {
 			const rect = canvas.getBoundingClientRect();
@@ -259,7 +263,6 @@
 				x: e.clientX - rect.left,
 				y: rect.bottom - e.clientY
 			};
-			gl.uniform2f(gl.uniformLocations.uMouse, mousePosition.x, mousePosition.y);
 		};
 
 		const handleMouseEnter = () => {
@@ -277,23 +280,6 @@
 			handleMouseMove(e);
 		};
 
-		const handleContextLost = (e) => {
-			e.preventDefault();
-			isContextLost = true;
-		};
-
-		const handleContextRestored = () => {
-			isContextLost = false;
-			initWebGLContext();
-		};
-
-		const handleSync = (e) => {
-			if (e.data?.type === SYNC_GL) {
-				gl.loseContextHandler?.[e.data.action === 'restore' ? 'restoreContext' : 'loseContext']();
-			}
-		};
-
-		resizeObserver.observe(canvas);
 		canvas.addEventListener('pointermove', handleMouseMove);
 		canvas.addEventListener('pointerdown', handlePointerDown);
 		canvas.addEventListener('pointerup', handleMouseLeave);
@@ -303,16 +289,8 @@
 		canvas.addEventListener('touchstart', handleMouseEnter);
 		canvas.addEventListener('touchend', handleMouseLeave);
 		canvas.addEventListener('touchcancel', handleMouseLeave);
-		canvas.addEventListener('webglcontextlost', handleContextLost);
-		canvas.addEventListener('webglcontextrestored', handleContextRestored);
-		window.addEventListener('message', handleSync);
-
-		const timeoutId = setInterval(() => {
-			render();
-		}, 1000 / fps);
 
 		onDestroy(() => {
-			resizeObserver.disconnect();
 			canvas.removeEventListener('pointermove', handleMouseMove);
 			canvas.removeEventListener('pointerdown', handlePointerDown);
 			canvas.removeEventListener('pointerup', handleMouseLeave);
@@ -322,12 +300,7 @@
 			canvas.removeEventListener('touchstart', handleMouseEnter);
 			canvas.removeEventListener('touchend', handleMouseLeave);
 			canvas.removeEventListener('touchcancel', handleMouseLeave);
-			canvas.removeEventListener('webglcontextlost', handleContextLost);
-			canvas.removeEventListener('webglcontextrestored', handleContextRestored);
-			window.removeEventListener('message', handleSync);
-			clearInterval(timeoutId);
-			gl?.loseContextHandler?.loseContext();
-			window.postMessage({ type: SYNC_GL, action: 'restore' }, '*');
+			webglComponent.cleanup();
 		});
 	});
 </script>
