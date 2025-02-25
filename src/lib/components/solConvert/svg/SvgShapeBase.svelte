@@ -1,7 +1,7 @@
 <script>
 	import { RADIANS } from './solSvgUtils';
 
-	let {
+	const {
 		fillType = 'solid',
 		fillColor = '#FFE0DB',
 		colors = ['#FFE0DB'],
@@ -10,7 +10,9 @@
 		strokeWidth = 1,
 		shadow = [],
 		shapeType = 'shape',
-		generatePath = () => ''
+		generatePath = () => '',
+		children = () => null,
+		defs = () => null
 	} = $props();
 
 	let svg;
@@ -140,7 +142,9 @@
 		<clipPath id={`stroke-clip-${id}`}>
 			<path data-clip-path />
 		</clipPath>
-		<slot name="defs" />
+		{#if defs}
+			{@render defs()}
+		{/if}
 	</defs>
 	{#if outsideShadows.length > 0}
 		<path data-shadow filter={`url(#outside-shadow-${id})`} />
@@ -161,5 +165,7 @@
 			clip-path={`url(#stroke-clip-${id})`}
 		/>
 	{/if}
-	<slot />
+	{#if children}
+		{@render children()}
+	{/if}
 </svg>

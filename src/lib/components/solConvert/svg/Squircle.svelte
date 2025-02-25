@@ -87,6 +87,16 @@
 
 		return outerPath;
 	};
+
+	function renderDefs() {
+		return () => {
+			return {
+				html: `<clipPath id="squircle-inner-clip">
+					<path data-inner />
+				</clipPath>`
+			};
+		};
+	}
 </script>
 
 <SvgShapeBase
@@ -99,10 +109,5 @@
 	{shadow}
 	shapeType="squircle"
 	{generatePath}
->
-	<svelte:fragment slot="defs">
-		<clipPath id="squircle-inner-clip">
-			<path data-inner />
-		</clipPath>
-	</svelte:fragment>
-</SvgShapeBase>
+	defs={renderDefs()}
+/>
