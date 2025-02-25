@@ -191,7 +191,7 @@
 	let magnetValue = 0;
 	let mousePosition = { x: 0, y: 0 };
 
-	const uniforms = {
+	const uniforms = $state({
 		gap,
 		offsetToggle,
 		offsetPercent,
@@ -201,12 +201,12 @@
 		falloff,
 		steepness,
 		magnetSmooth,
-		mouseArea,
-		magnetValue,
-		mousePosition,
+		mouseArea: 0,
+		magnetValue: 0,
+		mousePosition: { x: 0, y: 0 },
 		dpi,
 		magnet
-	};
+	});
 
 	$effect(() => {
 		if (webglComponent) {
@@ -222,6 +222,10 @@
 			vertexShader,
 			fragmentShader,
 			renderFunction: (gl, contextLost) => {
+				uniforms.mouseArea = mouseArea;
+				uniforms.magnetValue = magnetValue;
+				uniforms.mousePosition = mousePosition;
+
 				gridSize = render(gl, canvas, contextLost, uniforms) || gridSize;
 			},
 			fps
