@@ -286,25 +286,19 @@
 			y: Math.floor(clientHeight / cellSize) * 2
 		};
 
-		setUniforms(
-			gl,
-			canvas,
-			{
-				gap,
-				offsetToggle,
-				offsetPercent,
-				offsetRow,
-				state1,
-				state2,
-				noiseScale,
-				noiseSpeed,
-				noiseType
-			},
-			{
-				resizeCanvas: false,
-				gridSize
-			}
-		);
+		setUniforms(gl, canvas, {
+			gap,
+			offsetToggle,
+			offsetPercent,
+			offsetRow,
+			state1,
+			state2,
+			noiseScale,
+			noiseSpeed,
+			noiseType,
+			resizeCanvas: false,
+			gridSize
+		});
 
 		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
 	}

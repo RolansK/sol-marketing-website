@@ -219,21 +219,17 @@
 	function render() {
 		if (!gl || isContextLost) return;
 
-		setUniforms(
-			gl,
-			canvas,
-			{
-				colors,
-				grainScale,
-				grainSpeed,
-				grainStr,
-				noiseScale,
-				noiseSpeed,
-				pixelate,
-				pixelScale
-			},
-			{ dpi }
-		);
+		setUniforms(gl, canvas, {
+			colors,
+			grainScale,
+			grainSpeed,
+			grainStr,
+			noiseScale,
+			noiseSpeed,
+			pixelate,
+			pixelScale,
+			dpi
+		});
 
 		gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 	}

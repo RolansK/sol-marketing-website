@@ -244,28 +244,22 @@
 			y: Math.floor((magnetFactor * clientHeight) / cellSize) * 2
 		};
 
-		setUniforms(
-			gl,
-			canvas,
-			{
-				gap,
-				offsetToggle,
-				offsetPercent,
-				offsetRow,
-				state1,
-				state2,
-				falloff,
-				steepness,
-				magnetSmooth
-			},
-			{
-				resizeCanvas: false,
-				gridSize,
-				mouseArea,
-				magnetValue,
-				mousePosition
-			}
-		);
+		setUniforms(gl, canvas, {
+			gap,
+			offsetToggle,
+			offsetPercent,
+			offsetRow,
+			state1,
+			state2,
+			falloff,
+			steepness,
+			magnetSmooth,
+			resizeCanvas: false,
+			gridSize,
+			mouseArea,
+			magnetValue,
+			mousePosition
+		});
 
 		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
 	}
