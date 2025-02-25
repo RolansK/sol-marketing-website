@@ -191,14 +191,11 @@ export function render(gl, canvas, contextLost, uniforms) {
 
 	setUniforms(gl, canvas, uniforms);
 
-	// Return the gridSize for components that need it
 	const gridSize = uniforms.gridSize;
 
-	// Check if this is a grid-based component that needs instanced drawing
 	if (uniforms.state1 && uniforms.gap !== undefined && gridSize) {
 		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
 	} else {
-		// For non-grid components like GPerlin, GLinear, etc.
 		gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 	}
 
@@ -255,24 +252,19 @@ export function setupWebGLComponent({
 		window.postMessage({ type: SYNC_GL, action: 'restore' }, '*');
 	};
 
-	// Initialize immediately instead of returning a setup function
 	if (!initWebGLContext()) {
 		return null; // Return null if initialization failed
 	}
 
-	// Set up event listeners
 	canvas.addEventListener('webglcontextlost', eventHandlers.contextLost);
 	canvas.addEventListener('webglcontextrestored', eventHandlers.contextRestored);
 	window.addEventListener('message', eventHandlers.sync);
 
-	// Set up resize observer
 	resizeObserver = new ResizeObserver(eventHandlers.resize);
 	resizeObserver.observe(canvas);
 
-	// Start render loop
 	timeoutId = setInterval(() => renderFunction(gl, isContextLost), 1000 / fps);
 
-	// Return the component with methods (without setup)
 	return {
 		cleanup,
 		gl,
