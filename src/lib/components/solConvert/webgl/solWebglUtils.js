@@ -210,7 +210,6 @@ export function setupWebGLComponent({
 	canvas,
 	vertexShader,
 	fragmentShader,
-	uniformNames = null,
 	renderFunction,
 	fps = 60
 }) {
@@ -220,8 +219,7 @@ export function setupWebGLComponent({
 	let timeoutId = null;
 	let resizeObserver = null;
 
-	// Auto-extract uniform names if not provided
-	const extractedUniformNames = uniformNames || [
+	const extractedUniformNames = [
 		...extractUniformNames(vertexShader),
 		...extractUniformNames(fragmentShader)
 	];
