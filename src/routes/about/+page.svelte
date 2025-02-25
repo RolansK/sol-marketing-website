@@ -5,6 +5,10 @@
 	import GPerlinWave from '$lib/components/solConvert/webgl/GPerlinWave.svelte';
 	import GRadial from '$lib/components/solConvert/webgl/GRadial.svelte';
 	import Tiles from '$lib/components/solConvert/webgl/Tiles.svelte';
+	import Blob from '$lib/components/solConvert/svg/Blob.svelte';
+	import Polygon from '$lib/components/solConvert/svg/Polygon.svelte';
+	import Squircle from '$lib/components/solConvert/svg/Squircle.svelte';
+	import Super from '$lib/components/solConvert/svg/Super.svelte';
 </script>
 
 <svelte:head>
@@ -87,6 +91,58 @@
 			state1={{ color: '#ffab94', size: 1.75, radius: 100, rotX: 0, rotY: 0, rotZ: 0 }}
 			state2={{ color: '#de24ad', size: 3, radius: 100, rotX: 45, rotY: 45, rotZ: 45 }}
 			noiseSpeed={1}
+		/>
+	</div>
+	<div class="webgl-item">
+		<Blob
+			fillType="linear"
+			fillColor="#FFE0DB"
+			colors={['#FFE0DB', '#EB4C2D']}
+			angle={45}
+			strokeColor="#EB4C2D"
+			strokeWidth={1}
+			pointCount={5}
+			strength={5}
+			seed={9}
+		/>
+	</div>
+	<div class="webgl-item">
+		<Polygon
+			cornerCount={6}
+			bend={0.3}
+			fillType="linear"
+			fillColor="#FFE0DB"
+			colors={['#FFE0DB', '#EB4C2D']}
+			angle={45}
+			strokeColor="#EB4C2D"
+			strokeWidth={1}
+		/>
+	</div>
+	<div class="webgl-item">
+		<Squircle
+			borderRadius="20px"
+			smoothing={0.5}
+			fillType="linear"
+			fillColor="#FFE0DB"
+			colors={['#FFE0DB', '#EB4C2D']}
+			angle={45}
+			strokeColor="#EB4C2D"
+			strokeWidth={1}
+		/>
+	</div>
+	<div class="webgl-item">
+		<Super
+			ratio={1.3}
+			m={47}
+			n1={15}
+			n2={22}
+			n3={28}
+			fillType="linear"
+			fillColor="#FFE0DB"
+			colors={['#FFE0DB', '#EB4C2D']}
+			angle={45}
+			strokeColor="#EB4C2D"
+			strokeWidth={1}
 		/>
 	</div>
 </div>
