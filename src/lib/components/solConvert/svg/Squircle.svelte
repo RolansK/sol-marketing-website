@@ -75,16 +75,6 @@
 		const outerPath = generateSquirclePath(width, height, cornerRadii, smoothing);
 		return outerPath;
 	};
-
-	function renderDefs() {
-		return () => {
-			return {
-				html: `<clipPath id="squircle-inner-clip">
-					<path data-inner />
-				</clipPath>`
-			};
-		};
-	}
 </script>
 
 <SvgShapeBase
@@ -97,5 +87,4 @@
 	{shadow}
 	shapeType="squircle"
 	{generatePath}
-	defs={renderDefs()}
 />

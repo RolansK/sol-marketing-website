@@ -11,8 +11,7 @@
 		shadow = [],
 		shapeType = 'shape',
 		generatePath = () => '',
-		children = () => null,
-		defs = () => null
+		children = () => null
 	} = $props();
 
 	let svg;
@@ -142,9 +141,6 @@
 		<clipPath id={`stroke-clip-${id}`}>
 			<path data-clip-path />
 		</clipPath>
-		{#if defs}
-			{@render defs()}
-		{/if}
 	</defs>
 	{#if outsideShadows.length > 0}
 		<path data-shadow filter={`url(#outside-shadow-${id})`} />
