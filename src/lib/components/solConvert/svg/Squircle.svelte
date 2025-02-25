@@ -73,18 +73,6 @@
 
 	const generatePath = (width, height) => {
 		const outerPath = generateSquirclePath(width, height, cornerRadii, smoothing);
-		const innerPath =
-			width > strokeWidth * 2 && height > strokeWidth * 2
-				? generateSquirclePath(
-						width,
-						height,
-						cornerRadii.map((r) => Math.max(0, r - strokeWidth)),
-						smoothing,
-						strokeWidth,
-						{ x: strokeWidth, y: strokeWidth }
-					)
-				: '';
-
 		return outerPath;
 	};
 

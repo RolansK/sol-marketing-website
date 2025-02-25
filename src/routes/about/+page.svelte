@@ -121,7 +121,7 @@
 	<div class="webgl-item">
 		<Squircle
 			borderRadius="20px"
-			smoothing={0.5}
+			smoothing={1}
 			fillType="linear"
 			fillColor="#FFE0DB"
 			colors={['#FFE0DB', '#EB4C2D']}
