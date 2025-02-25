@@ -1,5 +1,17 @@
 export const RADIANS = Math.PI / 180;
 
+export function seedRandom(seed) {
+	const m = 4294967296;
+	const a = 1664525;
+	const c = 1013904223;
+	let z = seed >>> 0;
+
+	return function () {
+		z = (a * z + c) % m;
+		return z / m;
+	};
+}
+
 export function solveQuadratic(a, b, c) {
 	if (a === 0) return b !== 0 ? [-c / b] : [];
 
