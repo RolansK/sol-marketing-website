@@ -55,8 +55,8 @@
 		}
 	});
 
-	const outsideShadows = $derived(shadow.filter((s) => !s.outside));
-	const insideShadows = $derived(shadow.filter((s) => s.outside));
+	const outsideShadows = $derived(shadow.filter((s) => s.outside));
+	const insideShadows = $derived(shadow.filter((s) => !s.outside));
 </script>
 
 <svg bind:this={svg} style="overflow: visible">
