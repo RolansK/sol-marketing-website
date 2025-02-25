@@ -22,6 +22,27 @@ export function mapRange(value, min = 1, max = 10) {
 	return (1 - t) * 10 + t * 1;
 }
 
+export function calculateGridSize(canvas, cellSize, magnet = 0) {
+	if (!canvas) return { x: 0, y: 0 };
+
+	const { clientWidth, clientHeight } = canvas;
+
+	// For DotGrid component with magnet effect
+	if (magnet !== 0) {
+		const magnetFactor = 0.5 + Math.abs(magnet / 4000);
+		return {
+			x: Math.floor((magnetFactor * clientWidth) / cellSize) * 2,
+			y: Math.floor((magnetFactor * clientHeight) / cellSize) * 2
+		};
+	}
+
+	// For Tiles component and others
+	return {
+		x: Math.floor(clientWidth / cellSize) * 2,
+		y: Math.floor(clientHeight / cellSize) * 2
+	};
+}
+
 export function setUniforms(gl, canvas, uniforms = {}) {
 	if (!canvas || !gl || !gl.uniformLocations) return;
 
@@ -52,6 +73,21 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 	setters.vec2('uResolution', canvas.width, canvas.height);
 	setters.float('uTime', getTimestamp());
 	setters.vec2('uDisplaySize', clientWidth, clientHeight);
+
+	// Calculate grid size if needed
+	if (loc.uGridSize && uniforms.state1 && uniforms.gap !== undefined) {
+		const cellSize = uniforms.state1.size + uniforms.gap;
+		const magnet = uniforms.magnetValue !== undefined ? uniforms.magnet : 0;
+
+		// Calculate grid size
+		const gridSize = calculateGridSize(canvas, cellSize, magnet);
+
+		// Store the calculated grid size back in uniforms for components to access
+		uniforms.gridSize = gridSize;
+
+		// Set the uniform
+		setters.vec2('uGridSize', gridSize.x, gridSize.y);
+	}
 
 	// Color uniforms
 	if (loc.uColors && uniforms.colors && loc.uPositions && loc.uColorCount) {

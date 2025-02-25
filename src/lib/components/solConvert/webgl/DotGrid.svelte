@@ -230,16 +230,7 @@
 	function render() {
 		if (!gl || isContextLost) return;
 
-		const { clientWidth, clientHeight } = canvas;
-
-		const magnetFactor = 0.5 + Math.abs(magnet / 4000);
-		const cellSize = state1.size + gap;
-		gridSize = {
-			x: Math.floor((magnetFactor * clientWidth) / cellSize) * 2,
-			y: Math.floor((magnetFactor * clientHeight) / cellSize) * 2
-		};
-
-		setUniforms(gl, canvas, {
+		const uniforms = {
 			gap,
 			offsetToggle,
 			offsetPercent,
@@ -249,12 +240,16 @@
 			falloff,
 			steepness,
 			magnetSmooth,
-			gridSize,
 			mouseArea,
 			magnetValue,
 			mousePosition,
-			dpi
-		});
+			dpi,
+			magnet
+		};
+
+		setUniforms(gl, canvas, uniforms);
+
+		gridSize = uniforms.gridSize || gridSize;
 
 		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
 	}

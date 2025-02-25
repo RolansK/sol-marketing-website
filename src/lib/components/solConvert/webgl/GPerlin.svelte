@@ -219,7 +219,7 @@
 	function render() {
 		if (!gl || isContextLost) return;
 
-		setUniforms(gl, canvas, {
+		const uniforms = {
 			colors,
 			grainScale,
 			grainSpeed,
@@ -229,7 +229,9 @@
 			pixelate,
 			pixelScale,
 			dpi
-		});
+		};
+
+		setUniforms(gl, canvas, uniforms);
 
 		gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 	}

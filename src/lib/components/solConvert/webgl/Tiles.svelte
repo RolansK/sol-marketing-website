@@ -279,15 +279,7 @@
 	function render() {
 		if (!gl || isContextLost) return;
 
-		const { clientWidth, clientHeight } = canvas;
-		const cellSize = state1.size + gap;
-
-		gridSize = {
-			x: Math.floor(clientWidth / cellSize) * 2,
-			y: Math.floor(clientHeight / cellSize) * 2
-		};
-
-		setUniforms(gl, canvas, {
+		const uniforms = {
 			gap,
 			offsetToggle,
 			offsetPercent,
@@ -297,9 +289,12 @@
 			noiseScale,
 			noiseSpeed,
 			noiseType,
-			gridSize,
 			dpi
-		});
+		};
+
+		setUniforms(gl, canvas, uniforms);
+
+		gridSize = uniforms.gridSize || gridSize;
 
 		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
 	}
