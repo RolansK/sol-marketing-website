@@ -1,5 +1,5 @@
 <script>
-	import { parseColor, getTimestamp, setUniforms } from './solWebglUtils';
+	import { parseColor, getTimestamp, setUniforms, initWebGL } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
@@ -132,45 +132,25 @@
 	let isContextLost = $state(false);
 	const fps = 60;
 
-	function initWebGL() {
-		gl = canvas?.getContext('webgl2');
-		if (!gl) return null;
-		gl.loseContextHandler = gl.getExtension('WEBGL_lose_context');
-		const program = gl.createProgram();
-		[gl.VERTEX_SHADER, gl.FRAGMENT_SHADER].forEach((type, i) => {
-			const shader = gl.createShader(type);
-			gl.shaderSource(shader, i === 0 ? vertexShader : fragmentShader);
-			gl.compileShader(shader);
-			gl.attachShader(program, shader);
-		});
-		gl.linkProgram(program);
-		gl.useProgram(program);
+	function initWebGLContext() {
+		const uniformNames = [
+			'uColors',
+			'uPositions',
+			'uColorCount',
+			'uTime',
+			'uResolution',
+			'uGrainScale',
+			'uGrainSpeed',
+			'uGrainStr',
+			'uWaveType',
+			'uWaveScale',
+			'uWaveSpeed',
+			'uPixelate',
+			'uPixelScale'
+		];
 
-		const vertices = new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]);
-		gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-		const position = gl.getAttribLocation(program, 'position');
-		gl.enableVertexAttribArray(position);
-		gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-		gl.enable(gl.BLEND);
-		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-		gl.uniformLocations = {
-			uColors: gl.getUniformLocation(program, 'uColors'),
-			uPositions: gl.getUniformLocation(program, 'uPositions'),
-			uColorCount: gl.getUniformLocation(program, 'uColorCount'),
-			uTime: gl.getUniformLocation(program, 'uTime'),
-			uResolution: gl.getUniformLocation(program, 'uResolution'),
-			uGrainScale: gl.getUniformLocation(program, 'uGrainScale'),
-			uGrainSpeed: gl.getUniformLocation(program, 'uGrainSpeed'),
-			uGrainStr: gl.getUniformLocation(program, 'uGrainStr'),
-			uWaveType: gl.getUniformLocation(program, 'uWaveType'),
-			uWaveScale: gl.getUniformLocation(program, 'uWaveScale'),
-			uWaveSpeed: gl.getUniformLocation(program, 'uWaveSpeed'),
-			uPixelate: gl.getUniformLocation(program, 'uPixelate'),
-			uPixelScale: gl.getUniformLocation(program, 'uPixelScale')
-		};
-		return true;
+		gl = initWebGL(canvas, vertexShader, fragmentShader, uniformNames);
+		return gl !== null;
 	}
 
 	function render() {
@@ -199,7 +179,7 @@
 	});
 
 	onMount(() => {
-		if (!initWebGL()) return;
+		if (!initWebGLContext()) return;
 
 		const resizeObserver = new ResizeObserver(() => {
 			if (!canvas || !gl) return;
@@ -213,7 +193,7 @@
 
 		const handleContextRestored = () => {
 			isContextLost = false;
-			initWebGL();
+			initWebGLContext();
 		};
 
 		const handleSync = (e) => {

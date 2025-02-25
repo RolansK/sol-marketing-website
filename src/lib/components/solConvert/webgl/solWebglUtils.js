@@ -2,6 +2,42 @@ export function degToRad(degrees) {
 	return degrees * (Math.PI / 180);
 }
 
+export function initWebGL(canvas, vertexShader, fragmentShader, uniformNames = []) {
+	const gl = canvas?.getContext('webgl2');
+	if (!gl) return null;
+
+	gl.loseContextHandler = gl.getExtension('WEBGL_lose_context');
+	const program = gl.createProgram();
+
+	[gl.VERTEX_SHADER, gl.FRAGMENT_SHADER].forEach((type, i) => {
+		const shader = gl.createShader(type);
+		gl.shaderSource(shader, i === 0 ? vertexShader : fragmentShader);
+		gl.compileShader(shader);
+		gl.attachShader(program, shader);
+	});
+
+	gl.linkProgram(program);
+	gl.useProgram(program);
+
+	const vertices = new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]);
+	gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+	gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+	const position = gl.getAttribLocation(program, 'position');
+	gl.enableVertexAttribArray(position);
+	gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+	gl.enable(gl.BLEND);
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+	// Set up uniform locations
+	gl.uniformLocations = {};
+	uniformNames.forEach((name) => {
+		gl.uniformLocations[name] = gl.getUniformLocation(program, name);
+	});
+
+	return gl;
+}
+
 export function parseColor(color) {
 	const div = document.createElement('div');
 	div.style.color = color;
