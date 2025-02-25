@@ -9,9 +9,7 @@
 		strokeColor = '#ff0000',
 		strokeWidth = 1,
 		shadow = [],
-		shapeType = 'shape',
-		generatePath = () => '',
-		children = () => null
+		generatePath = () => ''
 	} = $props();
 
 	let svg;
@@ -62,7 +60,7 @@
 <svg bind:this={svg} style="overflow: visible">
 	<defs>
 		{#if fillType === 'linear'}
-			<linearGradient id={`${shapeType}-gradient-${id}`}>
+			<linearGradient id={`gradient-${id}`}>
 				{#each colors as color, i}
 					<stop offset={`${(i / (colors.length - 1)) * 100}%`} stop-color={color} />
 				{/each}
@@ -107,7 +105,8 @@
 				{/each}
 				<feMerge>
 					{#each outsideShadows as _, i}
-						<feMergeNode in={`shadow-${outsideShadows.length - 1 - i}`}></feMergeNode>
+						<feMergeNode in={`shadow-${outsideShadows.length - 1 - i}`} key={`${id}-${i}`}
+						></feMergeNode>
 					{/each}
 				</feMerge>
 			</filter>
@@ -133,7 +132,8 @@
 				{/each}
 				<feMerge>
 					{#each insideShadows as _, i}
-						<feMergeNode in={`shadow-${insideShadows.length - 1 - i}`}></feMergeNode>
+						<feMergeNode in={`shadow-${insideShadows.length - 1 - i}`} key={`${id}-${i}`}
+						></feMergeNode>
 					{/each}
 				</feMerge>
 			</filter>
@@ -147,7 +147,7 @@
 	{/if}
 	<path
 		data-fill-path
-		fill={fillType === 'solid' ? fillColor || '#0000' : `url(#${shapeType}-gradient-${id})`}
+		fill={fillType === 'solid' ? fillColor || '#0000' : `url(#gradient-${id})`}
 	/>
 	{#if insideShadows.length > 0}
 		<path data-shadow filter={`url(#inside-shadow-${id})`} />
@@ -160,8 +160,5 @@
 			stroke-width={strokeWidth * 2}
 			clip-path={`url(#stroke-clip-${id})`}
 		/>
-	{/if}
-	{#if children}
-		{@render children()}
 	{/if}
 </svg>

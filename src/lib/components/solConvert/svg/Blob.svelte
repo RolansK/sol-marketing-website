@@ -95,6 +95,5 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
-	shapeType="blob"
 	generatePath={(width, height) => generateBlobPath(width, height, pointCount, strength, seed)}
 />

@@ -66,6 +66,5 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
-	shapeType="supershape"
 	generatePath={(width, height) => generateSuperPath(width, height, m, n1, n2, n3, ratio)}
 />

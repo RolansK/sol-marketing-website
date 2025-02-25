@@ -140,6 +140,5 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
-	shapeType="polygon"
 	generatePath={(width, height) => generatePolygonPath(width, height, cornerCount, bend)}
 />

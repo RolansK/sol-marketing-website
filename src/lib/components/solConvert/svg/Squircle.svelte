@@ -73,6 +73,5 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
-	shapeType="squircle"
 	generatePath={generateSquirclePath}
 />
