@@ -31,7 +31,6 @@
         uniform float uWaveSpeed;
         uniform float uWaveAngle;
 
-        uniform bool uPixelate;
         uniform float uPixelScale;
 
         vec4 colorRamp(float t) {
@@ -90,7 +89,7 @@
         }
 
         void main() {
-            vec2 coord = uPixelate ? floor(vPixelCoord / max(vec2(1.0), floor(uPixelScale))) * max(vec2(1.0), floor(uPixelScale)) + max(vec2(1.0), floor(uPixelScale)) * 0.5 : vPixelCoord;
+            vec2 coord = uPixelScale == 1.0 ? floor(vPixelCoord / max(vec2(1.0), floor(uPixelScale))) * max(vec2(1.0), floor(uPixelScale)) + max(vec2(1.0), floor(uPixelScale)) * 0.5 : vPixelCoord;
 
             float rotationAngle = degToRad(uWaveAngle);
             float newWidth = abs(uResolution.x * cos(rotationAngle)) + abs(uResolution.y * sin(rotationAngle));
@@ -120,7 +119,6 @@
 		waveScale = 100,
 		waveSpeed = 2,
 		waveAngle = 0,
-		pixelate = 0,
 		pixelScale = 20,
 		dpi = 2
 	} = $props();
@@ -144,7 +142,6 @@
 			'uWaveScale',
 			'uWaveSpeed',
 			'uWaveAngle',
-			'uPixelate',
 			'uPixelScale'
 		];
 
@@ -164,7 +161,6 @@
 			waveScale,
 			waveSpeed,
 			waveAngle,
-			pixelate,
 			pixelScale,
 			dpi
 		};

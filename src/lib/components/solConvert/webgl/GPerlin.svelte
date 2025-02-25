@@ -29,7 +29,6 @@
     uniform float uNoiseScale;
     uniform float uNoiseSpeed;
 
-    uniform bool uPixelate;
     uniform float uPixelScale;
 
     vec4 colorRamp(float t) {
@@ -133,7 +132,7 @@
     void main() {
         vec2 coord = vPixelCoord;
             
-        if (uPixelate) {
+        if (uPixelScale != 1.0) {
             vec2 pixelSize = vec2(max(1.0, floor(uPixelScale)));
             coord = floor(vPixelCoord / pixelSize) * pixelSize + pixelSize * 0.5;
         }
@@ -166,7 +165,6 @@
 		grainStr = 0.1,
 		noiseScale = 0.1,
 		noiseSpeed = 0,
-		pixelate = 1,
 		pixelScale = 22,
 		dpi = 2
 	} = $props();
@@ -188,7 +186,6 @@
 			'uGrainStr',
 			'uNoiseScale',
 			'uNoiseSpeed',
-			'uPixelate',
 			'uPixelScale'
 		];
 
@@ -206,7 +203,6 @@
 			grainStr,
 			noiseScale,
 			noiseSpeed,
-			pixelate,
 			pixelScale,
 			dpi
 		};

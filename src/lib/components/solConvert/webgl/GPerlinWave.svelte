@@ -34,7 +34,6 @@
     uniform float uWaveSpeed;
     uniform float uWaveType;
 
-    uniform bool uPixelate;
     uniform float uPixelScale;
 
     vec4 colorRamp(float t) {
@@ -148,7 +147,7 @@
     void main() {
     vec2 coord = vPixelCoord;
         
-    if (uPixelate) {
+    if (uPixelScale == 1.0) {
         vec2 pixelSize = vec2(max(1.0, floor(uPixelScale)));
         coord = floor(vPixelCoord / pixelSize) * pixelSize + pixelSize * 0.5;
     }
@@ -189,7 +188,6 @@
 		waveType = 0,
 		waveScale = 40,
 		waveSpeed = 0,
-		pixelate = 0,
 		pixelScale = 20,
 		dpi = 2
 	} = $props();
@@ -214,7 +212,6 @@
 			'uWaveScale',
 			'uWaveSpeed',
 			'uWaveType',
-			'uPixelate',
 			'uPixelScale'
 		];
 
@@ -235,7 +232,6 @@
 			waveType,
 			waveScale,
 			waveSpeed,
-			pixelate,
 			pixelScale,
 			dpi
 		};

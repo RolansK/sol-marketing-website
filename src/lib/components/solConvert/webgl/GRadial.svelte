@@ -30,7 +30,6 @@
         uniform float uWaveScale;
         uniform float uWaveSpeed;
 
-        uniform bool uPixelate;
         uniform float uPixelScale;
 
         vec4 colorRamp(float t) {
@@ -96,7 +95,7 @@
         }
 
         void main() {
-            vec2 coord = uPixelate ? floor(vPixelCoord / max(vec2(1.0), floor(uPixelScale))) * max(vec2(1.0), floor(uPixelScale)) + max(vec2(1.0), floor(uPixelScale)) * 0.5 : vPixelCoord;
+            vec2 coord = uPixelScale == 1.0 ? floor(vPixelCoord / max(vec2(1.0), floor(uPixelScale))) * max(vec2(1.0), floor(uPixelScale)) + max(vec2(1.0), floor(uPixelScale)) * 0.5 : vPixelCoord;
             
             float normalizedX = cartesianToPolar(coord, uResolution * 0.5).x;
             
@@ -122,7 +121,6 @@
 		waveType = 0,
 		waveScale = 100,
 		waveSpeed = 2,
-		pixelate = 0,
 		pixelScale = 20,
 		dpi = 2
 	} = $props();
@@ -145,7 +143,6 @@
 			'uWaveType',
 			'uWaveScale',
 			'uWaveSpeed',
-			'uPixelate',
 			'uPixelScale'
 		];
 
@@ -164,7 +161,6 @@
 			waveType,
 			waveScale,
 			waveSpeed,
-			pixelate,
 			pixelScale,
 			dpi
 		};

@@ -136,12 +136,9 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 		['uFalloff', 'falloff'],
 		['uSteepness', 'steepness'],
 		['uMouseArea', 'mouseArea'],
-		['uGap', 'gap']
+		['uGap', 'gap'],
+		['uPixelScale', 'pixelScale']
 	].forEach(([uniform, prop]) => set.float(uniform, uniforms[prop]));
-
-	// Set pixelation uniforms
-	set.int('uPixelate', uniforms.pixelate);
-	set.float('uPixelScale', uniforms.pixelScale);
 
 	// Set state properties (for Tiles component)
 	if (uniforms.state1 && uniforms.state2) {
