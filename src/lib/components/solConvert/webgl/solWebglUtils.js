@@ -26,20 +26,11 @@ export function calculateGridSize(canvas, cellSize, magnet = 0) {
 	if (!canvas) return { x: 0, y: 0 };
 
 	const { clientWidth, clientHeight } = canvas;
+	const magnetFactor = magnet !== 0 ? 0.5 + Math.abs(magnet / 4000) : 1;
 
-	// For DotGrid component with magnet effect
-	if (magnet !== 0) {
-		const magnetFactor = 0.5 + Math.abs(magnet / 4000);
-		return {
-			x: Math.floor((magnetFactor * clientWidth) / cellSize) * 2,
-			y: Math.floor((magnetFactor * clientHeight) / cellSize) * 2
-		};
-	}
-
-	// For Tiles component and others
 	return {
-		x: Math.floor(clientWidth / cellSize) * 2,
-		y: Math.floor(clientHeight / cellSize) * 2
+		x: Math.floor((magnetFactor * clientWidth) / cellSize) * 2,
+		y: Math.floor((magnetFactor * clientHeight) / cellSize) * 2
 	};
 }
 
@@ -50,6 +41,7 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 	const { clientWidth, clientHeight } = canvas;
 	const dpi = uniforms.dpi || 1;
 
+	// Resize canvas if needed
 	if (uniforms.resizeCanvas !== false) {
 		const targetWidth = clientWidth * dpi;
 		const targetHeight = clientHeight * dpi;
@@ -62,34 +54,27 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 	}
 
 	// Helper functions for common uniform types
-	const setters = {
-		float: (name, value) => value !== undefined && gl.uniform1f(loc[name], value),
-		int: (name, value) => value !== undefined && gl.uniform1i(loc[name], value),
-		vec2: (name, x, y) => gl.uniform2f(loc[name], x, y),
-		vec4: (name, values) => gl.uniform4fv(loc[name], values)
+	const set = {
+		float: (name, value) => value !== undefined && loc[name] && gl.uniform1f(loc[name], value),
+		int: (name, value) => value !== undefined && loc[name] && gl.uniform1i(loc[name], value),
+		vec2: (name, x, y) => loc[name] && gl.uniform2f(loc[name], x, y),
+		vec4: (name, values) => loc[name] && gl.uniform4fv(loc[name], values)
 	};
 
-	// Basic uniforms
-	setters.vec2('uResolution', canvas.width, canvas.height);
-	setters.float('uTime', getTimestamp());
-	setters.vec2('uDisplaySize', clientWidth, clientHeight);
+	// Set basic uniforms
+	set.vec2('uResolution', canvas.width, canvas.height);
+	set.float('uTime', getTimestamp());
+	set.vec2('uDisplaySize', clientWidth, clientHeight);
 
-	// Calculate grid size if needed
+	// Calculate and set grid size
 	if (loc.uGridSize && uniforms.state1 && uniforms.gap !== undefined) {
 		const cellSize = uniforms.state1.size + uniforms.gap;
 		const magnet = uniforms.magnetValue !== undefined ? uniforms.magnet : 0;
-
-		// Calculate grid size
-		const gridSize = calculateGridSize(canvas, cellSize, magnet);
-
-		// Store the calculated grid size back in uniforms for components to access
-		uniforms.gridSize = gridSize;
-
-		// Set the uniform
-		setters.vec2('uGridSize', gridSize.x, gridSize.y);
+		uniforms.gridSize = calculateGridSize(canvas, cellSize, magnet);
+		set.vec2('uGridSize', uniforms.gridSize.x, uniforms.gridSize.y);
 	}
 
-	// Color uniforms
+	// Set color uniforms
 	if (loc.uColors && uniforms.colors && loc.uPositions && loc.uColorCount) {
 		const sortedColors = [...uniforms.colors].sort((a, b) => a.position - b.position);
 		const colorValues = sortedColors.map((c) => parseColor(c.color)).flat();
@@ -100,87 +85,77 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 		gl.uniform1i(loc.uColorCount, sortedColors.length);
 	}
 
-	// Simple property uniforms
-	const simpleProps = [
-		{ uniform: 'uGrainScale', prop: 'grainScale' },
-		{ uniform: 'uGrainSpeed', prop: 'grainSpeed' },
-		{ uniform: 'uGrainStr', prop: 'grainStr' },
-		{ uniform: 'uWaveType', prop: 'waveType' },
-		{ uniform: 'uWaveScale', prop: 'waveScale' },
-		{ uniform: 'uWaveSpeed', prop: 'waveSpeed' },
-		{ uniform: 'uWaveAngle', prop: 'waveAngle' },
-		{ uniform: 'uNoiseScale', prop: 'noiseScale' },
-		{ uniform: 'uNoiseSpeed', prop: 'noiseSpeed' },
-		{ uniform: 'uNoiseType', prop: 'noiseType' },
-		{ uniform: 'uFalloff', prop: 'falloff' },
-		{ uniform: 'uSteepness', prop: 'steepness' },
-		{ uniform: 'uMouseArea', prop: 'mouseArea' },
-		{ uniform: 'uGap', prop: 'gap' }
-	];
+	// Set simple property uniforms
+	[
+		['uGrainScale', 'grainScale'],
+		['uGrainSpeed', 'grainSpeed'],
+		['uGrainStr', 'grainStr'],
+		['uWaveType', 'waveType'],
+		['uWaveScale', 'waveScale'],
+		['uWaveSpeed', 'waveSpeed'],
+		['uWaveAngle', 'waveAngle'],
+		['uNoiseScale', 'noiseScale'],
+		['uNoiseSpeed', 'noiseSpeed'],
+		['uNoiseType', 'noiseType'],
+		['uFalloff', 'falloff'],
+		['uSteepness', 'steepness'],
+		['uMouseArea', 'mouseArea'],
+		['uGap', 'gap']
+	].forEach(([uniform, prop]) => set.float(uniform, uniforms[prop]));
 
-	simpleProps.forEach(({ uniform, prop }) => {
-		if (loc[uniform]) setters.float(uniform, uniforms[prop]);
-	});
+	// Set pixelation uniforms
+	set.int('uPixelate', uniforms.pixelate);
+	set.float('uPixelScale', uniforms.pixelScale);
 
-	// Pixelation
-	if (loc.uPixelate) setters.int('uPixelate', uniforms.pixelate);
-	if (loc.uPixelScale) setters.float('uPixelScale', uniforms.pixelScale);
-
-	// State properties (for Tiles component)
+	// Set state properties (for Tiles component)
 	if (uniforms.state1 && uniforms.state2) {
-		if (loc.uSize) setters.vec2('uSize', uniforms.state1.size, uniforms.state2.size);
-		if (loc.uRadius) setters.vec2('uRadius', uniforms.state1.radius, uniforms.state2.radius);
-
-		if (loc.uRotateX)
-			setters.vec2('uRotateX', degToRad(uniforms.state1.rotX), degToRad(uniforms.state2.rotX));
-		if (loc.uRotateY)
-			setters.vec2('uRotateY', degToRad(uniforms.state1.rotY), degToRad(uniforms.state2.rotY));
-		if (loc.uRotateZ)
-			setters.vec2('uRotateZ', degToRad(uniforms.state1.rotZ), degToRad(uniforms.state2.rotZ));
+		set.vec2('uSize', uniforms.state1.size, uniforms.state2.size);
+		set.vec2('uRadius', uniforms.state1.radius, uniforms.state2.radius);
+		set.vec2('uRotateX', degToRad(uniforms.state1.rotX), degToRad(uniforms.state2.rotX));
+		set.vec2('uRotateY', degToRad(uniforms.state1.rotY), degToRad(uniforms.state2.rotY));
+		set.vec2('uRotateZ', degToRad(uniforms.state1.rotZ), degToRad(uniforms.state2.rotZ));
 	}
 
-	if (uniforms.state1 && loc.uColorA) {
-		setters.vec4('uColorA', parseColor(uniforms.state1.color || '#0000'));
-	}
+	// Set color state uniforms
+	uniforms.state1 && set.vec4('uColorA', parseColor(uniforms.state1.color || '#0000'));
+	uniforms.state2 && set.vec4('uColorB', parseColor(uniforms.state2.color || '#0000'));
 
-	if (uniforms.state2 && loc.uColorB) {
-		setters.vec4('uColorB', parseColor(uniforms.state2.color || '#0000'));
-	}
-
-	// DotGrid specific
+	// Set DotGrid specific uniforms
 	if (loc.uRowOffset && uniforms.offsetToggle !== undefined) {
 		const rowOffset =
 			uniforms.offsetToggle === 'row' ? 1 / uniforms.offsetRow : uniforms.offsetPercent / 100;
-		setters.float('uRowOffset', rowOffset);
+		set.float('uRowOffset', rowOffset);
 	}
 
-	if (loc.uGridSize && uniforms.gridSize) {
-		setters.vec2('uGridSize', uniforms.gridSize.x, uniforms.gridSize.y);
-	}
+	// Set grid size uniform if already calculated
+	uniforms.gridSize && set.vec2('uGridSize', uniforms.gridSize.x, uniforms.gridSize.y);
 
-	// Other properties
-	if (loc.uMagnet && uniforms.magnetValue !== undefined) {
-		setters.vec2('uMagnet', uniforms.magnetValue, mapRange(uniforms.magnetSmooth));
-	}
-
-	if (loc.uMouse && uniforms.mousePosition) {
-		setters.vec2('uMouse', uniforms.mousePosition.x, uniforms.mousePosition.y);
-	}
+	// Set magnet and mouse position uniforms
+	uniforms.magnetValue !== undefined &&
+		set.vec2('uMagnet', uniforms.magnetValue, mapRange(uniforms.magnetSmooth));
+	uniforms.mousePosition && set.vec2('uMouse', uniforms.mousePosition.x, uniforms.mousePosition.y);
 
 	// Handle custom uniforms
 	if (uniforms.customUniforms) {
 		Object.entries(uniforms.customUniforms).forEach(([name, value]) => {
-			if (loc[name]) {
-				if (Array.isArray(value)) {
-					if (value.length === 2) setters.vec2(name, value[0], value[1]);
-					else if (value.length === 3) gl.uniform3f(loc[name], value[0], value[1], value[2]);
-					else if (value.length === 4)
-						gl.uniform4f(loc[name], value[0], value[1], value[2], value[3]);
-				} else if (typeof value === 'number') {
-					setters.float(name, value);
-				} else if (typeof value === 'boolean') {
-					setters.int(name, value ? 1 : 0);
+			if (!loc[name]) return;
+
+			if (Array.isArray(value)) {
+				switch (value.length) {
+					case 2:
+						set.vec2(name, value[0], value[1]);
+						break;
+					case 3:
+						loc[name] && gl.uniform3f(loc[name], value[0], value[1], value[2]);
+						break;
+					case 4:
+						loc[name] && gl.uniform4f(loc[name], value[0], value[1], value[2], value[3]);
+						break;
 				}
+			} else if (typeof value === 'number') {
+				set.float(name, value);
+			} else if (typeof value === 'boolean') {
+				set.int(name, value ? 1 : 0);
 			}
 		});
 	}
