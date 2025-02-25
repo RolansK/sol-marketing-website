@@ -57,12 +57,16 @@
 	const insideShadows = $derived(shadow.filter((s) => !s.outside));
 </script>
 
-<svg bind:this={svg} style="overflow: visible">
+<svg bind:this={svg} data-shape-id={id} style="overflow: visible">
 	<defs>
 		{#if fillType === 'linear'}
-			<linearGradient id={`gradient-${id}`}>
+			<linearGradient id={`shape-gradient-${id}`}>
 				{#each colors as color, i}
-					<stop offset={`${(i / (colors.length - 1)) * 100}%`} stop-color={color} />
+					<stop
+						offset={`${(i / (colors.length - 1)) * 100}%`}
+						stop-color={color}
+						key={`color-stop-${i}`}
+					/>
 				{/each}
 			</linearGradient>
 		{/if}
@@ -93,19 +97,33 @@
 				}px`}
 			>
 				{#each outsideShadows as { x, y, blur, color }, index}
-					<feOffset dx={x || 0.001} dy={y} in="SourceAlpha" result={`offset-${index}`} />
-					<feGaussianBlur stdDeviation={blur} in={`offset-${index}`} result={`blur-${index}`} />
-					<feFlood flood-color={color} result={`color-${index}`} />
+					<feOffset
+						dx={x || 0.001}
+						dy={y}
+						in="SourceAlpha"
+						result={`offset-${index}`}
+						key={`outside-offset-${index}`}
+					/>
+					<feGaussianBlur
+						stdDeviation={blur}
+						in={`offset-${index}`}
+						result={`blur-${index}`}
+						key={`outside-blur-${index}`}
+					/>
+					<feFlood flood-color={color} result={`color-${index}`} key={`outside-flood-${index}`} />
 					<feComposite
 						operator="in"
 						in={`color-${index}`}
 						in2={`blur-${index}`}
 						result={`shadow-${index}`}
+						key={`outside-composite-${index}`}
 					/>
 				{/each}
 				<feMerge>
 					{#each outsideShadows as _, i}
-						<feMergeNode in={`shadow-${outsideShadows.length - 1 - i}`} key={`${id}-${i}`}
+						<feMergeNode
+							in={`shadow-${outsideShadows.length - 1 - i}`}
+							key={`outside-merge-${id}-${i}`}
 						></feMergeNode>
 					{/each}
 				</feMerge>
@@ -114,25 +132,40 @@
 		{#if insideShadows.length > 0}
 			<filter id={`inside-shadow-${id}`}>
 				{#each insideShadows as { x, y, blur, color }, index}
-					<feOffset dx={x || 0.001} dy={y} in="SourceAlpha" result={`offset-${index}`} />
-					<feGaussianBlur stdDeviation={blur} in={`offset-${index}`} result={`blur-${index}`} />
+					<feOffset
+						dx={x || 0.001}
+						dy={y}
+						in="SourceAlpha"
+						result={`offset-${index}`}
+						key={`inside-offset-${index}`}
+					/>
+					<feGaussianBlur
+						stdDeviation={blur}
+						in={`offset-${index}`}
+						result={`blur-${index}`}
+						key={`inside-blur-${index}`}
+					/>
 					<feComposite
 						operator="out"
 						in="SourceAlpha"
 						in2={`blur-${index}`}
 						result={`composite-${index}`}
+						key={`inside-composite1-${index}`}
 					/>
-					<feFlood flood-color={color} result={`color-${index}`} />
+					<feFlood flood-color={color} result={`color-${index}`} key={`inside-flood-${index}`} />
 					<feComposite
 						operator="in"
 						in={`color-${index}`}
 						in2={`composite-${index}`}
 						result={`shadow-${index}`}
+						key={`inside-composite2-${index}`}
 					/>
 				{/each}
 				<feMerge>
 					{#each insideShadows as _, i}
-						<feMergeNode in={`shadow-${insideShadows.length - 1 - i}`} key={`${id}-${i}`}
+						<feMergeNode
+							in={`shadow-${insideShadows.length - 1 - i}`}
+							key={`inside-merge-${id}-${i}`}
 						></feMergeNode>
 					{/each}
 				</feMerge>
@@ -147,7 +180,7 @@
 	{/if}
 	<path
 		data-fill-path
-		fill={fillType === 'solid' ? fillColor || '#0000' : `url(#gradient-${id})`}
+		fill={fillType === 'solid' ? fillColor || '#0000' : `url(#shape-gradient-${id})`}
 	/>
 	{#if insideShadows.length > 0}
 		<path data-shadow filter={`url(#inside-shadow-${id})`} />
