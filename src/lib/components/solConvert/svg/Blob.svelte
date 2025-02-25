@@ -2,6 +2,21 @@
 	import { seedRandom, calculateSegmentBounds } from './solSvgUtils';
 	import SvgShapeBase from './SvgShapeBase.svelte';
 
+	let {
+		fillType = 'solid',
+		fillColor = '#FFE0DB',
+		colors = ['#FFE0DB'],
+		angle = 0,
+		strokeColor = '#EB4C2D',
+		strokeWidth = 1,
+		shadow = [],
+		pointCount = 5,
+		strength = 5,
+		seed = 9
+	} = $props();
+
+	let id = crypto.randomUUID();
+
 	function generateBlobPath(width, height, pointCount, strength, seed) {
 		const random = seedRandom(seed * 500);
 		const radius = Math.min(width, height) / 3;
@@ -72,19 +87,6 @@
 		path += ' Z';
 		return path;
 	}
-
-	let {
-		fillType = 'solid',
-		fillColor = '#FFE0DB',
-		colors = ['#FFE0DB'],
-		angle = 0,
-		strokeColor = '#EB4C2D',
-		strokeWidth = 1,
-		shadow = [],
-		pointCount = 5,
-		strength = 5,
-		seed = 9
-	} = $props();
 </script>
 
 <SvgShapeBase
@@ -95,5 +97,6 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
+	{id}
 	generatePath={(width, height) => generateBlobPath(width, height, pointCount, strength, seed)}
 />

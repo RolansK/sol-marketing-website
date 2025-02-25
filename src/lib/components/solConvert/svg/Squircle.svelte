@@ -2,6 +2,20 @@
 	import { RADIANS } from './solSvgUtils';
 	import SvgShapeBase from './SvgShapeBase.svelte';
 
+	let {
+		borderRadius = '20px',
+		smoothing = 0.5,
+		fillType = 'solid',
+		fillColor = '#FFE0DB',
+		colors = ['#FFE0DB'],
+		angle = 0,
+		strokeColor = '#ff0000',
+		strokeWidth = 10,
+		shadow = []
+	} = $props();
+
+	let id = crypto.randomUUID();
+
 	function getPathParamsForCorner(cornerRadius, cornerSmoothing, maxRadius) {
 		const clampedRadius = Math.min(cornerRadius, maxRadius);
 		const clampedSmoothing = Math.min(cornerSmoothing, maxRadius / clampedRadius - 1);
@@ -34,18 +48,6 @@
 		return commands[type];
 	}
 
-	let {
-		borderRadius = '20px',
-		smoothing = 0.5,
-		fillType = 'solid',
-		fillColor = '#FFE0DB',
-		colors = ['#FFE0DB'],
-		angle = 0,
-		strokeColor = '#ff0000',
-		strokeWidth = 10,
-		shadow = []
-	} = $props();
-
 	const values = borderRadius.split(' ').map(parseFloat);
 	const cornerRadii = Array(4)
 		.fill(values[0] || 0)
@@ -73,5 +75,6 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
+	{id}
 	generatePath={generateSquirclePath}
 />

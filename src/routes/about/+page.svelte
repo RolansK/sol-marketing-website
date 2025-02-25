@@ -138,7 +138,7 @@
 			strength={5}
 			seed={9}
 			shadow={[
-				{ x: 5, y: 5, blur: 10, color: 'rgba(235, 76, 45, 1.0)' },
+				{ x: 5, y: 5, blur: 1, color: 'rgba(235, 76, 45, 1.0)' },
 				{ x: 0, y: 0, blur: 8, color: 'rgba(0, 0, 0, 1.0)', outside: true }
 			]}
 		/>

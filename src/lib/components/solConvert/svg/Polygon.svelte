@@ -2,6 +2,20 @@
 	import { calculateSegmentBounds } from './solSvgUtils';
 	import SvgShapeBase from './SvgShapeBase.svelte';
 
+	let {
+		cornerCount = 3,
+		bend = 0,
+		fillType = 'solid',
+		fillColor = '#FFE0DB',
+		colors = ['#FFE0DB'],
+		angle = 0,
+		strokeColor = '#ff0000',
+		strokeWidth = 1,
+		shadow = []
+	} = $props();
+
+	let id = crypto.randomUUID();
+
 	function generatePolygonPath(width, height, cornerCount, bend) {
 		const angleOffset = -Math.PI / 2;
 		const angleIncrement = (2 * Math.PI) / cornerCount;
@@ -114,22 +128,6 @@
 
 		return path;
 	}
-
-	let {
-		cornerCount = 3,
-		bend = 0,
-		fillType = 'solid',
-		fillColor = '#FFE0DB',
-		colors = ['#FFE0DB'],
-		angle = 0,
-		strokeColor = '#ff0000',
-		strokeWidth = 1,
-		shadow = []
-	} = $props();
-
-	const generatePath = (width, height) => {
-		return generatePolygonPath(width, height, cornerCount, bend);
-	};
 </script>
 
 <SvgShapeBase
@@ -140,5 +138,6 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
+	{id}
 	generatePath={(width, height) => generatePolygonPath(width, height, cornerCount, bend)}
 />

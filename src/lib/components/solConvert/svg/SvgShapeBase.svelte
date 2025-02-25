@@ -9,11 +9,11 @@
 		strokeColor = '#ff0000',
 		strokeWidth = 1,
 		shadow = [],
-		generatePath = () => ''
+		generatePath = () => '',
+		id
 	} = $props();
 
 	let svg;
-	let id = crypto.randomUUID();
 
 	function updatePaths({ width, height }) {
 		if (!svg || width <= 0 || height <= 0) return;

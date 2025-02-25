@@ -2,6 +2,23 @@
 	import SvgShapeBase from './SvgShapeBase.svelte';
 	import { RADIANS } from './solSvgUtils';
 
+	let {
+		ratio = 1.3,
+		m = 47,
+		n1 = 15,
+		n2 = 22,
+		n3 = 28,
+		fillType = 'solid',
+		fillColor = '#FFE0DB',
+		colors = ['#FFE0DB'],
+		angle = 0,
+		strokeColor = '#ff0000',
+		strokeWidth = 1,
+		shadow = []
+	} = $props();
+
+	let id = crypto.randomUUID();
+
 	function generateSuperPath(width, height, m, n1, n2, n3, ratio) {
 		const segments = 7560;
 		const points = [];
@@ -41,21 +58,6 @@
 			}, '') + 'Z'
 		);
 	}
-
-	let {
-		ratio = 1.3,
-		m = 47,
-		n1 = 15,
-		n2 = 22,
-		n3 = 28,
-		fillType = 'solid',
-		fillColor = '#FFE0DB',
-		colors = ['#FFE0DB'],
-		angle = 0,
-		strokeColor = '#ff0000',
-		strokeWidth = 1,
-		shadow = []
-	} = $props();
 </script>
 
 <SvgShapeBase
@@ -66,5 +68,6 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
+	{id}
 	generatePath={(width, height) => generateSuperPath(width, height, m, n1, n2, n3, ratio)}
 />
