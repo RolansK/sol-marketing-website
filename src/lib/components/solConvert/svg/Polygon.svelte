@@ -1,5 +1,4 @@
 <script>
-	import { parseColor } from '../webgl/solWebglUtils';
 	import {
 		RADIANS,
 		solveQuadratic,

@@ -1,5 +1,4 @@
 <script>
-	import { parseColor } from '../webgl/solWebglUtils';
 	import { RADIANS } from './solSvgUtils';
 
 	function generatePath(width, height, m, n1, n2, n3, ratio) {

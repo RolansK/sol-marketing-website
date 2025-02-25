@@ -1,5 +1,4 @@
 <script>
-	import { parseColor } from '../webgl/solWebglUtils';
 	import { RADIANS } from './solSvgUtils';
 
 	function getPathParamsForCorner(cornerRadius, cornerSmoothing, maxRadius) {
