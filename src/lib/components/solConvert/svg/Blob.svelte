@@ -15,8 +15,6 @@
 		seed = 9
 	} = $props();
 
-	let id = crypto.randomUUID();
-
 	function generateBlobPath(width, height, pointCount, strength, seed) {
 		const random = seedRandom(seed * 500);
 		const radius = Math.min(width, height) / 3;
@@ -97,6 +95,5 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
-	{id}
 	generatePath={(width, height) => generateBlobPath(width, height, pointCount, strength, seed)}
 />

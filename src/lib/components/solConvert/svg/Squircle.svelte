@@ -14,8 +14,6 @@
 		shadow = []
 	} = $props();
 
-	let id = crypto.randomUUID();
-
 	function getPathParamsForCorner(cornerRadius, cornerSmoothing, maxRadius) {
 		const clampedRadius = Math.min(cornerRadius, maxRadius);
 		const clampedSmoothing = Math.min(cornerSmoothing, maxRadius / clampedRadius - 1);
@@ -75,6 +73,5 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
-	{id}
 	generatePath={generateSquirclePath}
 />

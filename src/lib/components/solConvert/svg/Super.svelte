@@ -17,8 +17,6 @@
 		shadow = []
 	} = $props();
 
-	let id = crypto.randomUUID();
-
 	function generateSuperPath(width, height, m, n1, n2, n3, ratio) {
 		const segments = 7560;
 		const points = [];
@@ -68,6 +66,5 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
-	{id}
 	generatePath={(width, height) => generateSuperPath(width, height, m, n1, n2, n3, ratio)}
 />

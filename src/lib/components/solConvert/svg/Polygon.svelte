@@ -14,8 +14,6 @@
 		shadow = []
 	} = $props();
 
-	let id = crypto.randomUUID();
-
 	function generatePolygonPath(width, height, cornerCount, bend) {
 		const angleOffset = -Math.PI / 2;
 		const angleIncrement = (2 * Math.PI) / cornerCount;
@@ -138,6 +136,5 @@
 	{strokeColor}
 	{strokeWidth}
 	{shadow}
-	{id}
 	generatePath={(width, height) => generatePolygonPath(width, height, cornerCount, bend)}
 />
