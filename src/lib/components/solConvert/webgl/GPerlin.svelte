@@ -194,9 +194,9 @@
 	};
 
 	$effect(() => {
-		if (webglComponent) {
-			gl = webglComponent.getGL();
-			isContextLost = webglComponent.isContextLost();
+		gl = webglComponent?.gl;
+		isContextLost = webglComponent?.isContextLost() || false;
+		if (gl && canvas) {
 			render(gl, canvas, isContextLost, uniforms);
 		}
 	});
@@ -210,11 +210,10 @@
 			fps
 		});
 
-		webglComponent.setup();
-		gl = webglComponent.getGL();
+		gl = webglComponent?.gl;
 
 		onDestroy(() => {
-			webglComponent.cleanup();
+			webglComponent?.cleanup();
 		});
 	});
 </script>

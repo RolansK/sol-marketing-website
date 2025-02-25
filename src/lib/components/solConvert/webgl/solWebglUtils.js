@@ -245,20 +245,6 @@ export function setupWebGLComponent({
 		resize: () => canvas && gl && renderFunction(gl, isContextLost)
 	};
 
-	const setup = () => {
-		if (!initWebGLContext()) return false;
-
-		canvas.addEventListener('webglcontextlost', eventHandlers.contextLost);
-		canvas.addEventListener('webglcontextrestored', eventHandlers.contextRestored);
-		window.addEventListener('message', eventHandlers.sync);
-
-		resizeObserver = new ResizeObserver(eventHandlers.resize);
-		resizeObserver.observe(canvas);
-
-		timeoutId = setInterval(() => renderFunction(gl, isContextLost), 1000 / fps);
-		return true;
-	};
-
 	const cleanup = () => {
 		resizeObserver?.disconnect();
 		canvas?.removeEventListener('webglcontextlost', eventHandlers.contextLost);
@@ -269,5 +255,27 @@ export function setupWebGLComponent({
 		window.postMessage({ type: SYNC_GL, action: 'restore' }, '*');
 	};
 
-	return { setup, cleanup, getGL: () => gl, isContextLost: () => isContextLost };
+	// Initialize immediately instead of returning a setup function
+	if (!initWebGLContext()) {
+		return null; // Return null if initialization failed
+	}
+
+	// Set up event listeners
+	canvas.addEventListener('webglcontextlost', eventHandlers.contextLost);
+	canvas.addEventListener('webglcontextrestored', eventHandlers.contextRestored);
+	window.addEventListener('message', eventHandlers.sync);
+
+	// Set up resize observer
+	resizeObserver = new ResizeObserver(eventHandlers.resize);
+	resizeObserver.observe(canvas);
+
+	// Start render loop
+	timeoutId = setInterval(() => renderFunction(gl, isContextLost), 1000 / fps);
+
+	// Return the component with methods (without setup)
+	return {
+		cleanup,
+		gl,
+		isContextLost: () => isContextLost
+	};
 }

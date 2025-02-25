@@ -209,9 +209,9 @@
 	});
 
 	$effect(() => {
-		if (webglComponent) {
-			gl = webglComponent.getGL();
-			isContextLost = webglComponent.isContextLost();
+		gl = webglComponent?.gl;
+		isContextLost = webglComponent?.isContextLost() || false;
+		if (gl && canvas) {
 			gridSize = render(gl, canvas, isContextLost, uniforms) || gridSize;
 		}
 	});
@@ -231,8 +231,7 @@
 			fps
 		});
 
-		webglComponent.setup();
-		gl = webglComponent.getGL();
+		gl = webglComponent?.gl;
 
 		const handleMouseMove = (e) => {
 			const rect = canvas.getBoundingClientRect();
@@ -277,7 +276,7 @@
 			canvas.removeEventListener('touchstart', handleMouseEnter);
 			canvas.removeEventListener('touchend', handleMouseLeave);
 			canvas.removeEventListener('touchcancel', handleMouseLeave);
-			webglComponent.cleanup();
+			webglComponent?.cleanup();
 		});
 	});
 </script>
