@@ -169,7 +169,8 @@
 		transition = { type: 'spring', stiffness: 300, damping: 30 },
 		preview = 0,
 		magnet = 10,
-		magnetSmooth = 9
+		magnetSmooth = 9,
+		dpi = 2
 	} = $props();
 
 	let canvas;
@@ -231,12 +232,6 @@
 
 		const { clientWidth, clientHeight } = canvas;
 
-		if (canvas.width !== clientWidth * 2 || canvas.height !== clientHeight * 2) {
-			canvas.width = clientWidth * 2;
-			canvas.height = clientHeight * 2;
-			gl.viewport(0, 0, clientWidth * 2, clientHeight * 2);
-		}
-
 		const magnetFactor = 0.5 + Math.abs(magnet / 4000);
 		const cellSize = state1.size + gap;
 		gridSize = {
@@ -254,11 +249,11 @@
 			falloff,
 			steepness,
 			magnetSmooth,
-			resizeCanvas: false,
 			gridSize,
 			mouseArea,
 			magnetValue,
-			mousePosition
+			mousePosition,
+			dpi
 		});
 
 		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
@@ -273,9 +268,6 @@
 
 		const resizeObserver = new ResizeObserver(() => {
 			if (!canvas || !gl) return;
-			canvas.width = canvas.clientWidth * 2;
-			canvas.height = canvas.clientHeight * 2;
-			gl.viewport(0, 0, canvas.width, canvas.height);
 			render();
 		});
 

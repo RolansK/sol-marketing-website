@@ -222,7 +222,8 @@
 		},
 		noiseType = 0,
 		noiseScale = 0.1,
-		noiseSpeed = 0
+		noiseSpeed = 0,
+		dpi = 2
 	} = $props();
 
 	let canvas;
@@ -296,8 +297,8 @@
 			noiseScale,
 			noiseSpeed,
 			noiseType,
-			resizeCanvas: false,
-			gridSize
+			gridSize,
+			dpi
 		});
 
 		gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, gridSize.x * gridSize.y);
@@ -312,9 +313,6 @@
 
 		const resizeObserver = new ResizeObserver(() => {
 			if (!canvas || !gl) return;
-			canvas.width = canvas.clientWidth * 2;
-			canvas.height = canvas.clientHeight * 2;
-			gl.viewport(0, 0, canvas.width, canvas.height);
 			render();
 		});
 

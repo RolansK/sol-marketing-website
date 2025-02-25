@@ -121,7 +121,8 @@
 		waveSpeed = 2,
 		waveAngle = 0,
 		pixelate = 0,
-		pixelScale = 20
+		pixelScale = 20,
+		dpi = 2
 	} = $props();
 
 	let canvas;
@@ -184,7 +185,8 @@
 			waveSpeed,
 			waveAngle,
 			pixelate,
-			pixelScale
+			pixelScale,
+			dpi
 		});
 
 		gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -199,9 +201,6 @@
 
 		const resizeObserver = new ResizeObserver(() => {
 			if (!canvas || !gl) return;
-			canvas.width = canvas.clientWidth;
-			canvas.height = canvas.clientHeight;
-			gl.viewport(0, 0, canvas.width, canvas.height);
 			render();
 		});
 
