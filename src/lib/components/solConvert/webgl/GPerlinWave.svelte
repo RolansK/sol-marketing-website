@@ -5,7 +5,8 @@
 		setUniforms,
 		initWebGL,
 		setupWebGLComponent,
-		render
+		render,
+		renderGL
 	} from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -198,10 +199,8 @@
 	} = $props();
 
 	let canvas;
-	let gl;
-	let isContextLost = $state(false);
+	let glRenderer = $state(null);
 	const fps = 60;
-	let webglComponent;
 
 	const uniforms = {
 		colors,
@@ -218,15 +217,13 @@
 	};
 
 	$effect(() => {
-		gl = webglComponent?.gl;
-		isContextLost = webglComponent?.isContextLost() || false;
-		if (gl && canvas) {
-			render(gl, canvas, isContextLost, uniforms);
+		if (glRenderer && canvas) {
+			renderGL(glRenderer, canvas, uniforms);
 		}
 	});
 
 	onMount(() => {
-		webglComponent = setupWebGLComponent({
+		glRenderer = setupWebGLComponent({
 			canvas,
 			vertexShader,
 			fragmentShader,
@@ -235,12 +232,12 @@
 		});
 
 		onDestroy(() => {
-			webglComponent?.cleanup();
+			glRenderer?.cleanup();
 		});
 	});
 </script>
 
-{#if isContextLost}
+{#if glRenderer?.isContextLost()}
 	<div
 		style="display: flex; justify-content: center; align-items: center; text-align: center; background: #9595951A; border: 1px solid #95959526; border-radius: 6px; height: 100%; padding: 15px; font-size: 11px; color: #a5a5a5"
 	>
@@ -251,5 +248,7 @@
 
 <canvas
 	bind:this={canvas}
-	style="width: {width}px; height: {height}px; display: {!isContextLost ? 'block' : 'none'};"
+	style="width: {width}px; height: {height}px; display: {!glRenderer?.isContextLost()
+		? 'block'
+		: 'none'};"
 ></canvas>

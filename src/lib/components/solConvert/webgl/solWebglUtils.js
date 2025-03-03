@@ -201,6 +201,10 @@ export function render(gl, canvas, contextLost, uniforms) {
 	return gridSize;
 }
 
+export function renderGL(glRenderer, canvas, uniforms) {
+	return glRenderer && render(glRenderer.gl, canvas, glRenderer.isContextLost(), uniforms);
+}
+
 export function setupWebGLComponent({
 	canvas,
 	vertexShader,
