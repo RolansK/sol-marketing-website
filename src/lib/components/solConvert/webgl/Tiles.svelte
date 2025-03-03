@@ -272,8 +272,6 @@
 			fps
 		});
 
-		gl = webglComponent?.gl;
-
 		onDestroy(() => {
 			webglComponent?.cleanup();
 		});

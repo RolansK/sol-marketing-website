@@ -231,8 +231,6 @@
 			fps
 		});
 
-		gl = webglComponent?.gl;
-
 		const handleMouseMove = (e) => {
 			const rect = canvas.getBoundingClientRect();
 			mousePosition = {
