@@ -147,9 +147,7 @@
 	};
 
 	$effect(() => {
-		if (glRenderer && canvas) {
-			renderGL(glRenderer, canvas, uniforms);
-		}
+		glRenderer && canvas && renderGL(glRenderer, canvas, uniforms);
 	});
 
 	onMount(() => {

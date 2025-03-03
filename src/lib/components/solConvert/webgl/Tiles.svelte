@@ -252,9 +252,7 @@
 	};
 
 	$effect(() => {
-		if (glRenderer && canvas) {
-			gridSize = renderGL(glRenderer, canvas, uniforms) || gridSize;
-		}
+		glRenderer && canvas && renderGL(glRenderer, canvas, uniforms);
 	});
 
 	onMount(() => {
