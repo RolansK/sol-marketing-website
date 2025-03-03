@@ -178,6 +178,8 @@
 		preview = 0,
 		magnet = 10,
 		magnetSmooth = 9,
+		magnetValue = 10,
+		mouseArea = 100,
 		dpi = 2,
 		fps = 60
 	} = $props();
@@ -185,11 +187,9 @@
 	let canvas;
 	let glRenderer = $state(null);
 	let gridSize = { x: 0, y: 0 };
-	let mouseArea = 0;
-	let magnetValue = 0;
-	let mousePosition = { x: 0, y: 0 };
+	let mousePosition = $state({ x: 0, y: 0 });
 
-	const uniforms = $state({
+	const uniforms = {
 		gap,
 		offsetToggle,
 		offsetPercent,
@@ -199,19 +199,15 @@
 		falloff,
 		steepness,
 		magnetSmooth,
-		mouseArea: 0,
-		magnetValue: 0,
-		mousePosition: { x: 0, y: 0 },
+		mouseArea,
+		magnetValue,
 		dpi,
 		magnet
-	});
+	};
 
 	$effect(() => {
 		if (glRenderer && canvas) {
-			uniforms.mouseArea = mouseArea;
-			uniforms.magnetValue = magnetValue;
 			uniforms.mousePosition = mousePosition;
-
 			gridSize = renderGL(glRenderer, canvas, uniforms) || gridSize;
 		}
 	});
@@ -222,10 +218,7 @@
 			vertexShader,
 			fragmentShader,
 			renderFunction: (gl, contextLost) => {
-				uniforms.mouseArea = mouseArea;
-				uniforms.magnetValue = magnetValue;
 				uniforms.mousePosition = mousePosition;
-
 				gridSize = render(gl, canvas, contextLost, uniforms) || gridSize;
 			},
 			fps
@@ -240,13 +233,13 @@
 		};
 
 		const handleMouseEnter = () => {
-			mouseArea = hoverArea;
-			magnetValue = magnet;
+			uniforms.magnetValue = magnet;
+			uniforms.mouseArea = hoverArea;
 		};
 
 		const handleMouseLeave = () => {
-			mouseArea = 0;
-			magnetValue = 0;
+			uniforms.magnetValue = 0;
+			uniforms.mouseArea = 0;
 		};
 
 		const handlePointerDown = (e) => {
