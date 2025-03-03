@@ -178,12 +178,12 @@
 		preview = 0,
 		magnet = 10,
 		magnetSmooth = 9,
-		dpi = 2
+		dpi = 2,
+		fps = 60
 	} = $props();
 
 	let canvas;
 	let glRenderer = $state(null);
-	const fps = 60;
 	let gridSize = { x: 0, y: 0 };
 	let mouseArea = 0;
 	let magnetValue = 0;

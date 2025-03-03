@@ -230,12 +230,12 @@
 		noiseType = 0,
 		noiseScale = 0.1,
 		noiseSpeed = 0,
-		dpi = 2
+		dpi = 2,
+		fps = 60
 	} = $props();
 
 	let canvas;
 	let glRenderer = $state(null);
-	const fps = 60;
 	let gridSize = { x: 0, y: 0 };
 
 	const uniforms = {

@@ -195,12 +195,12 @@
 		waveScale = 40,
 		waveSpeed = 0,
 		pixelScale = 20,
-		dpi = 2
+		dpi = 2,
+		fps = 60
 	} = $props();
 
 	let canvas;
 	let glRenderer = $state(null);
-	const fps = 60;
 
 	const uniforms = {
 		colors,

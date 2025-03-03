@@ -110,8 +110,6 @@
             fragColor = colorRamp(linearLight(vec3(baseNoise), grain, uGrainStr).r);
         }`;
 
-	const SYNC_GL = 'gl-sync';
-
 	let {
 		width = 100,
 		height = 100,
@@ -128,12 +126,12 @@
 		waveSpeed = 2,
 		waveAngle = 0,
 		pixelScale = 20,
-		dpi = 2
+		dpi = 2,
+		fps = 60
 	} = $props();
 
 	let canvas;
 	let glRenderer = $state(null);
-	const fps = 60;
 
 	const uniforms = {
 		colors,
