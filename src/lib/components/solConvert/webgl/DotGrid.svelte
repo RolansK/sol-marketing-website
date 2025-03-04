@@ -36,7 +36,21 @@
     
     uniform float uTime;
     
-    uniform float uPointerHover;
+    uniform vec2 uPointerHover;
+
+    float calculatePointerArea(vec2 hoverState, float currentTime, float baseArea, float duration) {
+        float state = hoverState.x;
+        float startTime = hoverState.y;
+        
+        float elapsed = currentTime - startTime;
+        float t = clamp(elapsed / duration, 0.0, 1.0);
+        
+        float target = baseArea * state;
+        float easeIn = smoothstep(0.0, 1.0, t);
+        float linearOut = 1.0 - t;
+        
+        return mix(target * linearOut, target * easeIn, state);
+    }
 
     float easeInFalloff(float t, float steepness) {
         return clamp(pow(t, steepness), 0.0, 1.0);
@@ -55,7 +69,9 @@
         int col = gl_InstanceID % int(uGridSize.x);
 
         float rowOffset = fract(uRowOffset * float(row)) * (uSize.x * 2.0 + uGap);
-        float pointerArea = max(0.0, uPointerArea);
+        
+        float animatedArea = calculatePointerArea(uPointerHover, uTime, uPointerArea, 0.5);
+        float pointerArea = max(0.0, animatedArea);
 
         vec2 instanceCenter = vec2(
             float(col) * (uSize.x * 2.0 + uGap) + uSize.x + (uDisplaySize.x - (uGridSize.x * uSize.x * 2.0 + (uGridSize.x - 1.0) * uGap)) * 0.5 + rowOffset,
@@ -196,7 +212,7 @@
 		pointerPosition,
 		pointerArea,
 		dpi,
-		pointerHover: 0
+		pointerHover: [0, 0]
 	};
 
 	$effect(() => {

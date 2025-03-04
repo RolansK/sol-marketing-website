@@ -114,6 +114,8 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 		set.int('uColorCount', sortedColors.length);
 	}
 
+	set.vec2('uPointerHover', ...(uniforms.pointerHover || [0, 0]));
+
 	[
 		['uGrainScale', 'grainScale'],
 		['uGrainSpeed', 'grainSpeed'],
@@ -170,10 +172,6 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 	loc.uPointer &&
 		uniforms.pointerPosition &&
 		set.vec2('uPointer', ...Object.values(uniforms.pointerPosition));
-
-	loc.uPointerHover &&
-		uniforms.pointerHover !== undefined &&
-		set.float('uPointerHover', uniforms.pointerHover);
 
 	if (uniforms.customUniforms) {
 		Object.entries(uniforms.customUniforms).forEach(([name, value]) => {
@@ -279,11 +277,11 @@ export function setupPointerTracking(canvas, uniforms) {
 	};
 
 	const handlePointerEnter = () => {
-		uniforms.pointerHover = 1;
+		uniforms.pointerHover = [1, getTimestamp()]; // [state, startTime]
 	};
 
 	const handlePointerLeave = () => {
-		uniforms.pointerHover = 0;
+		uniforms.pointerHover = [0, getTimestamp()]; // [state, startTime]
 	};
 
 	const handlePointerDown = (e) => {
