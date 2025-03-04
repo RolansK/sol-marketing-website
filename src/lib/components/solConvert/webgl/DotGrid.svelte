@@ -45,11 +45,11 @@
         float elapsed = currentTime - startTime;
         float t = clamp(elapsed / duration, 0.0, 1.0);
         
-        float target = baseArea * state;
-        float easeIn = smoothstep(0.0, 1.0, t);
-        float linearOut = 1.0 - t;
+        float animProgress = state > 0.5 
+            ? smoothstep(0.0, 1.0, t)  // Ease in when entering
+            : 1.0 - t;                 // Linear out when exiting
         
-        return mix(target * linearOut, target * easeIn, state);
+        return baseArea * animProgress;
     }
 
     float easeInFalloff(float t, float steepness) {
