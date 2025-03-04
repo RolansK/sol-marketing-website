@@ -35,6 +35,8 @@
     uniform float uSteepness;
     
     uniform float uTime;
+    
+    uniform float uPointerHover;
 
     float easeInFalloff(float t, float steepness) {
         return clamp(pow(t, steepness), 0.0, 1.0);
@@ -193,7 +195,8 @@
 		magnetValue,
 		pointerPosition,
 		pointerArea,
-		dpi
+		dpi,
+		pointerHover: 0
 	};
 
 	$effect(() => {

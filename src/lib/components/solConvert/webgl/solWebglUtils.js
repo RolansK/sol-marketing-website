@@ -171,6 +171,10 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 		uniforms.pointerPosition &&
 		set.vec2('uPointer', ...Object.values(uniforms.pointerPosition));
 
+	loc.uPointerHover &&
+		uniforms.pointerHover !== undefined &&
+		set.float('uPointerHover', uniforms.pointerHover);
+
 	if (uniforms.customUniforms) {
 		Object.entries(uniforms.customUniforms).forEach(([name, value]) => {
 			if (!loc[name]) return;
@@ -279,10 +283,12 @@ export function setupPointerTracking(canvas, uniforms) {
 			uniforms._initialMagnetValue = uniforms.magnetValue;
 		}
 		uniforms.magnetValue = uniforms._initialMagnetValue;
+		uniforms.pointerHover = 1;
 	};
 
 	const handlePointerLeave = () => {
 		uniforms.magnetValue = 0;
+		uniforms.pointerHover = 0;
 	};
 
 	const handlePointerDown = (e) => {
