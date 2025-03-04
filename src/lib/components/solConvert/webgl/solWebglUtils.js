@@ -185,6 +185,17 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 			}
 		});
 	}
+
+	if (uniforms.transition) {
+		const typeMap = { instant: 0, ease: 1, spring: 2 };
+		const typeCode = typeMap[uniforms.transition.type] || 0;
+		gl.uniform3f(
+			loc.uTransition,
+			typeCode,
+			uniforms.transition.stiffness,
+			uniforms.transition.damping
+		);
+	}
 }
 
 export function render(gl, canvas, contextLost, uniforms) {

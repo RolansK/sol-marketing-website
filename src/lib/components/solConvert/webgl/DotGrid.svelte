@@ -37,6 +37,7 @@
     uniform float uTime;
     
     uniform vec2 uPointerHover;
+    uniform vec3 uTransition;
 
     float calculatePointerArea(vec2 hoverState, float currentTime, float baseArea, float duration) {
         float state = hoverState.x;
@@ -212,7 +213,8 @@
 		pointerPosition,
 		pointerArea,
 		dpi,
-		pointerHover: [0, 0]
+		pointerHover: [0, 0],
+		transition
 	};
 
 	$effect(() => {
