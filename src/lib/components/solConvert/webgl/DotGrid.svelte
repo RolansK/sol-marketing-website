@@ -188,11 +188,11 @@
 		state2,
 		falloff,
 		steepness,
+		magnet,
 		magnetSmooth,
-		mouseArea,
 		magnetValue,
-		dpi,
-		magnet
+		mouseArea,
+		dpi
 	};
 
 	$effect(() => {
