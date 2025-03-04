@@ -1,15 +1,5 @@
 <script>
-	import {
-		parseColor,
-		degToRad,
-		getTimestamp,
-		mapRange,
-		setUniforms,
-		initWebGL,
-		setupGL,
-		render,
-		renderGL
-	} from './solWebglUtils';
+	import { setupGL, render, renderGL } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
@@ -206,9 +196,7 @@
 	};
 
 	$effect(() => {
-		if (glRenderer && canvas) {
-			gridSize = renderGL(glRenderer, canvas, uniforms) || gridSize;
-		}
+		glRenderer && canvas && renderGL(glRenderer, canvas, uniforms);
 	});
 
 	onMount(() => {
@@ -218,7 +206,7 @@
 			fragmentShader,
 			renderFunction: (gl, contextLost) => {
 				uniforms.mousePosition = mousePosition;
-				gridSize = render(gl, canvas, contextLost, uniforms) || gridSize;
+				render(gl, canvas, contextLost, uniforms);
 			},
 			fps
 		});

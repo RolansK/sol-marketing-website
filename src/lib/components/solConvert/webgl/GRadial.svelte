@@ -1,13 +1,5 @@
 <script>
-	import {
-		parseColor,
-		getTimestamp,
-		setUniforms,
-		initWebGL,
-		setupGL,
-		render,
-		renderGL
-	} from './solWebglUtils';
+	import { setupGL, render, renderGL } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
