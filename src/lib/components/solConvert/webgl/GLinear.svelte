@@ -143,13 +143,13 @@
 	});
 
 	onMount(() => {
-		glRenderer = setupGL({
+		glRenderer = setupGL(
 			canvas,
 			vertexShader,
 			fragmentShader,
-			renderFunction: (gl, contextLost) => render(gl, canvas, contextLost, uniforms),
+			(gl, contextLost) => render(gl, canvas, contextLost, uniforms),
 			fps
-		});
+		);
 
 		onDestroy(() => {
 			glRenderer?.cleanup();

@@ -200,16 +200,16 @@
 	});
 
 	onMount(() => {
-		glRenderer = setupGL({
+		glRenderer = setupGL(
 			canvas,
 			vertexShader,
 			fragmentShader,
-			renderFunction: (gl, contextLost) => {
+			(gl, contextLost) => {
 				uniforms.mousePosition = mousePosition;
 				render(gl, canvas, contextLost, uniforms);
 			},
 			fps
-		});
+		);
 
 		const handleMouseMove = (e) => {
 			const rect = canvas.getBoundingClientRect();
