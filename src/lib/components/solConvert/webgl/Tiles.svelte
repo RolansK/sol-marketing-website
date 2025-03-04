@@ -227,7 +227,6 @@
 
 	let canvas;
 	let glRenderer = $state(null);
-	let gridSize = { x: 0, y: 0 };
 
 	const uniforms = {
 		gap,

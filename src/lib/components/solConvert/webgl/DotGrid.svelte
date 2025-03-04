@@ -176,7 +176,6 @@
 
 	let canvas;
 	let glRenderer = $state(null);
-	let gridSize = { x: 0, y: 0 };
 	let mousePosition = $state({ x: -9999, y: -9999 });
 
 	const uniforms = {
