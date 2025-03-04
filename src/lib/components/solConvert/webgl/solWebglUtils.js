@@ -279,16 +279,10 @@ export function setupPointerTracking(canvas, uniforms) {
 			uniforms._initialMagnetValue = uniforms.magnetValue;
 		}
 		uniforms.magnetValue = uniforms._initialMagnetValue;
-
-		if (!uniforms._initialPointerArea) {
-			uniforms._initialPointerArea = uniforms.pointerArea;
-		}
-		uniforms.pointerArea = uniforms._initialPointerArea;
 	};
 
 	const handlePointerLeave = () => {
 		uniforms.magnetValue = 0;
-		uniforms.pointerArea = 0;
 	};
 
 	const handlePointerDown = (e) => {
