@@ -201,10 +201,6 @@ export function render(gl, canvas, contextLost, uniforms) {
 	return gridSize;
 }
 
-export function renderGL(glRenderer, canvas, uniforms) {
-	return glRenderer && render(glRenderer.gl, canvas, glRenderer.isContextLost(), uniforms);
-}
-
 export function setupGL(canvas, vertexShader, fragmentShader, renderFunction, fps = 60) {
 	const SYNC_GL = 'gl-sync';
 	let gl = null,

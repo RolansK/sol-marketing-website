@@ -1,5 +1,5 @@
 <script>
-	import { setupGL, render, renderGL } from './solWebglUtils';
+	import { setupGL, render } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
@@ -242,7 +242,7 @@
 	};
 
 	$effect(() => {
-		glRenderer && canvas && renderGL(glRenderer, canvas, uniforms);
+		glRenderer && canvas && render(gl, canvas, contextLost, uniforms);
 	});
 
 	onMount(() => {
