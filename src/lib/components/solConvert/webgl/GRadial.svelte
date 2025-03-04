@@ -4,7 +4,7 @@
 		getTimestamp,
 		setUniforms,
 		initWebGL,
-		setupWebGLComponent,
+		setupGL,
 		render,
 		renderGL
 	} from './solWebglUtils';
@@ -152,7 +152,7 @@
 	});
 
 	onMount(() => {
-		glRenderer = setupWebGLComponent({
+		glRenderer = setupGL({
 			canvas,
 			vertexShader,
 			fragmentShader,
