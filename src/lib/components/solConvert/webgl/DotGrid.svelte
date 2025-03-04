@@ -164,7 +164,6 @@
 		falloff = 3,
 		steepness = 2,
 		transition = { type: 'spring', stiffness: 300, damping: 30 },
-		preview = 0,
 		magnetSmooth = 9,
 		magnetValue = 10,
 		pointerPosition = { x: -9999, y: -9999 },
