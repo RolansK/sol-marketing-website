@@ -169,6 +169,7 @@
 		magnet = 10,
 		magnetSmooth = 9,
 		magnetValue = 10,
+		mousePosition = { x: -9999, y: -9999 },
 		mouseArea = 100,
 		dpi = 2,
 		fps = 60
@@ -176,7 +177,6 @@
 
 	let canvas;
 	let glRenderer = $state(null);
-	let mousePosition = $state({ x: -9999, y: -9999 });
 
 	const uniforms = {
 		gap,
@@ -190,6 +190,7 @@
 		magnet,
 		magnetSmooth,
 		magnetValue,
+		mousePosition,
 		mouseArea,
 		dpi
 	};
@@ -204,7 +205,6 @@
 			vertexShader,
 			fragmentShader,
 			(gl, contextLost) => {
-				uniforms.mousePosition = mousePosition;
 				render(gl, canvas, contextLost, uniforms);
 			},
 			fps
@@ -212,7 +212,7 @@
 
 		const handleMouseMove = (e) => {
 			const rect = canvas.getBoundingClientRect();
-			mousePosition = {
+			uniforms.mousePosition = {
 				x: e.clientX - rect.left,
 				y: rect.bottom - e.clientY
 			};
