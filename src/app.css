@@ -4,12 +4,15 @@
 	--font-body: 'Source Serif 4', serif;
 	--font-size-body: 16.5px;
 
+	--grey-10: #ffffff;
+	--grey-9: #f1f1f1;
+
 	--beige-9: #ece0db;
 	--beige-7: #a79c97;
 	--beige-5: #5f5854;
 	--beige-3: #312b29;
 
-	--color-bg: #000000;
+	--color-bg: var(--grey-9);
 	--color-button: var(--beige-9);
 	--color-button-2: var(--beige-5);
 	--color-text: var(--beige-9);
@@ -25,8 +28,7 @@
 body {
 	min-height: 100vh;
 	margin: 0;
-	/* background-color: #312b29; */
-	background-color: #ffffff;
+	background-color: var(--color-bg);
 
 	background-size: 100vw auto;
 }
@@ -76,12 +78,14 @@ button {
 }
 
 nav {
+	position: fixed;
+	height: 100%;
 	display: flex;
-	padding: 0 max(calc(16.6% - 146px), 32px);
-	gap: 32px;
 	flex-direction: column;
+	gap: 32px;
 	justify-content: center;
 	align-items: start;
+	background-color: var(--grey-10);
 }
 
 .gradient-line {

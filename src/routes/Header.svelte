@@ -5,10 +5,6 @@
 
 <nav>
 	<TeyahLogo />
-	<p>
-		A small studio building design tools for curious creatives with care and love. Based in the
-		Netherlands.
-	</p>
 	<div class="nav-links">
 		<a href="/" aria-current={$page.url.pathname === '/' ? 'page' : undefined}>Home</a>
 		<a href="/contact" aria-current={$page.url.pathname === '/contact' ? 'page' : undefined}
