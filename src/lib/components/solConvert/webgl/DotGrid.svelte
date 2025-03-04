@@ -62,7 +62,7 @@
                 float omega_d = omega * sqrt(1.0 - zeta * zeta); // damped frequency
                 float decay = exp(-zeta * omega * t);
                 
-                float phi = atan(zeta * omega / omega_d);
+                float phi = asin(zeta);
 				
                 return target - distance * decay * cos(omega_d * t - phi);
             } 
@@ -73,7 +73,7 @@
                 return target - distance * decay * (1.0 + omega * t);
             }
             else {
-                // Overdamped case
+                // Overdamped
                 float alpha = zeta * omega;
                 float beta = omega * sqrt(zeta * zeta - 1.0);
                 
@@ -91,13 +91,44 @@
         return state > 0.5 ? 1.0 : 0.0;
     }
 
+    float calculateSpringTime(float stiffness, float damping, float mass) {
+        const float settlingPercentage = 0.01;
+        float naturalFrequency = sqrt(stiffness / mass);
+        float dampingRatio = damping / (2.0 * sqrt(stiffness * mass));
+        
+        float settlingTime;
+        
+        if (dampingRatio < 1.0) {
+            // Underdamped case
+            settlingTime = -log(settlingPercentage) / (dampingRatio * naturalFrequency);
+        } else if (abs(dampingRatio - 1.0) < 0.0001) {
+            // Critically damped
+            settlingTime = -log(settlingPercentage) / naturalFrequency;
+        } else {
+            // Overdamped
+            settlingTime = abs(log(settlingPercentage)) / 
+                (dampingRatio * naturalFrequency - 
+                 sqrt(dampingRatio * dampingRatio - 1.0) * naturalFrequency);
+        }
+        
+        return min(settlingTime, 1e10);
+    }
+
     float calculatePointerArea(vec2 hoverState, float currentTime, float baseArea, float duration, vec3 transitionParams) {
         float state = hoverState.x;
         float startTime = hoverState.y;
         
         float elapsed = currentTime - startTime;
-        float t = clamp(elapsed / duration, 0.0, 1.0);
         
+        float stiffness = transitionParams.y;
+        float damping = transitionParams.z;
+        float mass = 1.0;
+        
+        if (int(transitionParams.x) == 2) {
+            duration = calculateSpringTime(stiffness, damping, mass);
+        }
+        
+        float t = elapsed / duration;
         float animProgress = calculateTransition(t, state, transitionParams);
         
         return baseArea * animProgress;
@@ -237,11 +268,11 @@
 		},
 		falloff = 3,
 		steepness = 2,
-		transition = { type: 'spring', stiffness: 200, damping: 6 },
+		transition = { type: 'spring', stiffness: 200, damping: 2 },
 		magnetSmooth = 9,
 		magnetValue = 10,
 		pointerPosition = { x: -9999, y: -9999 },
-		pointerArea = 100,
+		pointerArea = 50,
 		dpi = 2,
 		fps = 60
 	} = $props();
