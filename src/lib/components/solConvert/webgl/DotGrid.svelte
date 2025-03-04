@@ -53,41 +53,37 @@
             float omega = sqrt(stiffness); 
             float zeta = damping / (2.0 * sqrt(stiffness));
             
+            float target = state > 0.5 ? 1.0 : 0.0;
+            float start = state > 0.5 ? 0.0 : 1.0;
+            float distance = target - start;
+            
             if (zeta < 0.9999) {
-                // Underdamped
+                // Underdamped case (oscillating)
                 float omega_d = omega * sqrt(1.0 - zeta * zeta); // damped frequency
                 float decay = exp(-zeta * omega * t);
-                float cosArg = omega_d * t;
-                float phase = (zeta * omega) / omega_d;
                 
-                if (state > 0.5) {
-                    return 1.0 - decay * cos(cosArg - atan(1.0/phase));
-                } else {
-                    return decay * cos(cosArg - atan(1.0/phase));
-                }
+                float phi = atan(zeta * omega / omega_d);
+				
+                return target - distance * decay * cos(omega_d * t - phi);
             } 
             else if (zeta < 1.0001) {
-                // Critically damped
+                // Critically damped case
                 float decay = exp(-omega * t);
-                
-                if (state > 0.5) {
-                    return 1.0 - decay * (1.0 + omega * t);
-                } else {
-                    return decay * (1.0 + omega * t);
-                }
+
+                return target - distance * decay * (1.0 + omega * t);
             }
             else {
-                // Overdamped
+                // Overdamped case
                 float alpha = zeta * omega;
                 float beta = omega * sqrt(zeta * zeta - 1.0);
+                
+                float c1 = 0.5 * (1.0 + (alpha - beta) / (2.0 * beta));
+                float c2 = 0.5 * (1.0 - (alpha - beta) / (2.0 * beta));
+                
                 float decay1 = exp((-alpha + beta) * t);
                 float decay2 = exp((-alpha - beta) * t);
                 
-                if (state > 0.5) {
-                    return 1.0 - (decay1 + decay2) * 0.5;
-                } else {
-                    return (decay1 + decay2) * 0.5;
-                }
+                return target - distance * (c1 * decay1 + c2 * decay2);
             }
         }
         
