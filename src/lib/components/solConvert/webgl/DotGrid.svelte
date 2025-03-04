@@ -1,5 +1,5 @@
 <script>
-	import { setupGL, render, renderGL } from './solWebglUtils';
+	import { setupGL, render, renderGL, setupPointerTracking } from './solWebglUtils';
 	import { onMount, onDestroy } from 'svelte';
 
 	const vertexShader = `#version 300 es
@@ -161,12 +161,10 @@
 			rotY: 0,
 			rotZ: 0
 		},
-		hoverArea = 120,
 		falloff = 3,
 		steepness = 2,
 		transition = { type: 'spring', stiffness: 300, damping: 30 },
 		preview = 0,
-		magnet = 10,
 		magnetSmooth = 9,
 		magnetValue = 10,
 		pointerPosition = { x: -9999, y: -9999 },
@@ -187,7 +185,6 @@
 		state2,
 		falloff,
 		steepness,
-		magnet,
 		magnetSmooth,
 		magnetValue,
 		pointerPosition,
@@ -210,49 +207,10 @@
 			fps
 		);
 
-		const handlePointerMove = (e) => {
-			const rect = canvas.getBoundingClientRect();
-			uniforms.pointerPosition = {
-				x: e.clientX - rect.left,
-				y: rect.bottom - e.clientY
-			};
-		};
-
-		const handlePointerEnter = () => {
-			uniforms.magnetValue = magnet;
-			uniforms.pointerArea = hoverArea;
-		};
-
-		const handlePointerLeave = () => {
-			uniforms.magnetValue = 0;
-			uniforms.pointerArea = 0;
-		};
-
-		const handlePointerDown = (e) => {
-			handlePointerEnter();
-			handlePointerMove(e);
-		};
-
-		canvas.addEventListener('pointermove', handlePointerMove);
-		canvas.addEventListener('pointerdown', handlePointerDown);
-		canvas.addEventListener('pointerup', handlePointerLeave);
-		canvas.addEventListener('pointercancel', handlePointerLeave);
-		canvas.addEventListener('pointerenter', handlePointerEnter);
-		canvas.addEventListener('pointerleave', handlePointerLeave);
-		canvas.addEventListener('touchstart', handlePointerEnter);
-		canvas.addEventListener('touchend', handlePointerLeave);
-		canvas.addEventListener('touchcancel', handlePointerLeave);
+		const cleanupPointerTracking = setupPointerTracking(canvas, uniforms);
 
 		onDestroy(() => {
-			canvas.removeEventListener('pointermove', handlePointerMove);
-			canvas.removeEventListener('pointerdown', handlePointerDown);
-			canvas.removeEventListener('pointerup', handlePointerLeave);
-			canvas.removeEventListener('pointercancel', handlePointerLeave);
-			canvas.removeEventListener('pointerenter', handlePointerEnter);
-			canvas.removeEventListener('pointerleave', handlePointerLeave);
-			canvas.removeEventListener('touchstart', handlePointerEnter);
-			canvas.removeEventListener('touchend', handlePointerLeave);
-			canvas.removeEventListener('touchcancel', handlePointerLeave);
+			cleanupPointerTracking();
 			glRenderer?.cleanup();
 		});
 	});

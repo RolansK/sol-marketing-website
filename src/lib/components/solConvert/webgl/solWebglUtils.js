@@ -268,3 +268,57 @@ export function setupGL(canvas, vertexShader, fragmentShader, renderFunction, fp
 		isContextLost: () => isContextLost
 	};
 }
+
+export function setupPointerTracking(canvas, uniforms) {
+	const handlePointerMove = (e) => {
+		const rect = canvas.getBoundingClientRect();
+		uniforms.pointerPosition = {
+			x: e.clientX - rect.left,
+			y: rect.bottom - e.clientY
+		};
+	};
+
+	const handlePointerEnter = () => {
+		if (!uniforms._initialMagnetValue) {
+			uniforms._initialMagnetValue = uniforms.magnetValue;
+		}
+		uniforms.magnetValue = uniforms._initialMagnetValue;
+
+		if (!uniforms._initialPointerArea) {
+			uniforms._initialPointerArea = uniforms.pointerArea;
+		}
+		uniforms.pointerArea = uniforms._initialPointerArea;
+	};
+
+	const handlePointerLeave = () => {
+		uniforms.magnetValue = 0;
+		uniforms.pointerArea = 0;
+	};
+
+	const handlePointerDown = (e) => {
+		handlePointerEnter();
+		handlePointerMove(e);
+	};
+
+	canvas.addEventListener('pointermove', handlePointerMove);
+	canvas.addEventListener('pointerdown', handlePointerDown);
+	canvas.addEventListener('pointerup', handlePointerLeave);
+	canvas.addEventListener('pointercancel', handlePointerLeave);
+	canvas.addEventListener('pointerenter', handlePointerEnter);
+	canvas.addEventListener('pointerleave', handlePointerLeave);
+	canvas.addEventListener('touchstart', handlePointerEnter);
+	canvas.addEventListener('touchend', handlePointerLeave);
+	canvas.addEventListener('touchcancel', handlePointerLeave);
+
+	return () => {
+		canvas.removeEventListener('pointermove', handlePointerMove);
+		canvas.removeEventListener('pointerdown', handlePointerDown);
+		canvas.removeEventListener('pointerup', handlePointerLeave);
+		canvas.removeEventListener('pointercancel', handlePointerLeave);
+		canvas.removeEventListener('pointerenter', handlePointerEnter);
+		canvas.removeEventListener('pointerleave', handlePointerLeave);
+		canvas.removeEventListener('touchstart', handlePointerEnter);
+		canvas.removeEventListener('touchend', handlePointerLeave);
+		canvas.removeEventListener('touchcancel', handlePointerLeave);
+	};
+}
