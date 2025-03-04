@@ -279,15 +279,10 @@ export function setupPointerTracking(canvas, uniforms) {
 	};
 
 	const handlePointerEnter = () => {
-		if (!uniforms._initialMagnetValue) {
-			uniforms._initialMagnetValue = uniforms.magnetValue;
-		}
-		uniforms.magnetValue = uniforms._initialMagnetValue;
 		uniforms.pointerHover = 1;
 	};
 
 	const handlePointerLeave = () => {
-		uniforms.magnetValue = 0;
 		uniforms.pointerHover = 0;
 	};
 
