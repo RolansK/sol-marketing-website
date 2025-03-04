@@ -9,6 +9,7 @@
     out float vPointerInfluence;
     out float vCornerRadius;
     out float vSize;
+	out float vTime;
 
     uniform vec2 uDisplaySize;
     uniform vec2 uGridSize;
@@ -32,6 +33,8 @@
 
     uniform float uFalloff;
     uniform float uSteepness;
+    
+    uniform float uTime;
 
     float easeInFalloff(float t, float steepness) {
         return clamp(pow(t, steepness), 0.0, 1.0);
@@ -110,6 +113,7 @@
         vPointerInfluence = pointerInfluence;
         vCornerRadius = cornerRadius;
         vSize = mix(uSize.x, uSize.y, pointerInfluence);
+		vTime = uTime;
     }`;
 
 	const fragmentShader = `#version 300 es
@@ -122,6 +126,7 @@
     in float vPointerInfluence;
     in float vCornerRadius;
     in float vSize;
+	in float vTime;
 
     out vec4 fragColor;
 
