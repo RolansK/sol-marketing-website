@@ -39,16 +39,70 @@
     uniform vec2 uPointerHover;
     uniform vec3 uTransition;
 
-    float calculatePointerArea(vec2 hoverState, float currentTime, float baseArea, float duration) {
+    float calculateTransition(float t, float state, vec3 transitionParams) {
+        int transitionType = int(transitionParams.x);
+        
+        if (transitionType == 1) {
+            // Bezier placeholder
+            return t;
+        }
+        else if (transitionType == 2) {
+            float stiffness = transitionParams.y;
+            float damping = transitionParams.z;
+            
+            float omega = sqrt(stiffness); 
+            float zeta = damping / (2.0 * sqrt(stiffness));
+            
+            if (zeta < 0.9999) {
+                // Underdamped
+                float omega_d = omega * sqrt(1.0 - zeta * zeta); // damped frequency
+                float decay = exp(-zeta * omega * t);
+                float cosArg = omega_d * t;
+                float phase = (zeta * omega) / omega_d;
+                
+                if (state > 0.5) {
+                    return 1.0 - decay * cos(cosArg - atan(1.0/phase));
+                } else {
+                    return decay * cos(cosArg - atan(1.0/phase));
+                }
+            } 
+            else if (zeta < 1.0001) {
+                // Critically damped
+                float decay = exp(-omega * t);
+                
+                if (state > 0.5) {
+                    return 1.0 - decay * (1.0 + omega * t);
+                } else {
+                    return decay * (1.0 + omega * t);
+                }
+            }
+            else {
+                // Overdamped
+                float alpha = zeta * omega;
+                float beta = omega * sqrt(zeta * zeta - 1.0);
+                float decay1 = exp((-alpha + beta) * t);
+                float decay2 = exp((-alpha - beta) * t);
+                
+                if (state > 0.5) {
+                    return 1.0 - (decay1 + decay2) * 0.5;
+                } else {
+                    return (decay1 + decay2) * 0.5;
+                }
+            }
+        }
+        
+        // Default fallback - instant
+        return state > 0.5 ? 1.0 : 0.0;
+    }
+
+    float calculatePointerArea(vec2 hoverState, float currentTime, float baseArea, float duration, vec3 transitionParams) {
         float state = hoverState.x;
         float startTime = hoverState.y;
         
         float elapsed = currentTime - startTime;
         float t = clamp(elapsed / duration, 0.0, 1.0);
         
-        float animProgress = state > 0.5 
-            ? smoothstep(0.0, 1.0, t)  // Ease in when entering
-            : 1.0 - t;                 // Linear out when exiting
+        float animProgress = calculateTransition(t, state, transitionParams);
         
         return baseArea * animProgress;
     }
@@ -71,7 +125,7 @@
 
         float rowOffset = fract(uRowOffset * float(row)) * (uSize.x * 2.0 + uGap);
         
-        float animatedArea = calculatePointerArea(uPointerHover, uTime, uPointerArea, 0.5);
+        float animatedArea = calculatePointerArea(uPointerHover, uTime, uPointerArea, 0.5, uTransition);
         float pointerArea = max(0.0, animatedArea);
 
         vec2 instanceCenter = vec2(
@@ -187,7 +241,7 @@
 		},
 		falloff = 3,
 		steepness = 2,
-		transition = { type: 'spring', stiffness: 300, damping: 30 },
+		transition = { type: 'spring', stiffness: 200, damping: 6 },
 		magnetSmooth = 9,
 		magnetValue = 10,
 		pointerPosition = { x: -9999, y: -9999 },
