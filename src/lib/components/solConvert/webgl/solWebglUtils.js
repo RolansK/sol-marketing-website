@@ -277,11 +277,11 @@ export function setupPointerTracking(canvas, uniforms) {
 	};
 
 	const handlePointerEnter = () => {
-		uniforms.pointerHover = [1, getTimestamp()]; // [state, startTime]
+		uniforms.pointerHover = [1, getTimestamp()];
 	};
 
 	const handlePointerLeave = () => {
-		uniforms.pointerHover = [0, getTimestamp()]; // [state, startTime]
+		uniforms.pointerHover = [0, getTimestamp()];
 	};
 
 	const handlePointerDown = (e) => {
