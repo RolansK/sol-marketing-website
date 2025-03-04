@@ -9,7 +9,6 @@
     out float vPointerInfluence;
     out float vCornerRadius;
     out float vSize;
-	out float vTime;
 
     uniform vec2 uDisplaySize;
     uniform vec2 uGridSize;
@@ -213,7 +212,6 @@
         vPointerInfluence = pointerInfluence;
         vCornerRadius = cornerRadius;
         vSize = mix(uSize.x, uSize.y, pointerInfluence);
-		vTime = uTime;
     }`;
 
 	const fragmentShader = `#version 300 es
@@ -226,7 +224,6 @@
     in float vPointerInfluence;
     in float vCornerRadius;
     in float vSize;
-	in float vTime;
 
     out vec4 fragColor;
 
