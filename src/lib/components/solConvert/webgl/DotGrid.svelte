@@ -187,7 +187,7 @@
 	let canvas;
 	let glRenderer = $state(null);
 	let gridSize = { x: 0, y: 0 };
-	let mousePosition = $state({ x: 0, y: 0 });
+	let mousePosition = $state({ x: -9999, y: -9999 });
 
 	const uniforms = {
 		gap,
@@ -207,7 +207,6 @@
 
 	$effect(() => {
 		if (glRenderer && canvas) {
-			uniforms.mousePosition = mousePosition;
 			gridSize = renderGL(glRenderer, canvas, uniforms) || gridSize;
 		}
 	});
