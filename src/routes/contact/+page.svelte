@@ -30,11 +30,11 @@
 		<span class={hoveredItem === 'twitter' ? 'visible' : ''}>Twitter</span>
 		<button
 			tabindex="0"
-			onmouseenter={() => {
+			onpointerenter={() => {
 				isHovering = true;
 				hoveredItem = 'email';
 			}}
-			onmouseleave={() => {
+			onpointerleave={() => {
 				isHovering = false;
 				hoveredItem = null;
 			}}
@@ -44,24 +44,24 @@
 		</button>
 		<button
 			tabindex="0"
-			onmouseenter={() => (hoveredItem = 'github')}
-			onmouseleave={() => (hoveredItem = null)}
+			onpointerenter={() => (hoveredItem = 'github')}
+			onpointerleave={() => (hoveredItem = null)}
 			onclick={() => window.open('https://github.com/teyah-design', '_blank')}
 		>
 			<Github />
 		</button>
 		<button
 			tabindex="0"
-			onmouseenter={() => (hoveredItem = 'instagram')}
-			onmouseleave={() => (hoveredItem = null)}
+			onpointerenter={() => (hoveredItem = 'instagram')}
+			onpointerleave={() => (hoveredItem = null)}
 			onclick={() => window.open('https://www.instagram.com/teyah_design/', '_blank')}
 		>
 			<Instagram />
 		</button>
 		<button
 			tabindex="0"
-			onmouseenter={() => (hoveredItem = 'twitter')}
-			onmouseleave={() => (hoveredItem = null)}
+			onpointerenter={() => (hoveredItem = 'twitter')}
+			onpointerleave={() => (hoveredItem = null)}
 			onclick={() => window.open('https://x.com/teyah_design', '_blank')}
 		>
 			<Twitter />

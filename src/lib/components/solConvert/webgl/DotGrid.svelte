@@ -6,19 +6,19 @@
     in vec2 position;
 
     out vec2 vPosition;
-    out float vMouseInfluence;
+    out float vPointerInfluence;
     out float vCornerRadius;
     out float vSize;
 
     uniform vec2 uDisplaySize;
     uniform vec2 uGridSize;
-    uniform vec2 uMouse;
+    uniform vec2 uPointer;
 
     uniform float uGap;
 
     uniform vec2 uSize;
 
-    uniform float uMouseArea;
+    uniform float uPointerArea;
 
     uniform vec2 uRadius;
 
@@ -50,35 +50,35 @@
         int col = gl_InstanceID % int(uGridSize.x);
 
         float rowOffset = fract(uRowOffset * float(row)) * (uSize.x * 2.0 + uGap);
-        float mouseArea = max(0.0, uMouseArea);
+        float pointerArea = max(0.0, uPointerArea);
 
         vec2 instanceCenter = vec2(
             float(col) * (uSize.x * 2.0 + uGap) + uSize.x + (uDisplaySize.x - (uGridSize.x * uSize.x * 2.0 + (uGridSize.x - 1.0) * uGap)) * 0.5 + rowOffset,
             float(row) * (uSize.x * 2.0 + uGap) + uSize.x + (uDisplaySize.y - (uGridSize.y * uSize.x * 2.0 + (uGridSize.y - 1.0) * uGap)) * 0.5
         );
 
-        float mouseDist = length(uMouse - instanceCenter);
-        float mouseInfluence = clamp(1.0 - mouseDist / mouseArea, 0.0, 1.0);
+        float pointerDist = length(uPointer - instanceCenter);
+        float pointerInfluence = clamp(1.0 - pointerDist / pointerArea, 0.0, 1.0);
 
         if (uFalloff == 0.0) {
-            mouseInfluence = clamp(1.0 - mouseDist / mouseArea, 0.0, 1.0);
+            pointerInfluence = clamp(1.0 - pointerDist / pointerArea, 0.0, 1.0);
         } else if (uFalloff == 1.0) {
-            mouseInfluence = clamp(easeInFalloff(mouseInfluence, uSteepness), 0.0, 1.0);
+            pointerInfluence = clamp(easeInFalloff(pointerInfluence, uSteepness), 0.0, 1.0);
         } else if (uFalloff == 2.0) {
-            mouseInfluence = clamp(easeOutFalloff(mouseInfluence, uSteepness), 0.0, 1.0);
+            pointerInfluence = clamp(easeOutFalloff(pointerInfluence, uSteepness), 0.0, 1.0);
         } else if (uFalloff == 3.0) {
-            mouseInfluence = clamp(easeInOutFalloff(mouseInfluence, uSteepness), 0.0, 1.0);
+            pointerInfluence = clamp(easeInOutFalloff(pointerInfluence, uSteepness), 0.0, 1.0);
         }
 
-        float attractionForce = mouseInfluence * (1.0 - exp(-pow(uMagnet.y, 2.0) * mouseDist / mouseArea)) * uMagnet.x;
-        vec2 directionToMouse = normalize(uMouse - instanceCenter);
-        vec2 attractedCenter = instanceCenter + directionToMouse * attractionForce;
+        float attractionForce = pointerInfluence * (1.0 - exp(-pow(uMagnet.y, 2.0) * pointerDist / pointerArea)) * uMagnet.x;
+        vec2 directionToPointer = normalize(uPointer - instanceCenter);
+        vec2 attractedCenter = instanceCenter + directionToPointer * attractionForce;
 
-        float instanceSize = mix(uSize.x, uSize.y, mouseInfluence);
+        float instanceSize = mix(uSize.x, uSize.y, pointerInfluence);
 
-        float rotationX = mix(uRotateX.x, uRotateX.y, mouseInfluence);
-        float rotationY = mix(uRotateY.x, uRotateY.y, mouseInfluence);
-        float rotationZ = mix(uRotateZ.x, uRotateZ.y, mouseInfluence);
+        float rotationX = mix(uRotateX.x, uRotateX.y, pointerInfluence);
+        float rotationY = mix(uRotateY.x, uRotateY.y, pointerInfluence);
+        float rotationZ = mix(uRotateZ.x, uRotateZ.y, pointerInfluence);
 
         mat4 rotationMatrix = mat4(
             cos(rotationY) * cos(rotationZ), 
@@ -104,12 +104,12 @@
         float radiusA = uRadius.x / 100.0;
         float radiusB = uRadius.y / 100.0;
 
-        float cornerRadius = mix(radiusA, radiusB, mouseInfluence);
+        float cornerRadius = mix(radiusA, radiusB, pointerInfluence);
         
         vPosition = position;
-        vMouseInfluence = mouseInfluence;
+        vPointerInfluence = pointerInfluence;
         vCornerRadius = cornerRadius;
-        vSize = mix(uSize.x, uSize.y, mouseInfluence);
+        vSize = mix(uSize.x, uSize.y, pointerInfluence);
     }`;
 
 	const fragmentShader = `#version 300 es
@@ -119,7 +119,7 @@
     uniform vec4 uColorB;
 
     in vec2 vPosition;
-    in float vMouseInfluence;
+    in float vPointerInfluence;
     in float vCornerRadius;
     in float vSize;
 
@@ -131,7 +131,7 @@
     }
 
     void main() {
-    vec4 insideColor = mix(uColorA, uColorB, vMouseInfluence);
+    vec4 insideColor = mix(uColorA, uColorB, vPointerInfluence);
     
     float smoothing = 1.0 / vSize;
     float dist = squareSDF(vPosition, 1.0 - smoothing, vCornerRadius * (1.0-smoothing));
@@ -169,8 +169,8 @@
 		magnet = 10,
 		magnetSmooth = 9,
 		magnetValue = 10,
-		mousePosition = { x: -9999, y: -9999 },
-		mouseArea = 100,
+		pointerPosition = { x: -9999, y: -9999 },
+		pointerArea = 100,
 		dpi = 2,
 		fps = 60
 	} = $props();
@@ -190,8 +190,8 @@
 		magnet,
 		magnetSmooth,
 		magnetValue,
-		mousePosition,
-		mouseArea,
+		pointerPosition,
+		pointerArea,
 		dpi
 	};
 
@@ -210,49 +210,49 @@
 			fps
 		);
 
-		const handleMouseMove = (e) => {
+		const handlePointerMove = (e) => {
 			const rect = canvas.getBoundingClientRect();
-			uniforms.mousePosition = {
+			uniforms.pointerPosition = {
 				x: e.clientX - rect.left,
 				y: rect.bottom - e.clientY
 			};
 		};
 
-		const handleMouseEnter = () => {
+		const handlePointerEnter = () => {
 			uniforms.magnetValue = magnet;
-			uniforms.mouseArea = hoverArea;
+			uniforms.pointerArea = hoverArea;
 		};
 
-		const handleMouseLeave = () => {
+		const handlePointerLeave = () => {
 			uniforms.magnetValue = 0;
-			uniforms.mouseArea = 0;
+			uniforms.pointerArea = 0;
 		};
 
 		const handlePointerDown = (e) => {
-			handleMouseEnter();
-			handleMouseMove(e);
+			handlePointerEnter();
+			handlePointerMove(e);
 		};
 
-		canvas.addEventListener('pointermove', handleMouseMove);
+		canvas.addEventListener('pointermove', handlePointerMove);
 		canvas.addEventListener('pointerdown', handlePointerDown);
-		canvas.addEventListener('pointerup', handleMouseLeave);
-		canvas.addEventListener('pointercancel', handleMouseLeave);
-		canvas.addEventListener('mouseenter', handleMouseEnter);
-		canvas.addEventListener('mouseleave', handleMouseLeave);
-		canvas.addEventListener('touchstart', handleMouseEnter);
-		canvas.addEventListener('touchend', handleMouseLeave);
-		canvas.addEventListener('touchcancel', handleMouseLeave);
+		canvas.addEventListener('pointerup', handlePointerLeave);
+		canvas.addEventListener('pointercancel', handlePointerLeave);
+		canvas.addEventListener('pointerenter', handlePointerEnter);
+		canvas.addEventListener('pointerleave', handlePointerLeave);
+		canvas.addEventListener('touchstart', handlePointerEnter);
+		canvas.addEventListener('touchend', handlePointerLeave);
+		canvas.addEventListener('touchcancel', handlePointerLeave);
 
 		onDestroy(() => {
-			canvas.removeEventListener('pointermove', handleMouseMove);
+			canvas.removeEventListener('pointermove', handlePointerMove);
 			canvas.removeEventListener('pointerdown', handlePointerDown);
-			canvas.removeEventListener('pointerup', handleMouseLeave);
-			canvas.removeEventListener('pointercancel', handleMouseLeave);
-			canvas.removeEventListener('mouseenter', handleMouseEnter);
-			canvas.removeEventListener('mouseleave', handleMouseLeave);
-			canvas.removeEventListener('touchstart', handleMouseEnter);
-			canvas.removeEventListener('touchend', handleMouseLeave);
-			canvas.removeEventListener('touchcancel', handleMouseLeave);
+			canvas.removeEventListener('pointerup', handlePointerLeave);
+			canvas.removeEventListener('pointercancel', handlePointerLeave);
+			canvas.removeEventListener('pointerenter', handlePointerEnter);
+			canvas.removeEventListener('pointerleave', handlePointerLeave);
+			canvas.removeEventListener('touchstart', handlePointerEnter);
+			canvas.removeEventListener('touchend', handlePointerLeave);
+			canvas.removeEventListener('touchcancel', handlePointerLeave);
 			glRenderer?.cleanup();
 		});
 	});

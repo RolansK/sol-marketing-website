@@ -127,7 +127,7 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 		['uNoiseType', 'noiseType'],
 		['uFalloff', 'falloff'],
 		['uSteepness', 'steepness'],
-		['uMouseArea', 'mouseArea'],
+		['uPointerArea', 'pointerArea'],
 		['uGap', 'gap'],
 		['uPixelScale', 'pixelScale']
 	].forEach(([u, p]) => set.float(u, uniforms[p]));
@@ -167,9 +167,9 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 		uniforms.magnetValue != null &&
 		set.vec2('uMagnet', uniforms.magnetValue, mapRange(uniforms.magnetSmooth));
 
-	loc.uMouse &&
-		uniforms.mousePosition &&
-		set.vec2('uMouse', ...Object.values(uniforms.mousePosition));
+	loc.uPointer &&
+		uniforms.pointerPosition &&
+		set.vec2('uPointer', ...Object.values(uniforms.pointerPosition));
 
 	if (uniforms.customUniforms) {
 		Object.entries(uniforms.customUniforms).forEach(([name, value]) => {
