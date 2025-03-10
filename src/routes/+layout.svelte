@@ -1,7 +1,7 @@
 <script>
 	import Header from './Header.svelte';
-	import LogoBig from '$lib/assets/logo-big.svelte';
-	import Grid from '$lib/assets/grid.svelte';
+	import LogoBig from '$lib/icons/logo-big.svelte';
+	import Grid from '$lib/icons/grid.svelte';
 	import '../app.css';
 
 	let { children } = $props();

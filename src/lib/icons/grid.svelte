@@ -1,8 +1,8 @@
 <svg
-	width="1000"
+	width="100vw"
 	height="100vh"
-	style="position: fixed; left: 18.5px; z-index: 10;"
-	stroke="#000000"
+	style="position: fixed; z-index: -1;"
+	stroke="#ffffff"
 	stroke-width="1"
 	overflow="visible"
 >

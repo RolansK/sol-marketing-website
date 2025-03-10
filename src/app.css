@@ -166,7 +166,7 @@ nav:hover .button-nav span {
 	gap: 8px;
 	padding-left: 8px;
 	border-radius: 20px;
-	background: linear-gradient(to bottom, var(--grey-1), var(--grey-3));
+	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
 	transition: var(--transition-1);
 }
 
@@ -205,6 +205,22 @@ nav:hover .button-cta {
 .bottom {
 	position: absolute;
 	bottom: 14px;
+}
+
+/* Hero */
+
+.hero {
+	height: 75vh;
+	display: flex;
+	padding-left: 144px;
+	background-color: red;
+}
+
+.hero div {
+	position: relative;
+	flex-grow: 1;
+	height: 208px;
+	background-color: lightblue;
 }
 
 .contact-grid {

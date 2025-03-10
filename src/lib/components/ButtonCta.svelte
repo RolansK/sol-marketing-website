@@ -1,8 +1,8 @@
 <script>
-	const { icon, title = 'Demo' } = $props();
+	const { icon, title = 'Demo', class: className = '' } = $props();
 </script>
 
-<button class="button-cta bottom">
+<button class="button-cta {className}">
 	{#if icon}
 		{@const Icon = icon}
 		<Icon class="icon" />

@@ -1,8 +1,8 @@
 <script>
-	import Envelope from '$lib/assets/envelope.svelte';
-	import Github from '$lib/assets/github-logo.svelte';
-	import Instagram from '$lib/assets/instagram-logo.svelte';
-	import Twitter from '$lib/assets/x-logo.svelte';
+	import Envelope from '$lib/icons/envelope.svelte';
+	import Github from '$lib/icons/github-logo.svelte';
+	import Instagram from '$lib/icons/instagram-logo.svelte';
+	import Twitter from '$lib/icons/x-logo.svelte';
 
 	let hoveredItem = $state(null);
 	let isHovering = $state(false);
