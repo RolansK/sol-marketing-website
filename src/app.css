@@ -93,6 +93,10 @@ nav {
 	justify-content: center;
 	background-color: var(--grey-10);
 	padding: 0px !important;
+	box-shadow:
+		rgba(0, 0, 0, 0.09) 0px 0.75px 0.75px -0.75px,
+		rgba(0, 0, 0, 0.09) 0px 2.75px 2.75px -1.75px,
+		rgba(0, 0, 0, 0.09) 0px 12px 12px -2.5px;
 	transition: width var(--transition-1);
 }
 
