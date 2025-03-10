@@ -1,5 +1,6 @@
 <script>
 	import Header from './Header.svelte';
+	import LogoBig from '$lib/assets/logo-big.svelte';
 	import '../app.css';
 
 	let { children } = $props();
@@ -7,9 +8,8 @@
 
 <div class="app">
 	<Header />
-	<div class="gradient-line"></div>
-
 	<main>
+		<LogoBig />
 		{@render children()}
 	</main>
 </div>
