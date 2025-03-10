@@ -207,8 +207,42 @@ nav:hover .button-cta {
 	bottom: 14px;
 }
 
-/* Hero */
+/* ButtonPrimary */
+.button-primary {
+	/* width: 40px; */
+	height: 40px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-left: 8px;
+	border-radius: 20px;
+	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
+	transition: var(--transition-1);
+}
 
+.button-primary svg {
+	min-width: 20px;
+	max-width: 20px;
+	height: 20px;
+	fill: var(--grey-10);
+	transition: var(--transition-1);
+}
+
+.button-primary span {
+	color: var(--grey-10);
+	transition: var(--transition-1);
+}
+
+.button-primary:hover {
+	opacity: 0.9;
+	border-radius: 4px;
+}
+
+.button-primary:active {
+	opacity: 0.8;
+}
+
+/* Hero */
 .hero {
 	height: 75vh;
 	display: flex;
@@ -363,4 +397,31 @@ nav:hover .button-cta {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+}
+
+/* Hero image */
+.hero-image {
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid var(--grey-10);
+	box-shadow:
+		0 0 2px #00000026,
+		0 8px 16px #0000001a;
+	top: 0;
+	left: 76px;
+}
+
+.hero div img:nth-of-type(2) {
+	left: 57px;
+}
+.hero div img:nth-of-type(3) {
+	left: 38px;
+}
+.hero div img:nth-of-type(4) {
+	left: 19px;
+}
+.hero div img:nth-of-type(5) {
+	left: 0px;
 }

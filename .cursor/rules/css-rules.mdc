@@ -1,6 +1,6 @@
 ---
 description: Rules for styling anything in the project using css
-globs: .svelte, .css, .js
+globs: *.svelte, *.css, *.js
 alwaysApply: false
 ---
 
