@@ -18,6 +18,8 @@
 	--color-button: var(--beige-9);
 	--color-button-2: var(--beige-5);
 	--color-text: var(--grey-1);
+	--color-text-2: var(--grey-5);
+
 	--easing-1: cubic-bezier(0.38, 0, 0.16, 1);
 	--transition-1: 0.15s var(--easing-1);
 	--transition-2: 0.3s var(--easing-1);
@@ -55,6 +57,7 @@ p {
 span {
 	color: var(--color-text);
 	font-size: var(--font-size-body);
+	font-family: var(--font-body);
 }
 
 a {
@@ -82,45 +85,19 @@ button {
 
 nav {
 	position: fixed;
+	overflow: hidden;
 	width: 72px;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	gap: 32px;
 	justify-content: center;
-	align-items: start;
 	background-color: var(--grey-10);
+	padding: 0px !important;
+	transition: width var(--transition-1);
 }
 
 nav:hover {
 	width: 182px;
-}
-
-nav p {
-	width: 292px;
-}
-
-.nav-links {
-	padding: 0;
-	margin: -12px 0 0 -12px;
-	height: 48px;
-	display: flex;
-}
-
-nav a {
-	display: flex;
-	align-items: center;
-	padding: 0 12px;
-	color: var(--color-button-2);
-	transition: color var(--transition-1);
-}
-
-nav a:hover {
-	color: var(--color-button);
-}
-
-nav a[aria-current='page'] {
-	color: var(--color-button);
 }
 
 section {
@@ -131,46 +108,45 @@ section {
 	align-items: center;
 }
 
+.nav-links {
+	padding: 0;
+	margin: -12px 0 0 -12px;
+	height: 48px;
+	display: flex;
+}
+
 .button-nav {
+	height: 48px;
+	width: 182px;
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	padding: 8px 16px;
+	padding-left: 24px;
 	background: none;
-	fill: red !important;
 }
 
-.button-graphic {
-	box-sizing: border-box;
-	position: relative;
-	width: 168px;
-	height: 168px;
-	display: flex;
-	padding: 52px;
-	align-items: center;
-	justify-content: center;
-	border: 1px solid var(--beige-3);
-	transition: var(--transition-2);
+.button-nav svg {
+	width: 20px;
+	height: 20px;
+	fill: var(--color-text-2);
 }
 
-.button-graphic:hover {
-	width: 200px;
-	height: 200px;
-	border: 1px solid var(--beige-5);
+.button-nav:hover svg {
+	fill: var(--color-text);
 }
 
-.button-graphic canvas {
-	width: 100% !important;
-	height: 100% !important;
+.button-nav span {
+	color: var(--color-text-2);
+	opacity: 0;
+	transition: var(--transition-1);
 }
 
-.button-graphic span {
-	position: absolute;
-	bottom: -5px;
-	left: -1px;
-	background-color: var(--color-bg);
-	padding-right: 12px;
-	padding-top: 8px;
+nav:hover .button-nav span {
+	opacity: 1;
+}
+
+.button-nav:hover span {
+	color: var(--color-text);
 }
 
 .contact-grid {
