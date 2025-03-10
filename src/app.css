@@ -6,6 +6,8 @@
 
 	--grey-10: #ffffff;
 	--grey-9: #f1f1f1;
+	--grey-5: #7d7d7e;
+	--grey-1: #020203;
 
 	--beige-9: #ece0db;
 	--beige-7: #a79c97;
@@ -15,7 +17,7 @@
 	--color-bg: var(--grey-9);
 	--color-button: var(--beige-9);
 	--color-button-2: var(--beige-5);
-	--color-text: var(--beige-9);
+	--color-text: var(--grey-1);
 	--easing-1: cubic-bezier(0.38, 0, 0.16, 1);
 	--transition-1: 0.15s var(--easing-1);
 	--transition-2: 0.3s var(--easing-1);
@@ -52,6 +54,7 @@ p {
 
 span {
 	color: var(--color-text);
+	font-size: var(--font-size-body);
 }
 
 a {
@@ -93,15 +96,6 @@ nav:hover {
 	width: 182px;
 }
 
-.gradient-line {
-	height: 100dvh;
-	width: max(33.2%, 356px);
-	position: absolute;
-	border-right: 1px solid;
-	border-image: linear-gradient(to bottom, #6b295c, #313e7b) 1;
-	pointer-events: none;
-}
-
 nav p {
 	width: 292px;
 }
@@ -135,6 +129,15 @@ section {
 	height: 100%;
 	justify-content: center;
 	align-items: center;
+}
+
+.button-nav {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 16px;
+	background: none;
+	fill: red !important;
 }
 
 .button-graphic {

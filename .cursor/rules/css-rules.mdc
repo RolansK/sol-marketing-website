@@ -11,3 +11,7 @@ When styling .svelte components, always use the global app.css file. Never use s
 # Classes
 
 When possible, reuse the existing classes from app.css instead of creating new ones.
+
+# Units
+
+Never use rem or em units. Stick to px and % units.
