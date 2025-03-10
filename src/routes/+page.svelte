@@ -1,6 +1,4 @@
 <script>
-	import ButtonGraphic from '$lib/components/ButtonGraphic.svelte';
-
 	const purpleColors = [
 		{ color: '#FAE6E6', position: 0 },
 		{ color: '#E43817', position: 0.35 },
@@ -25,11 +23,4 @@
 	/>
 </svelte:head>
 
-<section>
-	<ButtonGraphic text="Sol" href="https://sol.design" colors={purpleColors} />
-	<ButtonGraphic
-		text="Ara"
-		href="https://framer.com/marketplace/plugins/ara"
-		colors={orangeColors}
-	/>
-</section>
+<section></section>

@@ -1,14 +1,14 @@
 <script>
-	import DotGrid from '$lib/components/solConvert/webgl/DotGrid.svelte';
-	import GLinear from '$lib/components/solConvert/webgl/GLinear.svelte';
-	import GPerlin from '$lib/components/solConvert/webgl/GPerlin.svelte';
-	import GPerlinWave from '$lib/components/solConvert/webgl/GPerlinWave.svelte';
-	import GRadial from '$lib/components/solConvert/webgl/GRadial.svelte';
-	import Tiles from '$lib/components/solConvert/webgl/Tiles.svelte';
-	import Blob from '$lib/components/solConvert/svg/Blob.svelte';
-	import Polygon from '$lib/components/solConvert/svg/Polygon.svelte';
-	import Squircle from '$lib/components/solConvert/svg/Squircle.svelte';
-	import Super from '$lib/components/solConvert/svg/Super.svelte';
+	import DotGrid from '$lib/components/webgl/DotGrid.svelte';
+	import GLinear from '$lib/components/webgl/GLinear.svelte';
+	import GPerlin from '$lib/components/webgl/GPerlin.svelte';
+	import GPerlinWave from '$lib/components/webgl/GPerlinWave.svelte';
+	import GRadial from '$lib/components/webgl/GRadial.svelte';
+	import Tiles from '$lib/components/webgl/Tiles.svelte';
+	import Blob from '$lib/components/svg/Blob.svelte';
+	import Polygon from '$lib/components/svg/Polygon.svelte';
+	import Squircle from '$lib/components/svg/Squircle.svelte';
+	import Super from '$lib/components/svg/Super.svelte';
 </script>
 
 <svelte:head>
