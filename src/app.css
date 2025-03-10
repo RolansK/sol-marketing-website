@@ -1,7 +1,8 @@
-@import '@fontsource/source-serif-4';
+@import '@fontsource-variable/source-serif-4';
+@import '@fontsource-variable/source-serif-4/opsz.css';
 
 :root {
-	--font-body: 'Source Serif 4', serif;
+	--font-body: 'Source Serif 4 Variable', serif;
 	--font-size-body: 16.5px;
 
 	--grey-10: #ffffff;
@@ -39,7 +40,12 @@ body {
 }
 
 h1 {
-	font-size: 32px;
+	font-size: 54px;
+	line-height: 100%;
+	letter-spacing: -1.25%;
+	font-variation-settings:
+		'wght' 390,
+		'opsz' 14.5;
 }
 
 h2 {
@@ -209,7 +215,7 @@ nav:hover .button-cta {
 
 /* ButtonPrimary */
 .button-primary {
-	/* width: 40px; */
+	min-width: fit-content;
 	height: 40px;
 	display: flex;
 	align-items: center;
@@ -255,6 +261,70 @@ nav:hover .button-cta {
 	flex-grow: 1;
 	height: 208px;
 	background-color: lightblue;
+}
+
+.hero div img {
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid var(--grey-10);
+	box-shadow:
+		0 0 2px #00000026,
+		0 8px 16px #0000001a;
+	top: 0;
+	left: 76px;
+}
+
+.hero div img:nth-of-type(2) {
+	left: 57px;
+}
+
+.hero div img:nth-of-type(3) {
+	left: 38px;
+}
+
+.hero div img:nth-of-type(4) {
+	left: 19px;
+}
+
+.hero div img:nth-of-type(5) {
+	left: 0px;
+}
+
+.hero div span {
+	position: absolute;
+	left: 118px;
+	top: 4px;
+}
+
+.hero div h1 {
+	position: absolute;
+	width: fit-content;
+	margin: 0px;
+	top: 52px;
+	left: 0px;
+}
+
+.hero div h1:nth-of-type(2) {
+	left: 215px;
+}
+
+.hero div h1:nth-of-type(3) {
+	top: 105px;
+}
+
+.hero div svg {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	top: 55px;
+	left: 165px;
+}
+
+.hero div button {
+	position: absolute;
+	bottom: 0px;
 }
 
 .contact-grid {
@@ -397,31 +467,4 @@ nav:hover .button-cta {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-}
-
-/* Hero image */
-.hero-image {
-	position: absolute;
-	width: 32px;
-	height: 32px;
-	border-radius: 50%;
-	border: 1px solid var(--grey-10);
-	box-shadow:
-		0 0 2px #00000026,
-		0 8px 16px #0000001a;
-	top: 0;
-	left: 76px;
-}
-
-.hero div img:nth-of-type(2) {
-	left: 57px;
-}
-.hero div img:nth-of-type(3) {
-	left: 38px;
-}
-.hero div img:nth-of-type(4) {
-	left: 19px;
-}
-.hero div img:nth-of-type(5) {
-	left: 0px;
 }
