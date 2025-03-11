@@ -181,7 +181,10 @@
 				r: 55,
 				xPercent: pos.xPercent,
 				yPercent: pos.yPercent,
-				shapeType: ['blob', 'squircle', 'polygon', 'super'][i % 4]
+				shapeType: ['blob', 'squircle', 'polygon', 'super'][i % 4],
+				fillColor: i % 2 === 0 ? 'var(--orange-9)' : 'var(--pink-9)',
+				strokeColor: i % 2 === 0 ? 'var(--orange-6)' : 'var(--pink-6)',
+				strokeWidth: 1
 			}));
 		}, 0);
 
@@ -227,13 +230,33 @@
 				"
 			>
 				{#if node.shapeType === 'blob'}
-					<Blob />
+					<Blob
+						fillColor={node.fillColor}
+						strokeColor={node.strokeColor}
+						strokeWidth={node.strokeWidth}
+					/>
 				{:else if node.shapeType === 'squircle'}
-					<Squircle />
+					<Squircle
+						fillColor={node.fillColor}
+						strokeColor={node.strokeColor}
+						strokeWidth={node.strokeWidth}
+					/>
 				{:else if node.shapeType === 'polygon'}
-					<Polygon cornerCount={Math.floor(Math.random() * 5) + 3} bend={Math.random()} />
+					<Polygon
+						cornerCount={Math.floor(Math.random() * 5) + 3}
+						bend={Math.random()}
+						fillColor={node.fillColor}
+						strokeColor={node.strokeColor}
+						strokeWidth={node.strokeWidth}
+					/>
 				{:else if node.shapeType === 'super'}
-					<Super ratio={1 + Math.random()} m={Math.floor(Math.random() * 20) + 5} />
+					<Super
+						ratio={1 + Math.random()}
+						m={Math.floor(Math.random() * 20) + 5}
+						fillColor={node.fillColor}
+						strokeColor={node.strokeColor}
+						strokeWidth={node.strokeWidth}
+					/>
 				{/if}
 			</div>
 		{/each}
