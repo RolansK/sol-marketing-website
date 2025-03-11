@@ -45,7 +45,7 @@ h1 {
 	line-height: 100%;
 	letter-spacing: -1.25%;
 	font-variation-settings:
-		'wght' 390,
+		'wght' 385,
 		'opsz' 15;
 }
 
@@ -82,7 +82,7 @@ main {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-	height: 100vh;
+	height: fit-content;
 }
 
 button {
@@ -106,6 +106,7 @@ nav {
 		rgba(0, 0, 0, 0.09) 0px 0.75px 0.75px -0.75px,
 		rgba(0, 0, 0, 0.09) 0px 2.75px 2.75px -1.75px,
 		rgba(0, 0, 0, 0.09) 0px 12px 12px -2.5px;
+	z-index: 10;
 	transition: var(--transition-1);
 }
 
@@ -119,6 +120,20 @@ section {
 	height: 100%;
 	justify-content: center;
 	align-items: center;
+}
+
+iframe {
+	z-index: 1;
+	border: none;
+	height: auto;
+	width: 100%;
+	max-width: 960;
+	max-height: 90%;
+	aspect-ratio: 1.33;
+	border-radius: 6px;
+	box-shadow:
+		0px 0px 1px rgba(0, 0, 0, 0.05),
+		0px 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .nav-links {
@@ -314,6 +329,7 @@ nav:hover .button-cta {
 	font-style: italic;
 	letter-spacing: -1%;
 	font-family: 'Source Serif 4', serif;
+	font-size: var(--font-size-body);
 }
 
 .hero div h1 {
@@ -336,7 +352,7 @@ nav:hover .button-cta {
 	position: absolute;
 	width: 50px;
 	height: 50px;
-	top: 55px;
+	top: 56px;
 	left: 165px;
 }
 
@@ -348,6 +364,15 @@ nav:hover .button-cta {
 .hero div button:nth-of-type(2) {
 	left: 182px;
 	bottom: 0px;
+}
+
+/* Demo */
+.demo {
+	box-sizing: border-box;
+	height: 100vh;
+	display: flex;
+	padding: 200px;
+	background-color: green;
 }
 
 .contact-grid {
