@@ -1,5 +1,5 @@
 <script>
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
 
 	let forceGraphContainer;
@@ -8,11 +8,10 @@
 	let draggedNode = $state(null);
 	let isDragging = $state(false);
 
-	onMount(async () => {
-		await tick();
+	onMount(() => {
 		const { clientWidth: w, clientHeight: h } = forceGraphContainer;
 
-		nodes = Array.from({ length: 25 }, (_, i) => ({
+		nodes = d3.range(25).map((i) => ({
 			id: i,
 			r: Math.random() * 16 + 8,
 			x: Math.random() * w,
@@ -32,37 +31,36 @@
 			.force('x', d3.forceX((d) => d.initialX).strength(0.1))
 			.force('y', d3.forceY((d) => d.initialY).strength(0.1))
 			.alphaDecay(0.01)
-			.on('tick', () => (nodes = [...nodes]))
-			.on('tick.bounds', () =>
+			.on('tick', () => {
+				nodes = [...nodes]; // Trigger update
 				nodes.forEach((node) => {
 					node.x = Math.max(node.r, Math.min(w - node.r, node.x));
 					node.y = Math.max(node.r, Math.min(h - node.r, node.y));
-				})
-			);
+				});
+			});
 
-		const handleMove = ({ clientX, clientY }) => {
+		const moveHandler = ({ clientX, clientY }) => {
 			if (!isDragging || !draggedNode) return;
 			const rect = forceGraphContainer.getBoundingClientRect();
 			[draggedNode.fx, draggedNode.fy] = [clientX - rect.left, clientY - rect.top];
 		};
 
-		document.addEventListener('pointermove', handleMove);
+		document.addEventListener('pointermove', moveHandler);
 		document.addEventListener('pointerup', () => {
 			isDragging = false;
-			if (draggedNode) [draggedNode.fx, draggedNode.fy] = [null, null];
+			draggedNode && ([draggedNode.fx, draggedNode.fy] = [null, null]);
 			draggedNode = null;
 		});
 
 		return () => {
-			document.removeEventListener('pointermove', handleMove);
+			document.removeEventListener('pointermove', moveHandler);
 			simulation?.stop();
 		};
 	});
 
 	function handleNodePointerDown(e, node) {
 		e.preventDefault();
-		isDragging = true;
-		draggedNode = node;
+		(isDragging = true) && (draggedNode = node);
 		simulation?.alphaTarget(0.1).restart();
 		[node.fx, node.fy] = [node.x, node.y];
 	}
