@@ -14,32 +14,29 @@
 
 	// Create nodes when component mounts
 	onMount(async () => {
-		// Wait for DOM to be ready
 		await tick();
 
-		// Get dimensions from container
-		containerWidth = forceGraphContainer.clientWidth;
-		containerHeight = forceGraphContainer.clientHeight;
+		// Simplified container measurement
+		const { clientWidth: w, clientHeight: h } = forceGraphContainer;
+		[containerWidth, containerHeight] = [w, h];
+		const centerX = w / 2,
+			centerY = h / 2;
 
-		// Create nodes with dynamic dimensions
-		const tempNodes = [];
-		for (let i = 0; i < 50; i++) {
-			tempNodes.push({
-				id: i,
-				x: Math.random() * containerWidth,
-				y: Math.random() * containerHeight,
-				r: Math.random() * 8 + 3,
-				initialX: Math.random() * containerWidth,
-				initialY: Math.random() * containerHeight
-			});
-		}
-		nodes = tempNodes;
+		// Simplified node creation
+		nodes = Array.from({ length: 50 }, (_, i) => ({
+			id: i,
+			x: Math.random() * w,
+			y: Math.random() * h,
+			r: Math.random() * 8 + 3,
+			initialX: Math.random() * w,
+			initialY: Math.random() * h
+		}));
 
-		// Create force simulation
+		// Consolidated force simulation setup
 		simulation = d3
 			.forceSimulation(nodes)
 			.force('charge', d3.forceManyBody().strength(-30))
-			.force('center', d3.forceCenter(containerWidth / 2, containerHeight / 2))
+			.force('center', d3.forceCenter(centerX, centerY))
 			.force(
 				'collision',
 				d3.forceCollide().radius((d) => d.r + 1)
@@ -47,60 +44,47 @@
 			.force('x', d3.forceX((d) => d.initialX).strength(0.1))
 			.force('y', d3.forceY((d) => d.initialY).strength(0.1))
 			.alphaDecay(0.01)
-			.on('tick', () => {
-				// Force reactivity update
-				nodes = [...nodes];
-			});
+			.on('tick', () => (nodes = [...nodes]))
+			.on('tick.bounds', () => nodes.forEach(clampPosition));
 
-		// Fix positions within boundaries
-		simulation.on('tick.bounds', () => {
-			nodes.forEach((node) => {
-				// Keep nodes within container boundaries
-				node.x = Math.max(node.r, Math.min(containerWidth - node.r, node.x));
-				node.y = Math.max(node.r, Math.min(containerHeight - node.r, node.y));
-			});
-		});
+		// Boundary enforcement helper
+		function clampPosition(node) {
+			node.x = Math.max(node.r, Math.min(containerWidth - node.r, node.x));
+			node.y = Math.max(node.r, Math.min(containerHeight - node.r, node.y));
+		}
 
-		// Set up global mouse events for dragging
-		document.addEventListener('mousemove', handleMouseMove);
-		document.addEventListener('mouseup', handleMouseUp);
+		// Streamlined event handlers
+		const moveHandler = (e) => {
+			if (!isDragging || !draggedNode) return;
+			const rect = forceGraphContainer.getBoundingClientRect();
+			[draggedNode.fx, draggedNode.fy] = [e.clientX - rect.left, e.clientY - rect.top];
+		};
+
+		const upHandler = () => {
+			if (!isDragging) return;
+			isDragging = false;
+			simulation?.alphaTarget(0);
+			if (draggedNode) [draggedNode.fx, draggedNode.fy] = [null, null];
+			draggedNode = null;
+		};
+
+		document.addEventListener('mousemove', moveHandler);
+		document.addEventListener('mouseup', upHandler);
 
 		return () => {
-			document.removeEventListener('mousemove', handleMouseMove);
-			document.removeEventListener('mouseup', handleMouseUp);
-			if (simulation) simulation.stop();
+			document.removeEventListener('mousemove', moveHandler);
+			document.removeEventListener('mouseup', upHandler);
+			simulation?.stop();
 		};
 	});
 
-	// Handle node dragging
-	function handleNodeMouseDown(event, node) {
-		if (!simulation) return;
-
-		event.preventDefault();
+	// Simplified drag handler
+	function handleNodeMouseDown(e, node) {
+		e.preventDefault();
 		isDragging = true;
 		draggedNode = node;
-		simulation.alphaTarget(0.1).restart();
-		node.fx = node.x;
-		node.fy = node.y;
-	}
-
-	function handleMouseMove(event) {
-		if (!isDragging || !draggedNode || !simulation) return;
-
-		// Update node position based on mouse movement
-		const rect = forceGraphContainer.getBoundingClientRect();
-		draggedNode.fx = event.clientX - rect.left;
-		draggedNode.fy = event.clientY - rect.top;
-	}
-
-	function handleMouseUp() {
-		if (!isDragging || !draggedNode || !simulation) return;
-
-		isDragging = false;
-		simulation.alphaTarget(0);
-		draggedNode.fx = null;
-		draggedNode.fy = null;
-		draggedNode = null;
+		simulation?.alphaTarget(0.1).restart();
+		[node.fx, node.fy] = [node.x, node.y];
 	}
 </script>
 
