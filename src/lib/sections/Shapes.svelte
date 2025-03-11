@@ -111,6 +111,59 @@
 		};
 	};
 
+	function generateEvenDistribution(w, h, n = 15) {
+		// Generate initial grid points with jitter
+		const cols = Math.ceil(Math.sqrt((n * w) / h));
+		const rows = Math.ceil(n / cols);
+		const cw = w / cols,
+			ch = h / rows;
+
+		let points = Array.from({ length: n }, (_, i) => ({
+			x: ((i % cols) + 0.5) * cw + (Math.random() - 0.5) * cw * 0.5,
+			y: (Math.floor(i / cols) + 0.5) * ch + (Math.random() - 0.5) * ch * 0.5
+		})).map((p) => ({ x: Math.max(0, Math.min(w, p.x)), y: Math.max(0, Math.min(h, p.y)) }));
+
+		// Lloyd's relaxation iterations
+		for (let i = 0; i < 3; i++) {
+			points = points.map((p) => {
+				const minDist = Math.min(
+					...points.map((q) => (p === q ? Infinity : Math.hypot(p.x - q.x, p.y - q.y)))
+				);
+
+				const samples = Array.from({ length: 20 }, () => {
+					const a = Math.random() * Math.PI * 2;
+					const r = minDist * 1.5 * Math.random();
+					return { x: p.x + Math.cos(a) * r, y: p.y + Math.sin(a) * r };
+				}).filter((s) => s.x >= 0 && s.x < w && s.y >= 0 && s.y < h);
+
+				const centroid = samples.reduce(
+					(acc, s) => {
+						const closest = points.reduce(
+							(a, b, j) =>
+								Math.hypot(s.x - b.x, s.y - b.y) < a.d
+									? { i: j, d: Math.hypot(s.x - b.x, s.y - b.y) }
+									: a,
+							{ d: Infinity, i: -1 }
+						);
+						return closest.i === points.indexOf(p)
+							? { x: acc.x + s.x, y: acc.y + s.y, c: acc.c + 1 }
+							: acc;
+					},
+					{ x: 0, y: 0, c: 0 }
+				);
+
+				return centroid.c ? { x: centroid.x / centroid.c, y: centroid.y / centroid.c } : p;
+			});
+		}
+
+		return points.map((p) => ({
+			x: p.x,
+			y: p.y,
+			xPercent: (p.x / w) * 100,
+			yPercent: (p.y / h) * 100
+		}));
+	}
+
 	onMount(() => {
 		const updateContainerSize = () => {
 			if (!forceGraphContainer) return;
@@ -121,51 +174,11 @@
 		updateContainerSize();
 
 		setTimeout(() => {
-			const centerX = containerRect.w / 2;
-			const centerY = containerRect.h / 2;
-			const maxRadiusX = centerX * 0.95; // 95% of available width
-			const maxRadiusY = centerY * 0.95; // 95% of available height
-			const minDistance = 70; // Minimum distance between nodes
-
-			const positions = [];
-
-			for (let i = 0; i < 20; i++) {
-				let valid = false;
-				let attempts = 0;
-				let x, y;
-				let xPercent, yPercent;
-
-				const goldenAngle = Math.PI * (3 - Math.sqrt(5));
-				const angle = i * goldenAngle;
-
-				while (!valid && attempts < 50) {
-					const normalizedRandom = Math.random();
-					const radiusFactor = Math.sqrt(normalizedRandom);
-
-					const radiusX = radiusFactor * maxRadiusX;
-					const radiusY = radiusFactor * maxRadiusY;
-
-					x = centerX + Math.cos(angle) * radiusX;
-					y = centerY + Math.sin(angle) * radiusY;
-
-					xPercent = (x / containerRect.w) * 100;
-					yPercent = (y / containerRect.h) * 100;
-
-					valid = positions.every((pos) => {
-						const dx = pos.x - x;
-						const dy = pos.y - y;
-						return Math.sqrt(dx * dx + dy * dy) >= minDistance;
-					});
-
-					attempts++;
-				}
-
-				positions.push({ x, y, xPercent, yPercent });
-			}
+			const positions = generateEvenDistribution(containerRect.w, containerRect.h, 15);
 
 			nodes = positions.map((pos, i) => ({
 				id: i,
-				r: Math.random() * 10 + 50,
+				r: 55,
 				xPercent: pos.xPercent,
 				yPercent: pos.yPercent,
 				shapeType: ['blob', 'squircle', 'polygon', 'super'][i % 4]
