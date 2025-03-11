@@ -406,6 +406,7 @@ nav:hover .button-cta {
 
 .force-graph {
 	position: relative;
+	overflow: hidden;
 	box-sizing: border-box;
 	height: 100%;
 	width: 50%;

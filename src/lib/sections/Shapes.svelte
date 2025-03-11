@@ -3,35 +3,31 @@
 	import * as d3 from 'd3';
 
 	let forceGraphContainer;
-
 	let nodes = $state([]);
-	let containerWidth = $state(0);
-	let containerHeight = $state(0);
 	let simulation = $state(null);
 	let draggedNode = $state(null);
 	let isDragging = $state(false);
 
 	onMount(async () => {
 		await tick();
+		const { clientWidth: w, clientHeight: h } = forceGraphContainer;
 
-		const { clientWidth: containerWidth, clientHeight: containerHeight } = forceGraphContainer;
-
-		nodes = [...Array(25)].map((_, i) => ({
+		nodes = Array.from({ length: 25 }, (_, i) => ({
 			id: i,
-			x: Math.random() * containerWidth,
-			y: Math.random() * containerHeight,
 			r: Math.random() * 16 + 8,
-			initialX: Math.random() * containerWidth,
-			initialY: Math.random() * containerHeight
+			x: Math.random() * w,
+			y: Math.random() * h,
+			initialX: Math.random() * w,
+			initialY: Math.random() * h
 		}));
 
 		simulation = d3
 			.forceSimulation(nodes)
 			.force('charge', d3.forceManyBody().strength(-30))
-			.force('center', d3.forceCenter(containerWidth / 2, containerHeight / 2))
+			.force('center', d3.forceCenter(w / 2, h / 2))
 			.force(
 				'collision',
-				d3.forceCollide().radius((d) => d.r + 1)
+				d3.forceCollide((d) => d.r + 1)
 			)
 			.force('x', d3.forceX((d) => d.initialX).strength(0.1))
 			.force('y', d3.forceY((d) => d.initialY).strength(0.1))
@@ -39,21 +35,20 @@
 			.on('tick', () => (nodes = [...nodes]))
 			.on('tick.bounds', () =>
 				nodes.forEach((node) => {
-					node.x = Math.max(node.r, Math.min(containerWidth - node.r, node.x));
-					node.y = Math.max(node.r, Math.min(containerHeight - node.r, node.y));
+					node.x = Math.max(node.r, Math.min(w - node.r, node.x));
+					node.y = Math.max(node.r, Math.min(h - node.r, node.y));
 				})
 			);
 
-		const handleMove = (e) => {
+		const handleMove = ({ clientX, clientY }) => {
 			if (!isDragging || !draggedNode) return;
 			const rect = forceGraphContainer.getBoundingClientRect();
-			[draggedNode.fx, draggedNode.fy] = [e.clientX - rect.left, e.clientY - rect.top];
+			[draggedNode.fx, draggedNode.fy] = [clientX - rect.left, clientY - rect.top];
 		};
 
 		document.addEventListener('pointermove', handleMove);
 		document.addEventListener('pointerup', () => {
 			isDragging = false;
-			simulation.alphaTarget(0);
 			if (draggedNode) [draggedNode.fx, draggedNode.fy] = [null, null];
 			draggedNode = null;
 		});
