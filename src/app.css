@@ -415,6 +415,21 @@ nav:hover .button-cta {
 	align-items: center;
 }
 
+.node-container {
+	position: absolute;
+	cursor: grab;
+	transform-origin: center center;
+	transition: transform 0.3s var(--easing-1);
+}
+
+.node-container:hover {
+	transform: scale(1.1);
+}
+
+.node-container:active {
+	cursor: grabbing;
+}
+
 .node {
 	position: absolute;
 	background-color: var(--grey-1);
