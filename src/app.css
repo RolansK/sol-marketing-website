@@ -408,7 +408,33 @@ nav:hover .button-cta {
 	box-sizing: border-box;
 	height: 100%;
 	width: 50%;
-	background-color: red;
+	background-color: var(--beige-9);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.force-graph {
+	background-color: transparent;
+	border-radius: 8px;
+	width: 50%;
+	height: 100%;
+}
+
+.node {
+	fill: var(--grey-1);
+	stroke: var(--grey-10);
+	stroke-width: 1px;
+	transition: fill 0.3s var(--easing-1);
+	cursor: grab;
+}
+
+.node:hover {
+	fill: var(--beige-5);
+}
+
+.node:active {
+	cursor: grabbing;
 }
 
 .components h2,

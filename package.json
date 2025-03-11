@@ -26,6 +26,7 @@
 	},
 	"dependencies": {
 		"@fontsource-variable/source-serif-4": "^5.2.5",
-		"@fontsource/source-serif-4": "^5.1.1"
+		"@fontsource/source-serif-4": "^5.1.1",
+		"d3": "^7.9.0"
 	}
 }
