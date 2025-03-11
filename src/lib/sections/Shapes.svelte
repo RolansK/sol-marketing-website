@@ -1,6 +1,5 @@
 <script>
 	import { onMount } from 'svelte';
-	import * as d3 from 'd3';
 	import Blob from '$lib/components/svg/Blob.svelte';
 	import Squircle from '$lib/components/svg/Squircle.svelte';
 	import Polygon from '$lib/components/svg/Polygon.svelte';
@@ -8,111 +7,143 @@
 
 	let forceGraphContainer;
 	let nodes = $state([]);
-	let simulation = $state(null);
-	let draggedNode = $state(null);
-	let isDragging = $state(false);
-	let prevW = 0;
-	let prevH = 0;
+	let containerRect = $state({ w: 0, h: 0 });
 
-	onMount(() => {
-		const handleResize = () => {
-			if (!simulation) return;
-			requestAnimationFrame(() => {
-				const { clientWidth: w, clientHeight: h } = forceGraphContainer;
-				if (!w || !h || (w === prevW && h === prevH)) return;
+	const dragAction = (element, node) => {
+		let lastPos = { x: 0, y: 0 };
+		let velocity = { x: 0, y: 0 };
+		let lastTime = 0;
+		let isDragging = false;
+		let animationId = null;
 
-				if (prevW > 0 && prevH > 0) {
-					const xRatio = w / prevW;
-					const yRatio = h / prevH;
+		function updatePosition(x, y) {
+			const boundedX = Math.max(node.r, Math.min(containerRect.w - node.r, x));
+			const boundedY = Math.max(node.r, Math.min(containerRect.h - node.r, y));
 
-					nodes = nodes.map((node) => ({
-						...node,
-						x: Math.max(node.r, Math.min(w - node.r, node.x * xRatio)),
-						y: Math.max(node.r, Math.min(h - node.r, node.y * yRatio))
-					}));
-				}
-
-				// Update center and collision forces only
-				simulation.force('center', d3.forceCenter(w / 2, h / 2));
-				simulation.force(
-					'collision',
-					d3.forceCollide((d) => d.r + 1)
-				);
-
-				simulation.nodes(nodes);
-				simulation.alpha(0.3).restart();
-
-				prevW = w;
-				prevH = h;
-			});
-		};
-
-		const resizeObserver = new ResizeObserver(handleResize);
-		if (forceGraphContainer) {
-			resizeObserver.observe(forceGraphContainer);
+			node.x = boundedX;
+			node.y = boundedY;
+			nodes = [...nodes]; // Trigger reactivity
 		}
 
-		const initSimulation = () => {
-			const { clientWidth: w, clientHeight: h } = forceGraphContainer;
-			if (w === 0 || h === 0) {
-				requestAnimationFrame(initSimulation);
-				return;
+		function handleDown(e) {
+			e.preventDefault();
+			animationId && (cancelAnimationFrame(animationId), (animationId = null));
+
+			isDragging = true;
+			element.style.cursor = 'grabbing';
+
+			const { left, top } = forceGraphContainer.getBoundingClientRect();
+			const { clientX, clientY } = e;
+			const [mouseX, mouseY] = [clientX - left, clientY - top];
+			const [offsetX, offsetY] = [mouseX - node.x, mouseY - node.y];
+
+			[lastTime, velocity] = [performance.now(), { x: 0, y: 0 }];
+			lastPos = { x: mouseX, y: mouseY };
+
+			function handleMove(e) {
+				if (!isDragging) return;
+
+				const now = performance.now();
+				const deltaTime = now - lastTime;
+				const rect = forceGraphContainer.getBoundingClientRect();
+
+				const newPos = {
+					x: e.clientX - rect.left - offsetX,
+					y: e.clientY - rect.top - offsetY
+				};
+
+				// Calculate velocity
+				if (deltaTime > 0) {
+					velocity.x = ((newPos.x - lastPos.x) / deltaTime) * 16; // Scale to approximately pixels per frame
+					velocity.y = ((newPos.y - lastPos.y) / deltaTime) * 16;
+				}
+
+				lastPos = newPos;
+				lastTime = now;
+
+				updatePosition(newPos.x, newPos.y);
 			}
 
-			nodes = d3.range(20).map((i) => ({
-				id: i,
-				r: Math.random() * 30 + 60,
-				x: Math.random() * w,
-				y: Math.random() * h,
-				shapeType: ['blob', 'squircle', 'polygon', 'super'][i % 4]
-			}));
-
-			simulation = d3
-				.forceSimulation(nodes)
-				.force('charge', d3.forceManyBody().strength(-30))
-				.force('center', d3.forceCenter(w / 2, h / 2))
-				.force(
-					'collision',
-					d3.forceCollide((d) => d.r + 1)
-				)
-				.alphaDecay(0.01)
-				.on('tick', () => {
-					nodes = [...nodes];
-					nodes.forEach((node) => {
-						node.x = Math.max(node.r, Math.min(w - node.r, node.x));
-						node.y = Math.max(node.r, Math.min(h - node.r, node.y));
-					});
-				});
-
-			const moveHandler = ({ clientX, clientY }) => {
-				if (!isDragging || !draggedNode) return;
-				const rect = forceGraphContainer.getBoundingClientRect();
-				[draggedNode.fx, draggedNode.fy] = [clientX - rect.left, clientY - rect.top];
-			};
-
-			document.addEventListener('pointermove', moveHandler);
-			document.addEventListener('pointerup', () => {
+			function handleUp(e) {
+				if (!isDragging) return;
 				isDragging = false;
-				draggedNode && ([draggedNode.fx, draggedNode.fy] = [null, null]);
-				draggedNode = null;
-			});
+				element.style.cursor = 'grab';
+
+				// Apply inertia
+				function applyInertia() {
+					const friction = 0.95;
+					velocity.x *= friction;
+					velocity.y *= friction;
+
+					updatePosition(node.x + velocity.x, node.y + velocity.y);
+
+					if (Math.abs(velocity.x) > 0.5 || Math.abs(velocity.y) > 0.5) {
+						animationId = requestAnimationFrame(applyInertia);
+					}
+				}
+
+				if (Math.abs(velocity.x) > 0.5 || Math.abs(velocity.y) > 0.5) {
+					animationId = requestAnimationFrame(applyInertia);
+				}
+
+				document.removeEventListener('pointermove', handleMove);
+				document.removeEventListener('pointerup', handleUp);
+			}
+
+			document.addEventListener('pointermove', handleMove);
+			document.addEventListener('pointerup', handleUp);
+		}
+
+		element.addEventListener('pointerdown', handleDown);
+
+		return {
+			destroy() {
+				element.removeEventListener('pointerdown', handleDown);
+				if (animationId) {
+					cancelAnimationFrame(animationId);
+				}
+			}
+		};
+	};
+
+	onMount(() => {
+		const updateContainerSize = () => {
+			if (!forceGraphContainer) return;
+			const rect = forceGraphContainer.getBoundingClientRect();
+			containerRect = { w: rect.width, h: rect.height };
 		};
 
-		requestAnimationFrame(initSimulation);
+		updateContainerSize();
+
+		setTimeout(() => {
+			// Initialize nodes with random positions
+			nodes = Array.from({ length: 20 }, (_, i) => ({
+				id: i,
+				r: Math.random() * 10 + 50,
+				x: Math.random() * (containerRect.w - 120) + 60, // Ensure within bounds
+				y: Math.random() * (containerRect.h - 120) + 60, // Ensure within bounds
+				shapeType: ['blob', 'squircle', 'polygon', 'super'][i % 4]
+			}));
+		}, 0);
+
+		const resizeObserver = new ResizeObserver(() => {
+			updateContainerSize();
+
+			if (nodes.length) {
+				nodes = nodes.map((node) => ({
+					...node,
+					x: Math.max(node.r, Math.min(containerRect.w - node.r, node.x)),
+					y: Math.max(node.r, Math.min(containerRect.h - node.r, node.y))
+				}));
+			}
+		});
+
+		resizeObserver.observe(forceGraphContainer);
 
 		return () => {
 			resizeObserver.disconnect();
-			document.removeEventListener('pointermove', moveHandler);
-			simulation?.stop();
 		};
 	});
-
-	function handleNodePointerDown(e, node) {
-		e.preventDefault();
-		(isDragging = true) && (draggedNode = node);
-		simulation?.alphaTarget(0.1).restart();
-		[node.fx, node.fy] = [node.x, node.y];
-	}
 </script>
 
 <section class="components">
@@ -128,14 +159,17 @@
 		{#each nodes as node (node.id)}
 			<div
 				class="node-container"
+				use:dragAction={node}
 				style="
+					position: absolute;
 					width: {node.r * 2}px;
 					height: {node.r * 2}px;
 					left: {node.x - node.r}px;
 					top: {node.y - node.r}px;
-					cursor: {isDragging && draggedNode === node ? 'grabbing' : 'grab'};
+					cursor: grab;
+					touch-action: none;
+					user-select: none;
 				"
-				onpointerdown={(e) => handleNodePointerDown(e, node)}
 			>
 				{#if node.shapeType === 'blob'}
 					<Blob />
