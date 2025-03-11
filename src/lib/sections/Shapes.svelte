@@ -50,8 +50,8 @@
 			[draggedNode.fx, draggedNode.fy] = [e.clientX - rect.left, e.clientY - rect.top];
 		};
 
-		document.addEventListener('mousemove', handleMove);
-		document.addEventListener('mouseup', () => {
+		document.addEventListener('pointermove', handleMove);
+		document.addEventListener('pointerup', () => {
 			isDragging = false;
 			simulation.alphaTarget(0);
 			if (draggedNode) [draggedNode.fx, draggedNode.fy] = [null, null];
@@ -59,12 +59,12 @@
 		});
 
 		return () => {
-			document.removeEventListener('mousemove', handleMove);
+			document.removeEventListener('pointermove', handleMove);
 			simulation?.stop();
 		};
 	});
 
-	function handleNodeMouseDown(e, node) {
+	function handleNodePointerDown(e, node) {
 		e.preventDefault();
 		isDragging = true;
 		draggedNode = node;
@@ -96,7 +96,7 @@
 					top: {node.y - node.r}px;
 					cursor: {isDragging && draggedNode === node ? 'grabbing' : 'grab'};
 				"
-				onmousedown={(e) => handleNodeMouseDown(e, node)}
+				onpointerdown={(e) => handleNodePointerDown(e, node)}
 			></div>
 		{/each}
 	</div>
