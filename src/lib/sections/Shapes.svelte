@@ -14,24 +14,21 @@
 	onMount(async () => {
 		await tick();
 
-		const { clientWidth: w, clientHeight: h } = forceGraphContainer;
-		[containerWidth, containerHeight] = [w, h];
-		const centerX = w / 2,
-			centerY = h / 2;
+		const { clientWidth: containerWidth, clientHeight: containerHeight } = forceGraphContainer;
 
-		nodes = Array.from({ length: 50 }, (_, i) => ({
+		nodes = [...Array(25)].map((_, i) => ({
 			id: i,
-			x: Math.random() * w,
-			y: Math.random() * h,
+			x: Math.random() * containerWidth,
+			y: Math.random() * containerHeight,
 			r: Math.random() * 16 + 8,
-			initialX: Math.random() * w,
-			initialY: Math.random() * h
+			initialX: Math.random() * containerWidth,
+			initialY: Math.random() * containerHeight
 		}));
 
 		simulation = d3
 			.forceSimulation(nodes)
 			.force('charge', d3.forceManyBody().strength(-30))
-			.force('center', d3.forceCenter(centerX, centerY))
+			.force('center', d3.forceCenter(containerWidth / 2, containerHeight / 2))
 			.force(
 				'collision',
 				d3.forceCollide().radius((d) => d.r + 1)
@@ -40,33 +37,29 @@
 			.force('y', d3.forceY((d) => d.initialY).strength(0.1))
 			.alphaDecay(0.01)
 			.on('tick', () => (nodes = [...nodes]))
-			.on('tick.bounds', () => nodes.forEach(clampPosition));
+			.on('tick.bounds', () =>
+				nodes.forEach((node) => {
+					node.x = Math.max(node.r, Math.min(containerWidth - node.r, node.x));
+					node.y = Math.max(node.r, Math.min(containerHeight - node.r, node.y));
+				})
+			);
 
-		function clampPosition(node) {
-			node.x = Math.max(node.r, Math.min(containerWidth - node.r, node.x));
-			node.y = Math.max(node.r, Math.min(containerHeight - node.r, node.y));
-		}
-
-		const moveHandler = (e) => {
+		const handleMove = (e) => {
 			if (!isDragging || !draggedNode) return;
 			const rect = forceGraphContainer.getBoundingClientRect();
 			[draggedNode.fx, draggedNode.fy] = [e.clientX - rect.left, e.clientY - rect.top];
 		};
 
-		const upHandler = () => {
-			if (!isDragging) return;
+		document.addEventListener('mousemove', handleMove);
+		document.addEventListener('mouseup', () => {
 			isDragging = false;
-			simulation?.alphaTarget(0);
+			simulation.alphaTarget(0);
 			if (draggedNode) [draggedNode.fx, draggedNode.fy] = [null, null];
 			draggedNode = null;
-		};
-
-		document.addEventListener('mousemove', moveHandler);
-		document.addEventListener('mouseup', upHandler);
+		});
 
 		return () => {
-			document.removeEventListener('mousemove', moveHandler);
-			document.removeEventListener('mouseup', upHandler);
+			document.removeEventListener('mousemove', handleMove);
 			simulation?.stop();
 		};
 	});
