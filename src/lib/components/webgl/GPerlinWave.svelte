@@ -189,7 +189,7 @@
 		pixelScale = 20,
 		dpi = 2,
 		fps = 60,
-		position = 'relative'
+		css = 'position: relative'
 	} = $props();
 
 	let canvas;
@@ -239,7 +239,7 @@
 
 <canvas
 	bind:this={canvas}
-	style="width: {width}; height: {height}; position: {position}; display: {!glRenderer?.isContextLost()
+	style="width: {width}; height: {height}; {css}; display: {!glRenderer?.isContextLost()
 		? 'block'
 		: 'none'};"
 ></canvas>

@@ -21,7 +21,7 @@
 		waveScale={40}
 		waveSpeed={0}
 		dpi={1}
-		position="absolute"
+		css="position: absolute; left: 0px"
 	/>
 	<DemoVideo />
 </section>

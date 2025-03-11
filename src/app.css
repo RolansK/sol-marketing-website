@@ -124,12 +124,11 @@ section {
 
 iframe {
 	z-index: 1;
+	flex-grow: 1;
 	border: none;
-	height: auto;
-	width: 100%;
-	max-width: 960;
+	max-width: 960px;
 	max-height: 90%;
-	aspect-ratio: 1.33;
+	aspect-ratio: 1.33333;
 	border-radius: 6px;
 	box-shadow:
 		0px 0px 1px rgba(0, 0, 0, 0.05),
@@ -186,7 +185,7 @@ nav:hover .button-nav span {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	padding-left: 8px;
+	padding-left: 10px;
 	border-radius: 20px;
 	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
 	transition: var(--transition-1);
@@ -371,7 +370,7 @@ nav:hover .button-cta {
 	box-sizing: border-box;
 	height: 100vh;
 	display: flex;
-	padding: 200px;
+	padding: 0px 72px 0px 144px;
 	background-color: green;
 }
 
