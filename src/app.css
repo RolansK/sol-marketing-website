@@ -415,22 +415,24 @@ nav:hover .button-cta {
 }
 
 .force-graph {
-	background-color: transparent;
-	border-radius: 8px;
+	position: relative;
+	overflow: hidden;
 	width: 50%;
 	height: 100%;
 }
 
 .node {
-	fill: var(--grey-1);
-	stroke: var(--grey-10);
-	stroke-width: 1px;
-	transition: fill 0.3s var(--easing-1);
+	position: absolute;
+	background-color: var(--grey-1);
+	border: 1px solid var(--grey-1);
+	border-radius: 50%;
+	transition: background-color 0.3s var(--easing-1);
 	cursor: grab;
+	transform-origin: center center;
 }
 
 .node:hover {
-	fill: var(--beige-5);
+	background-color: var(--beige-5);
 }
 
 .node:active {

@@ -1,82 +1,107 @@
 <script>
 	import ComponentSection from '$lib/components/ComponentSection.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import * as d3 from 'd3';
 
-	let forceGraph;
-	let containerWidth = 0;
-	let containerHeight = 0;
+	let forceGraphContainer;
 
-	onMount(() => {
-		// Get dimensions from CSS-computed values
-		containerWidth = forceGraph.parentElement.clientWidth;
-		containerHeight = forceGraph.parentElement.clientHeight;
+	let nodes = $state([]);
+	let containerWidth = $state(0);
+	let containerHeight = $state(0);
+	let simulation = $state(null);
+	let draggedNode = $state(null);
+	let isDragging = $state(false);
+
+	// Create nodes when component mounts
+	onMount(async () => {
+		// Wait for DOM to be ready
+		await tick();
+
+		// Get dimensions from container
+		containerWidth = forceGraphContainer.clientWidth;
+		containerHeight = forceGraphContainer.clientHeight;
 
 		// Create nodes with dynamic dimensions
-		const nodes = Array.from({ length: 50 }, () => ({
-			x: Math.random() * containerWidth,
-			y: Math.random() * containerHeight,
-			r: Math.random() * 8 + 3,
-			initialX: null,
-			initialY: null
-		}));
-
-		const svg = d3.select(forceGraph).attr('width', containerWidth).attr('height', containerHeight);
-
-		// First positioning
-		nodes.forEach((d) => {
-			d.initialX = d.x;
-			d.initialY = d.y;
-		});
+		const tempNodes = [];
+		for (let i = 0; i < 50; i++) {
+			tempNodes.push({
+				id: i,
+				x: Math.random() * containerWidth,
+				y: Math.random() * containerHeight,
+				r: Math.random() * 8 + 3,
+				initialX: Math.random() * containerWidth,
+				initialY: Math.random() * containerHeight
+			});
+		}
+		nodes = tempNodes;
 
 		// Create force simulation
-		const simulation = d3
+		simulation = d3
 			.forceSimulation(nodes)
-			.force('charge', d3.forceManyBody().strength(-15)) // Reduced repulsion
+			.force('charge', d3.forceManyBody().strength(-30))
 			.force('center', d3.forceCenter(containerWidth / 2, containerHeight / 2))
 			.force(
 				'collision',
 				d3.forceCollide().radius((d) => d.r + 1)
 			)
-			.force('x', d3.forceX((d) => d.initialX).strength(0.1)) // Positional forces
+			.force('x', d3.forceX((d) => d.initialX).strength(0.1))
 			.force('y', d3.forceY((d) => d.initialY).strength(0.1))
-			.alphaDecay(0.01); // Slower simulation decay
-
-		// Modify drag handling
-		const dragHandling = d3
-			.drag()
-			.on('start', (event, d) => {
-				if (!event.active) simulation.alphaTarget(0.1).restart();
-				d.fx = d.x;
-				d.fy = d.y;
-			})
-			.on('drag', (event, d) => {
-				d.fx = event.x;
-				d.fy = event.y;
-			})
-			.on('end', (event, d) => {
-				if (!event.active) simulation.alphaTarget(0);
-				d.fx = null; // Release fixed position
-				d.fy = null;
+			.alphaDecay(0.01)
+			.on('tick', () => {
+				// Force reactivity update
+				nodes = [...nodes];
 			});
 
-		// Create nodes in SVG and make them draggable
-		const circles = svg
-			.selectAll('circle')
-			.data(nodes)
-			.enter()
-			.append('circle')
-			.attr('r', (d) => d.r)
-			.attr('cx', (d) => d.x)
-			.attr('cy', (d) => d.y)
-			.attr('class', 'node')
-			.call(dragHandling);
-
-		// Update circle positions on each tick
-		simulation.on('tick', () => {
-			circles.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
+		// Fix positions within boundaries
+		simulation.on('tick.bounds', () => {
+			nodes.forEach((node) => {
+				// Keep nodes within container boundaries
+				node.x = Math.max(node.r, Math.min(containerWidth - node.r, node.x));
+				node.y = Math.max(node.r, Math.min(containerHeight - node.r, node.y));
+			});
 		});
+
+		// Set up global mouse events for dragging
+		document.addEventListener('mousemove', handleMouseMove);
+		document.addEventListener('mouseup', handleMouseUp);
+
+		return () => {
+			document.removeEventListener('mousemove', handleMouseMove);
+			document.removeEventListener('mouseup', handleMouseUp);
+			if (simulation) simulation.stop();
+		};
 	});
+
+	// Handle node dragging
+	function handleNodeMouseDown(event, node) {
+		if (!simulation) return;
+
+		event.preventDefault();
+		isDragging = true;
+		draggedNode = node;
+		simulation.alphaTarget(0.1).restart();
+		node.fx = node.x;
+		node.fy = node.y;
+	}
+
+	function handleMouseMove(event) {
+		if (!isDragging || !draggedNode || !simulation) return;
+
+		// Update node position based on mouse movement
+		const rect = forceGraphContainer.getBoundingClientRect();
+		draggedNode.fx = event.clientX - rect.left;
+		draggedNode.fy = event.clientY - rect.top;
+	}
+
+	function handleMouseUp() {
+		if (!isDragging || !draggedNode || !simulation) return;
+
+		isDragging = false;
+		simulation.alphaTarget(0);
+		draggedNode.fx = null;
+		draggedNode.fy = null;
+		draggedNode = null;
+	}
 </script>
 
 <section class="components">
@@ -88,5 +113,22 @@
 		</p>
 	</span>
 
-	<svg bind:this={forceGraph} class="force-graph"></svg>
+	<div class="force-graph" bind:this={forceGraphContainer}>
+		{#each nodes as node (node.id)}
+			<div
+				class="node"
+				role="button"
+				tabindex="0"
+				aria-label="Draggable node"
+				style="
+					width: {node.r * 2}px;
+					height: {node.r * 2}px;
+					left: {node.x - node.r}px;
+					top: {node.y - node.r}px;
+					cursor: {isDragging && draggedNode === node ? 'grabbing' : 'grab'};
+				"
+				onmousedown={(e) => handleNodeMouseDown(e, node)}
+			></div>
+		{/each}
+	</div>
 </section>
