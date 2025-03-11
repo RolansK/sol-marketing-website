@@ -3,7 +3,7 @@
 
 :root {
 	--font-body: 'Source Serif 4 Variable', serif;
-	--font-size-body: 16.5px;
+	--font-size-body: 18px;
 
 	--grey-10: #ffffff;
 	--grey-9: #f1f1f1;
@@ -45,7 +45,7 @@ h1 {
 	letter-spacing: -1.25%;
 	font-variation-settings:
 		'wght' 390,
-		'opsz' 14.5;
+		'opsz' 15;
 }
 
 h2 {
@@ -213,29 +213,19 @@ nav:hover .button-cta {
 	bottom: 14px;
 }
 
-/* ButtonPrimary */
+/* button-primary */
 .button-primary {
-	min-width: fit-content;
+	width: fit-content;
 	height: 40px;
 	display: flex;
+	padding: 20px;
 	align-items: center;
-	gap: 8px;
-	padding-left: 8px;
+	justify-content: center;
 	border-radius: 20px;
 	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
-	transition: var(--transition-1);
-}
-
-.button-primary svg {
-	min-width: 20px;
-	max-width: 20px;
-	height: 20px;
-	fill: var(--grey-10);
-	transition: var(--transition-1);
-}
-
-.button-primary span {
 	color: var(--grey-10);
+	font-family: var(--font-body);
+	font-size: var(--font-size-body);
 	transition: var(--transition-1);
 }
 
@@ -248,19 +238,43 @@ nav:hover .button-cta {
 	opacity: 0.8;
 }
 
+/* button-secondary */
+.button-secondary {
+	width: fit-content;
+	height: 40px;
+	display: flex;
+	padding: 20px;
+	align-items: center;
+	justify-content: center;
+	background: none;
+	border: 1px solid var(--grey-1);
+	border-radius: 20px;
+	color: var(--grey-1);
+	font-family: var(--font-body);
+	font-size: var(--font-size-body);
+	transition: var(--transition-1);
+}
+
+.button-secondary:hover {
+	opacity: 0.9;
+	border-radius: 4px;
+}
+
+.button-secondary:active {
+	opacity: 0.8;
+}
+
 /* Hero */
 .hero {
 	height: 75vh;
 	display: flex;
 	padding-left: 144px;
-	background-color: red;
 }
 
 .hero div {
 	position: relative;
 	flex-grow: 1;
-	height: 208px;
-	background-color: lightblue;
+	height: 220px;
 }
 
 .hero div img {
@@ -296,6 +310,7 @@ nav:hover .button-cta {
 	position: absolute;
 	left: 118px;
 	top: 4px;
+	font-style: italic;
 }
 
 .hero div h1 {
@@ -324,6 +339,11 @@ nav:hover .button-cta {
 
 .hero div button {
 	position: absolute;
+	bottom: 0px;
+}
+
+.hero div button:nth-of-type(2) {
+	left: 182px;
 	bottom: 0px;
 }
 

@@ -1,5 +1,5 @@
 <script>
-	import ButtonPrimary from '$lib/components/ButtonPrimary.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import Eye from '$lib/icons/eye.svelte';
 </script>
 
@@ -16,7 +16,7 @@
 		<h1>&nbsp;plugin</h1>
 		<h1>for Framer</h1>
 
-		<ButtonPrimary title="Watch the demo" />
-		<ButtonPrimary title="Follow on X" />
+		<Button title="Watch the demo" className="button-primary" />
+		<Button title="Follow on X" className="button-secondary" />
 	</div>
 </section>
