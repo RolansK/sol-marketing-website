@@ -9,8 +9,54 @@
 	let simulation = $state(null);
 	let draggedNode = $state(null);
 	let isDragging = $state(false);
+	let prevW = 0;
+	let prevH = 0;
 
 	onMount(() => {
+		const handleResize = () => {
+			if (!simulation) return;
+			requestAnimationFrame(() => {
+				const { clientWidth: w, clientHeight: h } = forceGraphContainer;
+				if (!w || !h || (w === prevW && h === prevH)) return;
+
+				// Calculate position ratios only if we have previous dimensions
+				if (prevW > 0 && prevH > 0) {
+					const xRatio = w / prevW;
+					const yRatio = h / prevH;
+
+					nodes = nodes.map((node) => ({
+						...node,
+						x: Math.max(node.r, Math.min(w - node.r, node.x * xRatio)),
+						y: Math.max(node.r, Math.min(h - node.r, node.y * yRatio)),
+						initialX: node.initialX * xRatio,
+						initialY: node.initialY * yRatio
+					}));
+				}
+
+				// Update forces with new dimensions
+				simulation.force('center', d3.forceCenter(w / 2, h / 2));
+				simulation.force('x', d3.forceX((d) => d.initialX).strength(0.1));
+				simulation.force('y', d3.forceY((d) => d.initialY).strength(0.1));
+				simulation.force(
+					'collision',
+					d3.forceCollide((d) => d.r + 1)
+				);
+
+				// Update simulation with new nodes and restart
+				simulation.nodes(nodes);
+				simulation.alpha(0.5).restart();
+
+				// Store current dimensions for next resize
+				prevW = w;
+				prevH = h;
+			});
+		};
+
+		const resizeObserver = new ResizeObserver(handleResize);
+		if (forceGraphContainer) {
+			resizeObserver.observe(forceGraphContainer);
+		}
+
 		const initSimulation = () => {
 			const { clientWidth: w, clientHeight: h } = forceGraphContainer;
 			if (w === 0 || h === 0) {
@@ -65,6 +111,7 @@
 		requestAnimationFrame(initSimulation);
 
 		return () => {
+			resizeObserver.disconnect();
 			document.removeEventListener('pointermove', moveHandler);
 			simulation?.stop();
 		};
