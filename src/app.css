@@ -1,5 +1,6 @@
 @import '@fontsource-variable/source-serif-4';
 @import '@fontsource-variable/source-serif-4/opsz.css';
+@import '@fontsource/source-serif-4/400-italic.css';
 
 :root {
 	--font-body: 'Source Serif 4 Variable', serif;
@@ -311,6 +312,8 @@ nav:hover .button-cta {
 	left: 118px;
 	top: 4px;
 	font-style: italic;
+	letter-spacing: -1%;
+	font-family: 'Source Serif 4', serif;
 }
 
 .hero div h1 {
