@@ -1,5 +1,4 @@
 <script>
-	import ComponentSection from '$lib/components/ComponentSection.svelte';
 	import { onMount, tick } from 'svelte';
 	import * as d3 from 'd3';
 
@@ -12,17 +11,14 @@
 	let draggedNode = $state(null);
 	let isDragging = $state(false);
 
-	// Create nodes when component mounts
 	onMount(async () => {
 		await tick();
 
-		// Simplified container measurement
 		const { clientWidth: w, clientHeight: h } = forceGraphContainer;
 		[containerWidth, containerHeight] = [w, h];
 		const centerX = w / 2,
 			centerY = h / 2;
 
-		// Simplified node creation
 		nodes = Array.from({ length: 50 }, (_, i) => ({
 			id: i,
 			x: Math.random() * w,
@@ -32,7 +28,6 @@
 			initialY: Math.random() * h
 		}));
 
-		// Consolidated force simulation setup
 		simulation = d3
 			.forceSimulation(nodes)
 			.force('charge', d3.forceManyBody().strength(-30))
@@ -47,13 +42,11 @@
 			.on('tick', () => (nodes = [...nodes]))
 			.on('tick.bounds', () => nodes.forEach(clampPosition));
 
-		// Boundary enforcement helper
 		function clampPosition(node) {
 			node.x = Math.max(node.r, Math.min(containerWidth - node.r, node.x));
 			node.y = Math.max(node.r, Math.min(containerHeight - node.r, node.y));
 		}
 
-		// Streamlined event handlers
 		const moveHandler = (e) => {
 			if (!isDragging || !draggedNode) return;
 			const rect = forceGraphContainer.getBoundingClientRect();
@@ -78,7 +71,6 @@
 		};
 	});
 
-	// Simplified drag handler
 	function handleNodeMouseDown(e, node) {
 		e.preventDefault();
 		isDragging = true;
