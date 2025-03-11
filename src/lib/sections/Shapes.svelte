@@ -3,6 +3,8 @@
 	import * as d3 from 'd3';
 	import Blob from '$lib/components/svg/Blob.svelte';
 	import Squircle from '$lib/components/svg/Squircle.svelte';
+	import Polygon from '$lib/components/svg/Polygon.svelte';
+	import Super from '$lib/components/svg/Super.svelte';
 
 	let forceGraphContainer;
 	let nodes = $state([]);
@@ -19,7 +21,6 @@
 				const { clientWidth: w, clientHeight: h } = forceGraphContainer;
 				if (!w || !h || (w === prevW && h === prevH)) return;
 
-				// Calculate position ratios only if we have previous dimensions
 				if (prevW > 0 && prevH > 0) {
 					const xRatio = w / prevW;
 					const yRatio = h / prevH;
@@ -27,26 +28,20 @@
 					nodes = nodes.map((node) => ({
 						...node,
 						x: Math.max(node.r, Math.min(w - node.r, node.x * xRatio)),
-						y: Math.max(node.r, Math.min(h - node.r, node.y * yRatio)),
-						initialX: node.initialX * xRatio,
-						initialY: node.initialY * yRatio
+						y: Math.max(node.r, Math.min(h - node.r, node.y * yRatio))
 					}));
 				}
 
-				// Update forces with new dimensions
+				// Update center and collision forces only
 				simulation.force('center', d3.forceCenter(w / 2, h / 2));
-				simulation.force('x', d3.forceX((d) => d.initialX).strength(0.1));
-				simulation.force('y', d3.forceY((d) => d.initialY).strength(0.1));
 				simulation.force(
 					'collision',
 					d3.forceCollide((d) => d.r + 1)
 				);
 
-				// Update simulation with new nodes and restart
 				simulation.nodes(nodes);
-				simulation.alpha(0.5).restart();
+				simulation.alpha(0.3).restart();
 
-				// Store current dimensions for next resize
 				prevW = w;
 				prevH = h;
 			});
@@ -60,7 +55,6 @@
 		const initSimulation = () => {
 			const { clientWidth: w, clientHeight: h } = forceGraphContainer;
 			if (w === 0 || h === 0) {
-				// Check for valid dimensions
 				requestAnimationFrame(initSimulation);
 				return;
 			}
@@ -70,9 +64,7 @@
 				r: Math.random() * 30 + 60,
 				x: Math.random() * w,
 				y: Math.random() * h,
-				initialX: Math.random() * w,
-				initialY: Math.random() * h,
-				isBlob: i % 2 === 0
+				shapeType: ['blob', 'squircle', 'polygon', 'super'][i % 4]
 			}));
 
 			simulation = d3
@@ -83,11 +75,9 @@
 					'collision',
 					d3.forceCollide((d) => d.r + 1)
 				)
-				.force('x', d3.forceX((d) => d.initialX).strength(0.1))
-				.force('y', d3.forceY((d) => d.initialY).strength(0.1))
 				.alphaDecay(0.01)
 				.on('tick', () => {
-					nodes = [...nodes]; // Trigger update
+					nodes = [...nodes];
 					nodes.forEach((node) => {
 						node.x = Math.max(node.r, Math.min(w - node.r, node.x));
 						node.y = Math.max(node.r, Math.min(h - node.r, node.y));
@@ -147,10 +137,14 @@
 				"
 				onpointerdown={(e) => handleNodePointerDown(e, node)}
 			>
-				{#if node.isBlob}
+				{#if node.shapeType === 'blob'}
 					<Blob />
-				{:else}
+				{:else if node.shapeType === 'squircle'}
 					<Squircle />
+				{:else if node.shapeType === 'polygon'}
+					<Polygon cornerCount={Math.floor(Math.random() * 5) + 3} bend={Math.random()} />
+				{:else if node.shapeType === 'super'}
+					<Super ratio={1 + Math.random()} m={Math.floor(Math.random() * 20) + 5} />
 				{/if}
 			</div>
 		{/each}
