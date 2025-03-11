@@ -23,7 +23,7 @@
 			id: i,
 			x: Math.random() * w,
 			y: Math.random() * h,
-			r: Math.random() * 8 + 3,
+			r: Math.random() * 16 + 8,
 			initialX: Math.random() * w,
 			initialY: Math.random() * h
 		}));

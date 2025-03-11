@@ -404,21 +404,14 @@ nav:hover .button-cta {
 	background-color: var(--grey-10);
 }
 
-.components div {
+.force-graph {
+	position: relative;
 	box-sizing: border-box;
 	height: 100%;
 	width: 50%;
-	background-color: var(--beige-9);
 	display: flex;
 	justify-content: center;
 	align-items: center;
-}
-
-.force-graph {
-	position: relative;
-	overflow: hidden;
-	width: 50%;
-	height: 100%;
 }
 
 .node {
