@@ -20,8 +20,9 @@
 			const boundedX = Math.max(node.r, Math.min(containerRect.w - node.r, x));
 			const boundedY = Math.max(node.r, Math.min(containerRect.h - node.r, y));
 
-			node.x = boundedX;
-			node.y = boundedY;
+			node.xPercent = (boundedX / containerRect.w) * 100;
+			node.yPercent = (boundedY / containerRect.h) * 100;
+
 			nodes = [...nodes]; // Trigger reactivity
 		}
 
@@ -32,10 +33,13 @@
 			isDragging = true;
 			element.style.cursor = 'grabbing';
 
+			const pixelX = (node.xPercent / 100) * containerRect.w;
+			const pixelY = (node.yPercent / 100) * containerRect.h;
+
 			const { left, top } = forceGraphContainer.getBoundingClientRect();
 			const { clientX, clientY } = e;
 			const [mouseX, mouseY] = [clientX - left, clientY - top];
-			const [offsetX, offsetY] = [mouseX - node.x, mouseY - node.y];
+			const [offsetX, offsetY] = [mouseX - pixelX, mouseY - pixelY];
 
 			[lastTime, velocity] = [performance.now(), { x: 0, y: 0 }];
 			lastPos = { x: mouseX, y: mouseY };
@@ -52,7 +56,6 @@
 					y: e.clientY - rect.top - offsetY
 				};
 
-				// Calculate velocity
 				if (deltaTime > 0) {
 					velocity.x = ((newPos.x - lastPos.x) / deltaTime) * 16; // Scale to approximately pixels per frame
 					velocity.y = ((newPos.y - lastPos.y) / deltaTime) * 16;
@@ -69,13 +72,15 @@
 				isDragging = false;
 				element.style.cursor = 'grab';
 
-				// Apply inertia
 				function applyInertia() {
 					const friction = 0.95;
 					velocity.x *= friction;
 					velocity.y *= friction;
 
-					updatePosition(node.x + velocity.x, node.y + velocity.y);
+					const pixelX = (node.xPercent / 100) * containerRect.w;
+					const pixelY = (node.yPercent / 100) * containerRect.h;
+
+					updatePosition(pixelX + velocity.x, pixelY + velocity.y);
 
 					if (Math.abs(velocity.x) > 0.5 || Math.abs(velocity.y) > 0.5) {
 						animationId = requestAnimationFrame(applyInertia);
@@ -116,25 +121,61 @@
 		updateContainerSize();
 
 		setTimeout(() => {
-			// Initialize nodes with random positions
-			nodes = Array.from({ length: 20 }, (_, i) => ({
+			const centerX = containerRect.w / 2;
+			const centerY = containerRect.h / 2;
+			const maxRadiusX = centerX * 0.95; // 95% of available width
+			const maxRadiusY = centerY * 0.95; // 95% of available height
+			const minDistance = 70; // Minimum distance between nodes
+
+			const positions = [];
+
+			for (let i = 0; i < 20; i++) {
+				let valid = false;
+				let attempts = 0;
+				let x, y;
+				let xPercent, yPercent;
+
+				const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+				const angle = i * goldenAngle;
+
+				while (!valid && attempts < 50) {
+					const normalizedRandom = Math.random();
+					const radiusFactor = Math.sqrt(normalizedRandom);
+
+					const radiusX = radiusFactor * maxRadiusX;
+					const radiusY = radiusFactor * maxRadiusY;
+
+					x = centerX + Math.cos(angle) * radiusX;
+					y = centerY + Math.sin(angle) * radiusY;
+
+					xPercent = (x / containerRect.w) * 100;
+					yPercent = (y / containerRect.h) * 100;
+
+					valid = positions.every((pos) => {
+						const dx = pos.x - x;
+						const dy = pos.y - y;
+						return Math.sqrt(dx * dx + dy * dy) >= minDistance;
+					});
+
+					attempts++;
+				}
+
+				positions.push({ x, y, xPercent, yPercent });
+			}
+
+			nodes = positions.map((pos, i) => ({
 				id: i,
 				r: Math.random() * 10 + 50,
-				x: Math.random() * (containerRect.w - 120) + 60, // Ensure within bounds
-				y: Math.random() * (containerRect.h - 120) + 60, // Ensure within bounds
+				xPercent: pos.xPercent,
+				yPercent: pos.yPercent,
 				shapeType: ['blob', 'squircle', 'polygon', 'super'][i % 4]
 			}));
 		}, 0);
 
 		const resizeObserver = new ResizeObserver(() => {
 			updateContainerSize();
-
 			if (nodes.length) {
-				nodes = nodes.map((node) => ({
-					...node,
-					x: Math.max(node.r, Math.min(containerRect.w - node.r, node.x)),
-					y: Math.max(node.r, Math.min(containerRect.h - node.r, node.y))
-				}));
+				nodes = [...nodes];
 			}
 		});
 
@@ -164,8 +205,9 @@
 					position: absolute;
 					width: {node.r * 2}px;
 					height: {node.r * 2}px;
-					left: {node.x - node.r}px;
-					top: {node.y - node.r}px;
+					left: {node.xPercent}%;
+					top: {node.yPercent}%;
+					transform: translate(-50%, -50%);
 					cursor: grab;
 					touch-action: none;
 					user-select: none;
