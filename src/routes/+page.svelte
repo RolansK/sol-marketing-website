@@ -1,5 +1,6 @@
 <script>
 	import Hero from '$lib/sections/Hero.svelte';
+	import Demo from '$lib/sections/Demo.svelte';
 </script>
 
 <svelte:head>
@@ -11,3 +12,4 @@
 </svelte:head>
 
 <Hero />
+<Demo />

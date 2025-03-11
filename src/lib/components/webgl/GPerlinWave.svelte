@@ -170,8 +170,8 @@
 }`;
 
 	let {
-		width = 100,
-		height = 100,
+		width = '100px',
+		height = '100px',
 		colors = [
 			{ color: '#fae6e6', position: 0 },
 			{ color: '#e03100', position: 0.35 },
@@ -238,7 +238,7 @@
 
 <canvas
 	bind:this={canvas}
-	style="width: {width}px; height: {height}px; display: {!glRenderer?.isContextLost()
+	style="width: {width}; height: {height}; display: {!glRenderer?.isContextLost()
 		? 'block'
 		: 'none'};"
 ></canvas>

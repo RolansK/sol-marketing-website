@@ -196,8 +196,8 @@
 }`;
 
 	let {
-		width = 100,
-		height = 100,
+		width = '100px',
+		height = '100px',
 		gap = 3.5,
 		offsetToggle = 'row',
 		offsetPercent = 0,
@@ -273,7 +273,7 @@
 
 <canvas
 	bind:this={canvas}
-	style="width: {width}px; height: {height}px; display: {!glRenderer?.isContextLost()
+	style="width: {width}; height: {height}; display: {!glRenderer?.isContextLost()
 		? 'block'
 		: 'none'};"
 ></canvas>
