@@ -10,18 +10,30 @@
 	let containerRect = $state({ w: 0, h: 0 });
 
 	const shapesConfig = [
-		{ type: 'squircle', xPercent: 25, yPercent: 30 },
-		{ type: 'super', xPercent: 75, yPercent: 25, ratio: 1.5, m: 8 },
-		{ type: 'super', xPercent: 60, yPercent: 70, ratio: 1.8, m: 12 },
-		{ type: 'super', xPercent: 35, yPercent: 65, ratio: 2.2, m: 15 },
-		{ type: 'super', xPercent: 15, yPercent: 80, ratio: 1.3, m: 7 },
-		{ type: 'super', xPercent: 85, yPercent: 45, ratio: 1.7, m: 10 },
-		{ type: 'super', xPercent: 45, yPercent: 15, ratio: 2.0, m: 20 },
-		{ type: 'polygon', xPercent: 80, yPercent: 85, cornerCount: 5, bend: 0.3 },
+		{ type: 'super', xPercent: 68, yPercent: 18, ratio: 10, m: 60, n1: -14, n2: 5.1, n3: 38.5 },
+		{ type: 'blob', xPercent: 32, yPercent: 12, pointCount: 40, strength: 2, seed: 17 },
+		{ type: 'super', xPercent: 17, yPercent: 34, ratio: 1, m: 20, n1: 6, n2: -2, n3: 0.6 },
+		{ type: 'super', xPercent: 81, yPercent: 38, ratio: 1, m: 6, n1: 48, n2: 22, n3: 28 },
+		{ type: 'super', xPercent: 54.5, yPercent: 30.5, ratio: 25, m: 6, n1: 5, n2: 1, n3: 1.2 },
+		{ type: 'super', xPercent: 30, yPercent: 45, ratio: 2.6, m: 14, n1: 1, n2: -0.1, n3: 1 },
+		{ type: 'super', xPercent: 49, yPercent: 57, ratio: 1, m: 4, n1: 48, n2: 16, n3: 16 },
+		{ type: 'blob', xPercent: 15, yPercent: 15, pointCount: 3, strength: 9, seed: 12 },
+		{ type: 'super', xPercent: 73.5, yPercent: 53.8, ratio: 0.2, m: 16, n1: 23.1, n2: -5, n3: 4 },
+		{
+			type: 'super',
+			xPercent: 55,
+			yPercent: 70.2,
+			ratio: 50,
+			m: 10,
+			n1: 28.2,
+			n2: -30.8,
+			n3: -3.8
+		},
+		{ type: 'super', xPercent: 82.5, yPercent: 85.5, ratio: 1, m: 6, n1: 9, n2: 50, n3: 10 },
+		{ type: 'squircle', xPercent: 22.5, yPercent: 71.5 },
+		{ type: 'polygon', xPercent: 10, yPercent: 85, cornerCount: 5, bend: 0.3 },
 		{ type: 'polygon', xPercent: 25, yPercent: 50, cornerCount: 3, bend: 0.2 },
-		{ type: 'polygon', xPercent: 65, yPercent: 30, cornerCount: 6, bend: 0.1 },
-		{ type: 'blob', xPercent: 40, yPercent: 85 },
-		{ type: 'blob', xPercent: 15, yPercent: 15 }
+		{ type: 'polygon', xPercent: 65, yPercent: 30, cornerCount: 6, bend: 0.1 }
 	];
 
 	const dragAction = (element, node) => {
@@ -201,6 +213,9 @@
 			>
 				{#if node.shapeType === 'blob'}
 					<Blob
+						pointCount={node.pointCount}
+						strength={node.strength}
+						seed={node.seed}
 						fillColor={node.fillColor}
 						strokeColor={node.strokeColor}
 						strokeWidth={node.strokeWidth}
@@ -223,6 +238,9 @@
 					<Super
 						ratio={node.ratio}
 						m={node.m}
+						n1={node.n1}
+						n2={node.n2}
+						n3={node.n3}
 						fillColor={node.fillColor}
 						strokeColor={node.strokeColor}
 						strokeWidth={node.strokeWidth}
