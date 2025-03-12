@@ -9,132 +9,102 @@
 	let nodes = $state([]);
 	let containerRect = $state({ w: 0, h: 0 });
 
-	const shapeConfig = {
-		minSize: 45,
-		maxSize: 55
-	};
-
-	const springConfig = {
-		stiffness: 0.05,
-		damping: 0.85,
-		precision: 0.01
-	};
-
-	const shapesConfig = [
-		{ type: 'squircle', xPercent: 25, yPercent: 30 },
-		{ type: 'super', xPercent: 75, yPercent: 25, ratio: 1.5, m: 8 },
-		{ type: 'super', xPercent: 60, yPercent: 70, ratio: 1.8, m: 12 },
-		{ type: 'super', xPercent: 35, yPercent: 65, ratio: 2.2, m: 15 },
-		{ type: 'super', xPercent: 15, yPercent: 80, ratio: 1.3, m: 7 },
-		{ type: 'super', xPercent: 85, yPercent: 45, ratio: 1.7, m: 10 },
-		{ type: 'super', xPercent: 45, yPercent: 15, ratio: 2.0, m: 20 },
-		{ type: 'polygon', xPercent: 80, yPercent: 85, cornerCount: 5, bend: 0.3 },
-		{ type: 'polygon', xPercent: 25, yPercent: 50, cornerCount: 3, bend: 0.2 },
-		{ type: 'polygon', xPercent: 65, yPercent: 30, cornerCount: 6, bend: 0.1 },
-		{ type: 'blob', xPercent: 40, yPercent: 85 },
-		{ type: 'blob', xPercent: 15, yPercent: 15 }
+	const shapes = [
+		{ type: 'squircle', x: 25, y: 30 },
+		{ type: 'super', x: 75, y: 25, ratio: 1.5, m: 8 },
+		{ type: 'super', x: 60, y: 70, ratio: 1.8, m: 12 },
+		{ type: 'super', x: 35, y: 65, ratio: 2.2, m: 15 },
+		{ type: 'super', x: 15, y: 80, ratio: 1.3, m: 7 },
+		{ type: 'super', x: 85, y: 45, ratio: 1.7, m: 10 },
+		{ type: 'super', x: 45, y: 15, ratio: 2.0, m: 20 },
+		{ type: 'polygon', x: 80, y: 85, cornerCount: 5, bend: 0.3 },
+		{ type: 'polygon', x: 25, y: 50, cornerCount: 3, bend: 0.2 },
+		{ type: 'polygon', x: 65, y: 30, cornerCount: 6, bend: 0.1 },
+		{ type: 'blob', x: 40, y: 85 },
+		{ type: 'blob', x: 15, y: 15 }
 	];
 
+	const createShape = (config, i) => ({
+		id: i,
+		r: 45 + Math.random() * 10,
+		xPercent: config.x,
+		yPercent: config.y,
+		originalX: config.x,
+		originalY: config.y,
+		shapeType: config.type,
+		fillColor: i % 2 ? 'var(--pink-9)' : 'var(--orange-9)',
+		strokeColor: i % 2 ? 'var(--pink-6)' : 'var(--orange-6)',
+		strokeWidth: 1,
+		...config
+	});
+
 	const dragAction = (element, node) => {
-		let lastPos = { x: 0, y: 0 },
-			velocity = { x: 0, y: 0 },
-			animationId;
-		let isDragging = false;
+		let isDragging, animationId;
+		const startPos = { x: 0, y: 0 },
+			velocity = { x: 0, y: 0 };
 
 		const updatePosition = (x, y) => {
-			const boundedX = Math.max(node.r, Math.min(containerRect.w - node.r, x));
-			const boundedY = Math.max(node.r, Math.min(containerRect.h - node.r, y));
+			const bound = (val, max) => Math.max(node.r, Math.min(max - node.r, val));
 			[node.xPercent, node.yPercent] = [
-				(boundedX / containerRect.w) * 100,
-				(boundedY / containerRect.h) * 100
+				(bound(x, containerRect.w) / containerRect.w) * 100,
+				(bound(y, containerRect.h) / containerRect.h) * 100
 			];
 			nodes = [...nodes];
 		};
 
+		const handleMove = (e) => {
+			if (!isDragging) return;
+			const rect = forceGraphContainer.getBoundingClientRect();
+			const [x, y] = [e.clientX - rect.left - startPos.x, e.clientY - rect.top - startPos.y];
+			updatePosition(x, y);
+		};
+
 		const handleDown = (e) => {
 			e.preventDefault();
-			cancelAnimationFrame(animationId);
 			isDragging = true;
 			element.style.cursor = 'grabbing';
-
 			const rect = forceGraphContainer.getBoundingClientRect();
-			const [mouseX, mouseY] = [e.clientX - rect.left, e.clientY - rect.top];
-			const [startX, startY] = [
-				(node.xPercent / 100) * containerRect.w,
-				(node.yPercent / 100) * containerRect.h
-			];
-			const [offsetX, offsetY] = [mouseX - startX, mouseY - startY];
-
-			lastPos = { x: mouseX, y: mouseY };
-			let lastTime = performance.now();
-
-			const handleMove = (e) => {
-				if (!isDragging) return;
-				const now = performance.now();
-				const [x, y] = [e.clientX - rect.left - offsetX, e.clientY - rect.top - offsetY];
-
-				velocity = {
-					x: ((x - lastPos.x) / (now - lastTime)) * 16,
-					y: ((y - lastPos.y) / (now - lastTime)) * 16
-				};
-
-				[lastPos.x, lastPos.y, lastTime] = [x, y, now];
-				updatePosition(x, y);
-			};
-
-			const handleUp = () => {
-				isDragging = false;
-				element.style.cursor = 'grab';
-
-				const startX = node.xPercent;
-				const startY = node.yPercent;
-				const targetX = node.originalX;
-				const targetY = node.originalY;
-
-				let currentX = startX;
-				let currentY = startY;
-				let velocityX = 0;
-				let velocityY = 0;
-				let lastTime = performance.now();
-
-				const animate = () => {
-					const now = performance.now();
-					const deltaTime = (now - lastTime) / 16;
-					lastTime = now;
-
-					const dx = targetX - currentX;
-					const dy = targetY - currentY;
-
-					velocityX += dx * springConfig.stiffness * deltaTime;
-					velocityY += dy * springConfig.stiffness * deltaTime;
-
-					velocityX *= springConfig.damping;
-					velocityY *= springConfig.damping;
-
-					currentX += velocityX;
-					currentY += velocityY;
-
-					node.xPercent = currentX;
-					node.yPercent = currentY;
-					nodes = [...nodes];
-
-					if (
-						Math.abs(dx) > springConfig.precision ||
-						Math.abs(dy) > springConfig.precision ||
-						Math.abs(velocityX) > springConfig.precision ||
-						Math.abs(velocityY) > springConfig.precision
-					) {
-						animationId = requestAnimationFrame(animate);
-					}
-				};
-
-				animationId = requestAnimationFrame(animate);
-				document.removeEventListener('pointermove', handleMove);
-				document.removeEventListener('pointerup', handleUp);
-			};
+			startPos.x = e.clientX - rect.left - (node.xPercent / 100) * containerRect.w;
+			startPos.y = e.clientY - rect.top - (node.yPercent / 100) * containerRect.h;
 
 			document.addEventListener('pointermove', handleMove);
-			document.addEventListener('pointerup', handleUp);
+			document.addEventListener(
+				'pointerup',
+				() => {
+					isDragging = false;
+					element.style.cursor = 'grab';
+					document.removeEventListener('pointermove', handleMove);
+
+					let [currentX, currentY] = [node.xPercent, node.yPercent];
+					let [velX, velY] = [0, 0];
+
+					const animate = () => {
+						const dx = node.originalX - currentX;
+						const dy = node.originalY - currentY;
+
+						velX += dx * 0.05;
+						velY += dy * 0.05;
+						velX *= 0.85;
+						velY *= 0.85;
+
+						currentX += velX;
+						currentY += velY;
+						[node.xPercent, node.yPercent] = [currentX, currentY];
+						nodes = [...nodes];
+
+						if (
+							Math.abs(dx) > 0.01 ||
+							Math.abs(dy) > 0.01 ||
+							Math.abs(velX) > 0.01 ||
+							Math.abs(velY) > 0.01
+						) {
+							animationId = requestAnimationFrame(animate);
+						}
+					};
+					animationId = requestAnimationFrame(animate);
+				},
+				{ once: true }
+			);
 		};
 
 		element.addEventListener('pointerdown', handleDown);
@@ -142,39 +112,16 @@
 	};
 
 	onMount(() => {
-		const updateContainerSize = () => {
+		const updateSize = () => {
 			if (!forceGraphContainer) return;
 			const rect = forceGraphContainer.getBoundingClientRect();
 			containerRect = { w: rect.width, h: rect.height };
 		};
 
-		updateContainerSize();
+		updateSize();
+		nodes = shapes.map(createShape);
 
-		setTimeout(() => {
-			nodes = shapesConfig.map((config, i) => ({
-				id: i,
-				r:
-					shapeConfig.minSize +
-					Math.floor(Math.random() * (shapeConfig.maxSize - shapeConfig.minSize + 1)),
-				xPercent: config.xPercent,
-				yPercent: config.yPercent,
-				originalX: config.xPercent,
-				originalY: config.yPercent,
-				shapeType: config.type,
-				fillColor: ['var(--orange-9)', 'var(--pink-9)'][i % 2],
-				strokeColor: ['var(--orange-6)', 'var(--pink-6)'][i % 2],
-				strokeWidth: 1,
-				...config
-			}));
-		}, 0);
-
-		const resizeObserver = new ResizeObserver(() => {
-			updateContainerSize();
-			nodes = [...nodes];
-		});
-
-		resizeObserver.observe(forceGraphContainer);
-		return () => resizeObserver.disconnect();
+		new ResizeObserver(updateSize).observe(forceGraphContainer);
 	});
 </script>
 
