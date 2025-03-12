@@ -9,7 +9,6 @@
 	let nodes = $state([]);
 	let containerRect = $state({ w: 0, h: 0 });
 
-	// Simplified shape configuration
 	const shapesConfig = [
 		{ type: 'squircle', xPercent: 25, yPercent: 30 },
 		{ type: 'super', xPercent: 75, yPercent: 25, ratio: 1.5, m: 8 },
@@ -113,7 +112,6 @@
 
 		updateContainerSize();
 
-		// Restore initialization timing with setTimeout
 		setTimeout(() => {
 			nodes = shapesConfig.map((config, i) => ({
 				id: i,
@@ -163,6 +161,7 @@
 					touch-action: none;
 					user-select: none;
 					overflow: hidden;
+					padding: 1px;
 				"
 			>
 				{#if node.shapeType === 'blob'}
