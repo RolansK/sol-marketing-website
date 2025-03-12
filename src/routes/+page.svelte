@@ -2,6 +2,7 @@
 	import Hero from '$lib/sections/Hero.svelte';
 	import Demo from '$lib/sections/Demo.svelte';
 	import Shapes from '$lib/sections/Shapes.svelte';
+	import Shapes_2 from '$lib/sections/Shapes_2.svelte';
 </script>
 
 <svelte:head>
@@ -15,3 +16,4 @@
 <Hero />
 <Demo />
 <Shapes />
+<Shapes_2 />
