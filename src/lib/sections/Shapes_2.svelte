@@ -9,6 +9,17 @@
 	let nodes = $state([]);
 	let containerRect = $state({ w: 0, h: 0 });
 
+	const shapeConfig = {
+		minSize: 45,
+		maxSize: 55
+	};
+
+	const springConfig = {
+		stiffness: 0.05,
+		damping: 0.85,
+		precision: 0.01
+	};
+
 	const shapesConfig = [
 		{ type: 'squircle', xPercent: 25, yPercent: 30 },
 		{ type: 'super', xPercent: 75, yPercent: 25, ratio: 1.5, m: 8 },
@@ -75,22 +86,49 @@
 				isDragging = false;
 				element.style.cursor = 'grab';
 
-				const applyInertia = () => {
-					velocity.x *= 0.95;
-					velocity.y *= 0.95;
-					updatePosition(
-						(node.xPercent / 100) * containerRect.w + velocity.x,
-						(node.yPercent / 100) * containerRect.h + velocity.y
-					);
-					if (Math.abs(velocity.x) > 0.5 || Math.abs(velocity.y) > 0.5) {
-						animationId = requestAnimationFrame(applyInertia);
+				const startX = node.xPercent;
+				const startY = node.yPercent;
+				const targetX = node.originalX;
+				const targetY = node.originalY;
+
+				let currentX = startX;
+				let currentY = startY;
+				let velocityX = 0;
+				let velocityY = 0;
+				let lastTime = performance.now();
+
+				const animate = () => {
+					const now = performance.now();
+					const deltaTime = (now - lastTime) / 16;
+					lastTime = now;
+
+					const dx = targetX - currentX;
+					const dy = targetY - currentY;
+
+					velocityX += dx * springConfig.stiffness * deltaTime;
+					velocityY += dy * springConfig.stiffness * deltaTime;
+
+					velocityX *= springConfig.damping;
+					velocityY *= springConfig.damping;
+
+					currentX += velocityX;
+					currentY += velocityY;
+
+					node.xPercent = currentX;
+					node.yPercent = currentY;
+					nodes = [...nodes];
+
+					if (
+						Math.abs(dx) > springConfig.precision ||
+						Math.abs(dy) > springConfig.precision ||
+						Math.abs(velocityX) > springConfig.precision ||
+						Math.abs(velocityY) > springConfig.precision
+					) {
+						animationId = requestAnimationFrame(animate);
 					}
 				};
 
-				if (Math.abs(velocity.x) > 0.5 || Math.abs(velocity.y) > 0.5) {
-					animationId = requestAnimationFrame(applyInertia);
-				}
-
+				animationId = requestAnimationFrame(animate);
 				document.removeEventListener('pointermove', handleMove);
 				document.removeEventListener('pointerup', handleUp);
 			};
@@ -115,9 +153,13 @@
 		setTimeout(() => {
 			nodes = shapesConfig.map((config, i) => ({
 				id: i,
-				r: 45 + Math.floor(Math.random() * 11),
+				r:
+					shapeConfig.minSize +
+					Math.floor(Math.random() * (shapeConfig.maxSize - shapeConfig.minSize + 1)),
 				xPercent: config.xPercent,
 				yPercent: config.yPercent,
+				originalX: config.xPercent,
+				originalY: config.yPercent,
 				shapeType: config.type,
 				fillColor: ['var(--orange-9)', 'var(--pink-9)'][i % 2],
 				strokeColor: ['var(--orange-6)', 'var(--pink-6)'][i % 2],
@@ -161,7 +203,7 @@
 					touch-action: none;
 					user-select: none;
 					overflow: hidden;
-					padding: 1px;
+					padding: 2px;
 				"
 			>
 				{#if node.shapeType === 'blob'}
