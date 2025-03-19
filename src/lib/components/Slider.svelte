@@ -10,8 +10,6 @@
 		gap = 0.25,
 		padding = 0,
 		maxWidth = 500,
-		color1 = '#000',
-		color2 = '#000',
 		components = [1, 2, 3]
 	} = $props();
 
