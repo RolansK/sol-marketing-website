@@ -8,7 +8,7 @@
 	let containerWidth = $state(0);
 	let containerRef;
 
-	const { itemWidth = 240, gap = 0.25, padding = 0, maxWidth = 448 } = $props();
+	const { itemWidth = 240, gap = 0.25, padding = 104, maxWidth = 448 } = $props();
 
 	const demoItems = [1, 2, 3];
 
@@ -40,6 +40,18 @@
 			transform: `translate(${translateX}px, -50%) scale(${scale})`
 		};
 	}
+
+	function getControlsPosition() {
+		const activeWidth = Math.min(maxWidth, containerWidth - padding * 2);
+		const scale = activeWidth / itemWidth;
+		const translateY = (itemWidth * scale) / 2 + 32;
+
+		return {
+			top: '50%',
+			left: '50%',
+			transform: `translate(-50%, ${translateY}px)`
+		};
+	}
 </script>
 
 <div bind:this={containerRef} class="slider-container">
@@ -60,7 +72,12 @@
 		</div>
 	{/each}
 
-	<div class="slider-controls">
+	<div
+		class="slider-controls"
+		style:top={getControlsPosition().top}
+		style:left={getControlsPosition().left}
+		style:transform={getControlsPosition().transform}
+	>
 		{#each demoItems as _, i}
 			<button onpointerenter={() => (active = i)} class={active === i ? 'active' : ''}>
 				{i + 1}
