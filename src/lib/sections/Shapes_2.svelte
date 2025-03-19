@@ -36,149 +36,132 @@
 		{ type: 'polygon', xPercent: 65, yPercent: 23, cornerCount: 6, bend: 0.1 }
 	];
 
-	const dragAction = (element, node) => {
+	const dragAction = (el, node) => {
 		let lastPos = { x: 0, y: 0 },
 			velocity = { x: 0, y: 0 },
-			animationId;
-		let isDragging = false;
-		const springConfig = {
+			animationId,
+			dragging = false;
+		const spring = {
 			stiffness: 0.05,
 			damping: 0.85,
 			precision: 0.01
 		};
 
-		const updatePosition = (x, y) => {
-			const boundedX = Math.max(node.r, Math.min(containerRect.w - node.r, x));
-			const boundedY = Math.max(node.r, Math.min(containerRect.h - node.r, y));
-			[node.xPercent, node.yPercent] = [
-				(boundedX / containerRect.w) * 100,
-				(boundedY / containerRect.h) * 100
-			];
+		const updatePos = (x, y) => {
+			let bx = Math.max(node.r, Math.min(containerRect.w - node.r, x));
+			let by = Math.max(node.r, Math.min(containerRect.h - node.r, y));
+			node.xPercent = (bx / containerRect.w) * 100;
+			node.yPercent = (by / containerRect.h) * 100;
 			nodes = [...nodes];
 		};
 
-		const handleDown = (e) => {
+		const pointerDown = (e) => {
 			e.preventDefault();
 			cancelAnimationFrame(animationId);
-			isDragging = true;
-			element.style.cursor = 'grabbing';
-
-			const rect = forceGraphContainer.getBoundingClientRect();
-			const [mouseX, mouseY] = [e.clientX - rect.left, e.clientY - rect.top];
-			const [startX, startY] = [
-				(node.xPercent / 100) * containerRect.w,
-				(node.yPercent / 100) * containerRect.h
-			];
-			const [offsetX, offsetY] = [mouseX - startX, mouseY - startY];
-
-			lastPos = { x: mouseX, y: mouseY };
+			dragging = true;
+			el.style.cursor = 'grabbing';
+			let rect = forceGraphContainer.getBoundingClientRect();
+			let mx = e.clientX - rect.left,
+				my = e.clientY - rect.top;
+			let ox = mx - (node.xPercent / 100) * containerRect.w;
+			let oy = my - (node.yPercent / 100) * containerRect.h;
+			lastPos = { x: mx, y: my };
 			let lastTime = performance.now();
 
-			const handleMove = (e) => {
-				if (!isDragging) return;
-				const now = performance.now();
-				const [x, y] = [e.clientX - rect.left - offsetX, e.clientY - rect.top - offsetY];
-
+			const pointerMove = (e) => {
+				if (!dragging) return;
+				let now = performance.now();
+				let x = e.clientX - rect.left - ox;
+				let y = e.clientY - rect.top - oy;
 				velocity = {
 					x: ((x - lastPos.x) / (now - lastTime)) * 16,
 					y: ((y - lastPos.y) / (now - lastTime)) * 16
 				};
-
-				[lastPos.x, lastPos.y, lastTime] = [x, y, now];
-				updatePosition(x, y);
+				lastPos = { x, y };
+				lastTime = now;
+				updatePos(x, y);
 			};
 
-			const handleUp = () => {
-				isDragging = false;
-				element.style.cursor = 'grab';
-
-				const startX = node.xPercent;
-				const startY = node.yPercent;
-				const targetX = node.originalX;
-				const targetY = node.originalY;
-
-				let currentX = startX;
-				let currentY = startY;
-				let velocityX = 0;
-				let velocityY = 0;
-				let lastTime = performance.now();
+			const pointerUp = () => {
+				dragging = false;
+				el.style.cursor = 'grab';
+				let currentX = node.xPercent,
+					currentY = node.yPercent,
+					vX = 0,
+					vY = 0,
+					lt = performance.now();
 
 				const animate = () => {
-					const now = performance.now();
-					const deltaTime = (now - lastTime) / 16;
-					lastTime = now;
-
-					const dx = targetX - currentX;
-					const dy = targetY - currentY;
-
-					velocityX += dx * springConfig.stiffness * deltaTime;
-					velocityY += dy * springConfig.stiffness * deltaTime;
-
-					velocityX *= springConfig.damping;
-					velocityY *= springConfig.damping;
-
-					currentX += velocityX;
-					currentY += velocityY;
-
+					let now = performance.now();
+					let dt = (now - lt) / 16;
+					lt = now;
+					let dx = node.originalX - currentX,
+						dy = node.originalY - currentY;
+					vX += dx * spring.stiffness * dt;
+					vY += dy * spring.stiffness * dt;
+					vX *= spring.damping;
+					vY *= spring.damping;
+					currentX += vX;
+					currentY += vY;
 					node.xPercent = currentX;
 					node.yPercent = currentY;
 					nodes = [...nodes];
-
 					if (
-						Math.abs(dx) > springConfig.precision ||
-						Math.abs(dy) > springConfig.precision ||
-						Math.abs(velocityX) > springConfig.precision ||
-						Math.abs(velocityY) > springConfig.precision
+						Math.abs(dx) > spring.precision ||
+						Math.abs(dy) > spring.precision ||
+						Math.abs(vX) > spring.precision ||
+						Math.abs(vY) > spring.precision
 					) {
 						animationId = requestAnimationFrame(animate);
 					}
 				};
 
 				animationId = requestAnimationFrame(animate);
-				document.removeEventListener('pointermove', handleMove);
-				document.removeEventListener('pointerup', handleUp);
+				document.removeEventListener('pointermove', pointerMove);
+				document.removeEventListener('pointerup', pointerUp);
 			};
 
-			document.addEventListener('pointermove', handleMove);
-			document.addEventListener('pointerup', handleUp);
+			document.addEventListener('pointermove', pointerMove);
+			document.addEventListener('pointerup', pointerUp);
 		};
 
-		element.addEventListener('pointerdown', handleDown);
-		return { destroy: () => element.removeEventListener('pointerdown', handleDown) };
+		el.addEventListener('pointerdown', pointerDown);
+		return { destroy: () => el.removeEventListener('pointerdown', pointerDown) };
 	};
 
 	onMount(() => {
-		const updateContainerSize = () => {
-			if (!forceGraphContainer) return;
-			const rect = forceGraphContainer.getBoundingClientRect();
-			containerRect = { w: rect.width, h: rect.height };
+		const updateSize = () => {
+			if (forceGraphContainer) {
+				let r = forceGraphContainer.getBoundingClientRect();
+				containerRect = { w: r.width, h: r.height };
+			}
 		};
 
-		updateContainerSize();
+		updateSize();
 
 		setTimeout(() => {
-			nodes = shapesConfig.map((config, i) => ({
+			nodes = shapesConfig.map((c, i) => ({
 				id: i,
 				r: 45 + Math.floor(Math.random() * 11),
-				xPercent: config.xPercent,
-				yPercent: config.yPercent,
-				originalX: config.xPercent,
-				originalY: config.yPercent,
-				shapeType: config.type,
+				xPercent: c.xPercent,
+				yPercent: c.yPercent,
+				originalX: c.xPercent,
+				originalY: c.yPercent,
+				shapeType: c.type,
 				fillColor: ['var(--orange-9)', 'var(--pink-9)'][i % 2],
 				strokeColor: ['var(--orange-6)', 'var(--pink-6)'][i % 2],
 				strokeWidth: 1,
-				...config
+				...c
 			}));
 		}, 0);
 
-		const resizeObserver = new ResizeObserver(() => {
-			updateContainerSize();
+		const ro = new ResizeObserver(() => {
+			updateSize();
 			nodes = [...nodes];
 		});
 
-		resizeObserver.observe(forceGraphContainer);
-		return () => resizeObserver.disconnect();
+		ro.observe(forceGraphContainer);
+		return () => ro.disconnect();
 	});
 </script>
 

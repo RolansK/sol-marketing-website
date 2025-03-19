@@ -1,0 +1,19 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# OS
+Operating system used is Windows. Only use terminal commands etc., that are compatible with Windows.
+
+# JS runtime
+The project uses Bun as its package manager and JavaScript runtime, not NPM.
+
+# No TypeScript
+The project does NOT use TypeScript, opting for JavaScript instead. This is extremely important!
+
+# Svelte 5
+The project uses Svelte 5 in runes mode. Keep that in mind at all times as certain Svelte 4 code and approaches are incompatible with Svelte 5.
+
+
