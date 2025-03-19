@@ -8,13 +8,7 @@
 	let containerWidth = $state(0);
 	let containerRef;
 
-	const {
-		itemWidth = 500,
-		gap = 0.25,
-		padding = 0,
-		maxWidth = 300,
-		components = [1, 2, 3]
-	} = $props();
+	const { itemWidth = 240, gap = 0.25, padding = 0, maxWidth = 448 } = $props();
 
 	const demoItems = [1, 2, 3];
 
@@ -36,10 +30,8 @@
 		const inactiveWidth = activeWidth * 0.8;
 		const gapSize = activeWidth * gap;
 
-		const alignmentOffset = (containerWidth - activeWidth) / 2;
-
 		const left = i * (inactiveWidth + gapSize);
-		const translateX = -(active * (inactiveWidth + gapSize)) + alignmentOffset;
+		const translateX = -(active * (inactiveWidth + gapSize)) + (containerWidth - itemWidth) / 2;
 		const scale = active === i ? activeWidth / itemWidth : inactiveWidth / itemWidth;
 
 		return {

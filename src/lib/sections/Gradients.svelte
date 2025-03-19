@@ -5,7 +5,7 @@
 </script>
 
 <section class="components nopadding">
-	<Slider itemWidth={240} gap={0.25} padding={96} maxWidth={600} />
+	<Slider />
 
 	<span>
 		<h2>Give life back<br />to colors</h2>
