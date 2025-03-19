@@ -30,10 +30,10 @@
 			n3: -3.8
 		},
 		{ type: 'super', xPercent: 82.5, yPercent: 85.5, ratio: 1, m: 6, n1: 9, n2: 50, n3: 10 },
-		{ type: 'squircle', xPercent: 22.5, yPercent: 71.5 },
-		{ type: 'polygon', xPercent: 10, yPercent: 85, cornerCount: 5, bend: 0.3 },
+		{ type: 'squircle', xPercent: 22.5, yPercent: 71.5, smoothing: 1 },
+		{ type: 'polygon', xPercent: 45, yPercent: 90.5, cornerCount: 3, bend: 0.9 },
 		{ type: 'polygon', xPercent: 25, yPercent: 50, cornerCount: 3, bend: 0.2 },
-		{ type: 'polygon', xPercent: 65, yPercent: 30, cornerCount: 6, bend: 0.1 }
+		{ type: 'polygon', xPercent: 75, yPercent: 28, cornerCount: 6, bend: 0.1 }
 	];
 
 	const dragAction = (element, node) => {
@@ -197,18 +197,10 @@
 				class="node-container"
 				use:dragAction={node}
 				style="
-					position: absolute;
 					width: {node.r * 2}px;
 					height: {node.r * 2}px;
 					left: {node.xPercent}%;
 					top: {node.yPercent}%;
-					transform: translate(-50%, -50%);
-					cursor: grab;
-					touch-action: none;
-					user-select: none;
-					overflow: hidden;
-					padding: 2px;
-					display: flex;
 				"
 			>
 				{#if node.shapeType === 'blob'}
@@ -224,6 +216,7 @@
 					<Squircle
 						fillColor={node.fillColor}
 						strokeColor={node.strokeColor}
+						smoothing={node.smoothing}
 						strokeWidth={node.strokeWidth}
 					/>
 				{:else if node.shapeType === 'polygon'}

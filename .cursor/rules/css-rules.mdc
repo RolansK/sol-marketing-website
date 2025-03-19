@@ -1,9 +1,8 @@
 ---
-description: Rules for styling anything in the project using css
-globs: *.svelte, *.css, *.js
-alwaysApply: false
+description: 
+globs: 
+alwaysApply: true
 ---
-
 # Styling components
 
 When styling .svelte components, always use the global app.css file. Never use svelte's built-in <style> tag.
