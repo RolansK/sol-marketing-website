@@ -7,7 +7,7 @@
 <section class="components nopadding">
 	<Slider />
 
-	<span>
+	<span class="right">
 		<h2>Give life back<br />to colors</h2>
 		<p>
 			Motion is the only thing that can make gradients even more awesome. Pick the colors, scale,

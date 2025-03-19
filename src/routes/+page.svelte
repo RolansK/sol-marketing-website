@@ -3,6 +3,7 @@
 	import Demo from '$lib/sections/Demo.svelte';
 	import Shapes from '$lib/sections/Shapes.svelte';
 	import Gradients from '$lib/sections/Gradients.svelte';
+	import Dots from '$lib/sections/Dots.svelte';
 </script>
 
 <svelte:head>
@@ -17,3 +18,4 @@
 <Demo />
 <Shapes />
 <Gradients />
+<Dots />
