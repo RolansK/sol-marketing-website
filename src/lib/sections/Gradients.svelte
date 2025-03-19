@@ -5,20 +5,13 @@
 </script>
 
 <section class="components nopadding">
-	<Slider
-		itemWidth={240}
-		gap={0.25}
-		padding={20}
-		maxWidth={600}
-		color1="#FF3E00"
-		color2="#FF8700"
-	/>
+	<Slider itemWidth={240} gap={0.25} padding={96} maxWidth={600} />
 
 	<span>
-		<h2>Create a shape.<br />Any shape</h2>
+		<h2>Give life back<br />to colors</h2>
 		<p>
-			Rounded rectangles are cool, but there's a bit more you can make with shape generators -
-			flowers, stars, droplets, blobs, squircles… You get it, the list goes on.
+			Motion is the only thing that can make gradients even more awesome. Pick the colors, scale,
+			sprinkle some noise on top and create magic!
 		</p>
 	</span>
 </section>

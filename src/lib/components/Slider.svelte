@@ -1,15 +1,18 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
+	import GPerlin from './webgl/GPerlin.svelte';
+	import GPerlinWave from './webgl/GPerlinWave.svelte';
+	import GRadial from './webgl/GRadial.svelte';
 
 	let active = $state(0);
 	let containerWidth = $state(0);
 	let containerRef;
 
 	const {
-		itemWidth = 240,
+		itemWidth = 500,
 		gap = 0.25,
 		padding = 0,
-		maxWidth = 500,
+		maxWidth = 300,
 		components = [1, 2, 3]
 	} = $props();
 
@@ -32,7 +35,8 @@
 		const activeWidth = Math.min(maxWidth, containerWidth - padding * 2);
 		const inactiveWidth = activeWidth * 0.8;
 		const gapSize = activeWidth * gap;
-		const alignmentOffset = (containerWidth - itemWidth) / 2;
+
+		const alignmentOffset = (containerWidth - activeWidth) / 2;
 
 		const left = i * (inactiveWidth + gapSize);
 		const translateX = -(active * (inactiveWidth + gapSize)) + alignmentOffset;
@@ -54,7 +58,13 @@
 			style:top={getPosition(i).top}
 			style:transform={getPosition(i).transform}
 		>
-			<div class="slider-item-content"></div>
+			{#if i === 0}
+				<GPerlin width={`${itemWidth}px`} height={`${itemWidth}px`} />
+			{:else if i === 1}
+				<GPerlinWave width={`${itemWidth}px`} height={`${itemWidth}px`} />
+			{:else if i === 2}
+				<GRadial width={`${itemWidth}px`} height={`${itemWidth}px`} />
+			{/if}
 		</div>
 	{/each}
 
