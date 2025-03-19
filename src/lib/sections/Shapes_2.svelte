@@ -10,30 +10,30 @@
 	let containerRect = $state({ w: 0, h: 0 });
 
 	const shapesConfig = [
-		{ type: 'super', xPercent: 68, yPercent: 18, ratio: 10, m: 60, n1: -14, n2: 5.1, n3: 38.5 },
-		{ type: 'blob', xPercent: 32, yPercent: 12, pointCount: 40, strength: 2, seed: 17 },
-		{ type: 'super', xPercent: 17, yPercent: 34, ratio: 1, m: 20, n1: 6, n2: -2, n3: 0.6 },
-		{ type: 'super', xPercent: 81, yPercent: 38, ratio: 1, m: 6, n1: 48, n2: 22, n3: 28 },
-		{ type: 'super', xPercent: 54.5, yPercent: 30.5, ratio: 25, m: 6, n1: 5, n2: 1, n3: 1.2 },
-		{ type: 'super', xPercent: 30, yPercent: 45, ratio: 2.6, m: 14, n1: 1, n2: -0.1, n3: 1 },
-		{ type: 'super', xPercent: 49, yPercent: 57, ratio: 1, m: 4, n1: 48, n2: 16, n3: 16 },
-		{ type: 'blob', xPercent: 15, yPercent: 15, pointCount: 3, strength: 9, seed: 12 },
-		{ type: 'super', xPercent: 73.5, yPercent: 53.8, ratio: 0.2, m: 16, n1: 23.1, n2: -5, n3: 4 },
+		{ type: 'super', xPercent: 58, yPercent: 13, ratio: 10, m: 60, n1: -14, n2: 5.1, n3: 38.5 },
+		{ type: 'blob', xPercent: 22, yPercent: 7, pointCount: 40, strength: 2, seed: 17 },
+		{ type: 'super', xPercent: 7, yPercent: 29, ratio: 1, m: 20, n1: 6, n2: -2, n3: 0.6 },
+		{ type: 'super', xPercent: 71, yPercent: 33, ratio: 1, m: 6, n1: 48, n2: 22, n3: 28 },
+		{ type: 'super', xPercent: 44.5, yPercent: 25.5, ratio: 25, m: 6, n1: 5, n2: 1, n3: 1.2 },
+		{ type: 'super', xPercent: 20, yPercent: 40, ratio: 2.6, m: 14, n1: 1, n2: -0.1, n3: 1 },
+		{ type: 'super', xPercent: 39, yPercent: 52, ratio: 1, m: 4, n1: 48, n2: 16, n3: 16 },
+		{ type: 'blob', xPercent: 5, yPercent: 10, pointCount: 3, strength: 9, seed: 12 },
+		{ type: 'super', xPercent: 63.5, yPercent: 48.8, ratio: 0.2, m: 16, n1: 23.1, n2: -5, n3: 4 },
 		{
 			type: 'super',
-			xPercent: 55,
-			yPercent: 70.2,
+			xPercent: 45,
+			yPercent: 65.2,
 			ratio: 50,
 			m: 10,
 			n1: 28.2,
 			n2: -30.8,
 			n3: -3.8
 		},
-		{ type: 'super', xPercent: 82.5, yPercent: 85.5, ratio: 1, m: 6, n1: 9, n2: 50, n3: 10 },
-		{ type: 'squircle', xPercent: 22.5, yPercent: 71.5, smoothing: 1 },
-		{ type: 'polygon', xPercent: 45, yPercent: 90.5, cornerCount: 3, bend: 0.9 },
-		{ type: 'polygon', xPercent: 25, yPercent: 50, cornerCount: 3, bend: 0.2 },
-		{ type: 'polygon', xPercent: 75, yPercent: 28, cornerCount: 6, bend: 0.1 }
+		{ type: 'super', xPercent: 72.5, yPercent: 80.5, ratio: 1, m: 6, n1: 9, n2: 50, n3: 10 },
+		{ type: 'squircle', xPercent: 12.5, yPercent: 66.5, smoothing: 1 },
+		{ type: 'polygon', xPercent: 35, yPercent: 85.5, cornerCount: 3, bend: 0.9 },
+		{ type: 'polygon', xPercent: 15, yPercent: 45, cornerCount: 3, bend: 0.2 },
+		{ type: 'polygon', xPercent: 65, yPercent: 23, cornerCount: 6, bend: 0.1 }
 	];
 
 	const dragAction = (element, node) => {
