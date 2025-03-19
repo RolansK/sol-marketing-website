@@ -413,15 +413,15 @@ nav:hover .button-cta {
 .force-graph {
 	position: relative;
 	overflow: hidden;
-	box-sizing: border-box;
+	background-color: red;
 	height: 100%;
 	width: 50%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	padding: 0px;
+	margin: 0px;
 }
 
 .node-container {
+	background-color: #a79c97;
 	position: absolute;
 	cursor: grab;
 	touch-action: none;
