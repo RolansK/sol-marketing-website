@@ -9,201 +9,167 @@
 	let nodes = $state([]);
 	let containerRect = $state({ w: 0, h: 0 });
 
-	const dragAction = (element, node) => {
-		let lastPos = { x: 0, y: 0 };
-		let velocity = { x: 0, y: 0 };
-		let lastTime = 0;
-		let isDragging = false;
-		let animationId = null;
+	const shapesConfig = [
+		{ type: 'super', xPercent: 58, yPercent: 13, ratio: 10, m: 60, n1: -14, n2: 5.1, n3: 38.5 },
+		{ type: 'blob', xPercent: 22, yPercent: 7, pointCount: 40, strength: 2, seed: 17 },
+		{ type: 'super', xPercent: 7, yPercent: 29, ratio: 1, m: 20, n1: 6, n2: -2, n3: 0.6 },
+		{ type: 'super', xPercent: 71, yPercent: 33, ratio: 1, m: 6, n1: 48, n2: 22, n3: 28 },
+		{ type: 'super', xPercent: 44.5, yPercent: 25.5, ratio: 25, m: 6, n1: 5, n2: 1, n3: 1.2 },
+		{ type: 'super', xPercent: 20, yPercent: 40, ratio: 2.6, m: 14, n1: 1, n2: -0.1, n3: 1 },
+		{ type: 'super', xPercent: 39, yPercent: 52, ratio: 1, m: 4, n1: 48, n2: 16, n3: 16 },
+		{ type: 'blob', xPercent: 5, yPercent: 10, pointCount: 3, strength: 9, seed: 12 },
+		{ type: 'super', xPercent: 63.5, yPercent: 48.8, ratio: 0.2, m: 16, n1: 23.1, n2: -5, n3: 4 },
+		{
+			type: 'super',
+			xPercent: 45,
+			yPercent: 65.2,
+			ratio: 50,
+			m: 10,
+			n1: 28.2,
+			n2: -30.8,
+			n3: -3.8
+		},
+		{ type: 'super', xPercent: 72.5, yPercent: 80.5, ratio: 1, m: 6, n1: 9, n2: 50, n3: 10 },
+		{ type: 'squircle', xPercent: 12.5, yPercent: 66.5, smoothing: 1 },
+		{ type: 'polygon', xPercent: 35, yPercent: 85.5, cornerCount: 3, bend: 0.9 },
+		{ type: 'polygon', xPercent: 15, yPercent: 45, cornerCount: 3, bend: 0.2 },
+		{ type: 'polygon', xPercent: 65, yPercent: 23, cornerCount: 6, bend: 0.1 }
+	];
 
-		function updatePosition(x, y) {
-			const boundedX = Math.max(node.r, Math.min(containerRect.w - node.r, x));
-			const boundedY = Math.max(node.r, Math.min(containerRect.h - node.r, y));
+	const dragAction = (el, node) => {
+		let lastPos = { x: 0, y: 0 },
+			velocity = { x: 0, y: 0 },
+			animationId,
+			dragging = false;
+		const spring = {
+			stiffness: 0.05,
+			damping: 0.85,
+			precision: 0.01
+		};
 
-			node.xPercent = (boundedX / containerRect.w) * 100;
-			node.yPercent = (boundedY / containerRect.h) * 100;
+		const updatePos = (x, y) => {
+			let bx = Math.max(0, Math.min(containerRect.w - node.r * 2, x));
+			let by = Math.max(0, Math.min(containerRect.h - node.r * 2, y));
+			node.xPercent = (bx / containerRect.w) * 100;
+			node.yPercent = (by / containerRect.h) * 100;
+			nodes = [...nodes];
+		};
 
-			nodes = [...nodes]; // Trigger reactivity
-		}
-
-		function handleDown(e) {
+		const pointerDown = (e) => {
 			e.preventDefault();
-			animationId && (cancelAnimationFrame(animationId), (animationId = null));
+			cancelAnimationFrame(animationId);
+			dragging = true;
+			el.style.cursor = 'grabbing';
+			let rect = forceGraphContainer.getBoundingClientRect();
+			let mx = e.clientX - rect.left;
+			let my = e.clientY - rect.top;
 
-			isDragging = true;
-			element.style.cursor = 'grabbing';
+			let nodeX = (node.xPercent / 100) * containerRect.w;
+			let nodeY = (node.yPercent / 100) * containerRect.h;
+			let ox = mx - nodeX;
+			let oy = my - nodeY;
 
-			const pixelX = (node.xPercent / 100) * containerRect.w;
-			const pixelY = (node.yPercent / 100) * containerRect.h;
+			lastPos = { x: mx, y: my };
+			let lastTime = performance.now();
 
-			const { left, top } = forceGraphContainer.getBoundingClientRect();
-			const { clientX, clientY } = e;
-			const [mouseX, mouseY] = [clientX - left, clientY - top];
-			const [offsetX, offsetY] = [mouseX - pixelX, mouseY - pixelY];
+			const pointerMove = (e) => {
+				if (!dragging) return;
+				let now = performance.now();
+				let x = e.clientX - rect.left - ox;
+				let y = e.clientY - rect.top - oy;
+				velocity = {
+					x: ((x - lastPos.x) / (now - lastTime)) * 16,
+					y: ((y - lastPos.y) / (now - lastTime)) * 16
+				};
+				lastPos = { x, y };
+				lastTime = now;
+				updatePos(x, y);
+			};
 
-			[lastTime, velocity] = [performance.now(), { x: 0, y: 0 }];
-			lastPos = { x: mouseX, y: mouseY };
+			const pointerUp = () => {
+				dragging = false;
+				el.style.cursor = 'grab';
+				let currentX = node.xPercent,
+					currentY = node.yPercent,
+					vX = 0,
+					vY = 0,
+					lt = performance.now();
 
-			function handleMove(e) {
-				if (!isDragging) return;
-
-				const now = performance.now();
-				const deltaTime = now - lastTime;
-				const rect = forceGraphContainer.getBoundingClientRect();
-
-				const newPos = {
-					x: e.clientX - rect.left - offsetX,
-					y: e.clientY - rect.top - offsetY
+				const animate = () => {
+					let now = performance.now();
+					let dt = (now - lt) / 16;
+					lt = now;
+					let dx = node.originalX - currentX,
+						dy = node.originalY - currentY;
+					vX += dx * spring.stiffness * dt;
+					vY += dy * spring.stiffness * dt;
+					vX *= spring.damping;
+					vY *= spring.damping;
+					currentX += vX;
+					currentY += vY;
+					node.xPercent = currentX;
+					node.yPercent = currentY;
+					nodes = [...nodes];
+					if (
+						Math.abs(dx) > spring.precision ||
+						Math.abs(dy) > spring.precision ||
+						Math.abs(vX) > spring.precision ||
+						Math.abs(vY) > spring.precision
+					) {
+						animationId = requestAnimationFrame(animate);
+					}
 				};
 
-				if (deltaTime > 0) {
-					velocity.x = ((newPos.x - lastPos.x) / deltaTime) * 16; // Scale to approximately pixels per frame
-					velocity.y = ((newPos.y - lastPos.y) / deltaTime) * 16;
-				}
+				animationId = requestAnimationFrame(animate);
+				document.removeEventListener('pointermove', pointerMove);
+				document.removeEventListener('pointerup', pointerUp);
+			};
 
-				lastPos = newPos;
-				lastTime = now;
-
-				updatePosition(newPos.x, newPos.y);
-			}
-
-			function handleUp(e) {
-				if (!isDragging) return;
-				isDragging = false;
-				element.style.cursor = 'grab';
-
-				function applyInertia() {
-					const friction = 0.95;
-					velocity.x *= friction;
-					velocity.y *= friction;
-
-					const pixelX = (node.xPercent / 100) * containerRect.w;
-					const pixelY = (node.yPercent / 100) * containerRect.h;
-
-					updatePosition(pixelX + velocity.x, pixelY + velocity.y);
-
-					if (Math.abs(velocity.x) > 0.5 || Math.abs(velocity.y) > 0.5) {
-						animationId = requestAnimationFrame(applyInertia);
-					}
-				}
-
-				if (Math.abs(velocity.x) > 0.5 || Math.abs(velocity.y) > 0.5) {
-					animationId = requestAnimationFrame(applyInertia);
-				}
-
-				document.removeEventListener('pointermove', handleMove);
-				document.removeEventListener('pointerup', handleUp);
-			}
-
-			document.addEventListener('pointermove', handleMove);
-			document.addEventListener('pointerup', handleUp);
-		}
-
-		element.addEventListener('pointerdown', handleDown);
-
-		return {
-			destroy() {
-				element.removeEventListener('pointerdown', handleDown);
-				if (animationId) {
-					cancelAnimationFrame(animationId);
-				}
-			}
+			document.addEventListener('pointermove', pointerMove);
+			document.addEventListener('pointerup', pointerUp);
 		};
+
+		el.addEventListener('pointerdown', pointerDown);
+		return { destroy: () => el.removeEventListener('pointerdown', pointerDown) };
 	};
 
-	function generateEvenDistribution(w, h, n = 15) {
-		// Generate initial grid points with jitter
-		const cols = Math.ceil(Math.sqrt((n * w) / h));
-		const rows = Math.ceil(n / cols);
-		const cw = w / cols,
-			ch = h / rows;
-
-		let points = Array.from({ length: n }, (_, i) => ({
-			x: ((i % cols) + 0.5) * cw + (Math.random() - 0.5) * cw * 0.5,
-			y: (Math.floor(i / cols) + 0.5) * ch + (Math.random() - 0.5) * ch * 0.5
-		})).map((p) => ({ x: Math.max(0, Math.min(w, p.x)), y: Math.max(0, Math.min(h, p.y)) }));
-
-		// Lloyd's relaxation iterations
-		for (let i = 0; i < 3; i++) {
-			points = points.map((p) => {
-				const minDist = Math.min(
-					...points.map((q) => (p === q ? Infinity : Math.hypot(p.x - q.x, p.y - q.y)))
-				);
-
-				const samples = Array.from({ length: 20 }, () => {
-					const a = Math.random() * Math.PI * 2;
-					const r = minDist * 1.5 * Math.random();
-					return { x: p.x + Math.cos(a) * r, y: p.y + Math.sin(a) * r };
-				}).filter((s) => s.x >= 0 && s.x < w && s.y >= 0 && s.y < h);
-
-				const centroid = samples.reduce(
-					(acc, s) => {
-						const closest = points.reduce(
-							(a, b, j) =>
-								Math.hypot(s.x - b.x, s.y - b.y) < a.d
-									? { i: j, d: Math.hypot(s.x - b.x, s.y - b.y) }
-									: a,
-							{ d: Infinity, i: -1 }
-						);
-						return closest.i === points.indexOf(p)
-							? { x: acc.x + s.x, y: acc.y + s.y, c: acc.c + 1 }
-							: acc;
-					},
-					{ x: 0, y: 0, c: 0 }
-				);
-
-				return centroid.c ? { x: centroid.x / centroid.c, y: centroid.y / centroid.c } : p;
-			});
-		}
-
-		return points.map((p) => ({
-			x: p.x,
-			y: p.y,
-			xPercent: (p.x / w) * 100,
-			yPercent: (p.y / h) * 100
-		}));
-	}
-
 	onMount(() => {
-		const updateContainerSize = () => {
-			if (!forceGraphContainer) return;
-			const rect = forceGraphContainer.getBoundingClientRect();
-			containerRect = { w: rect.width, h: rect.height };
+		const updateSize = () => {
+			if (forceGraphContainer) {
+				let r = forceGraphContainer.getBoundingClientRect();
+				containerRect = { w: r.width, h: r.height };
+			}
 		};
 
-		updateContainerSize();
+		updateSize();
 
 		setTimeout(() => {
-			const positions = generateEvenDistribution(containerRect.w, containerRect.h, 15);
-
-			nodes = positions.map((pos, i) => ({
+			nodes = shapesConfig.map((c, i) => ({
 				id: i,
-				r: 55,
-				xPercent: pos.xPercent,
-				yPercent: pos.yPercent,
-				shapeType: ['blob', 'squircle', 'polygon', 'super'][i % 4],
-				fillColor: i % 2 === 0 ? 'var(--orange-9)' : 'var(--pink-9)',
-				strokeColor: i % 2 === 0 ? 'var(--orange-6)' : 'var(--pink-6)',
-				strokeWidth: 1
+				r: 45 + Math.floor(Math.random() * 11),
+				xPercent: c.xPercent,
+				yPercent: c.yPercent,
+				originalX: c.xPercent,
+				originalY: c.yPercent,
+				shapeType: c.type,
+				fillColor: ['var(--orange-9)', 'var(--pink-9)'][i % 2],
+				strokeColor: ['var(--orange-6)', 'var(--pink-6)'][i % 2],
+				strokeWidth: 1,
+				...c
 			}));
 		}, 0);
 
-		const resizeObserver = new ResizeObserver(() => {
-			updateContainerSize();
-			if (nodes.length) {
-				nodes = [...nodes];
-			}
+		const ro = new ResizeObserver(() => {
+			updateSize();
+			nodes = [...nodes];
 		});
 
-		resizeObserver.observe(forceGraphContainer);
-
-		return () => {
-			resizeObserver.disconnect();
-		};
+		ro.observe(forceGraphContainer);
+		return () => ro.disconnect();
 	});
 </script>
 
-<section class="components">
+<section class="components nopadding">
 	<span>
 		<h2>Create a shape.<br />Any shape</h2>
 		<p>
@@ -218,19 +184,17 @@
 				class="node-container"
 				use:dragAction={node}
 				style="
-					position: absolute;
 					width: {node.r * 2}px;
 					height: {node.r * 2}px;
 					left: {node.xPercent}%;
 					top: {node.yPercent}%;
-					transform: translate(-50%, -50%);
-					cursor: grab;
-					touch-action: none;
-					user-select: none;
 				"
 			>
 				{#if node.shapeType === 'blob'}
 					<Blob
+						pointCount={node.pointCount}
+						strength={node.strength}
+						seed={node.seed}
 						fillColor={node.fillColor}
 						strokeColor={node.strokeColor}
 						strokeWidth={node.strokeWidth}
@@ -239,20 +203,24 @@
 					<Squircle
 						fillColor={node.fillColor}
 						strokeColor={node.strokeColor}
+						smoothing={node.smoothing}
 						strokeWidth={node.strokeWidth}
 					/>
 				{:else if node.shapeType === 'polygon'}
 					<Polygon
-						cornerCount={Math.floor(Math.random() * 5) + 3}
-						bend={Math.random()}
+						cornerCount={node.cornerCount}
+						bend={node.bend}
 						fillColor={node.fillColor}
 						strokeColor={node.strokeColor}
 						strokeWidth={node.strokeWidth}
 					/>
 				{:else if node.shapeType === 'super'}
 					<Super
-						ratio={1 + Math.random()}
-						m={Math.floor(Math.random() * 20) + 5}
+						ratio={node.ratio}
+						m={node.m}
+						n1={node.n1}
+						n2={node.n2}
+						n3={node.n3}
 						fillColor={node.fillColor}
 						strokeColor={node.strokeColor}
 						strokeWidth={node.strokeWidth}
