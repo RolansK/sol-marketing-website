@@ -17,8 +17,6 @@
 
 	const demoItems = [1, 2, 3];
 
-	const transitionParams = { duration: 300, easing: (t) => t };
-
 	onMount(() => {
 		const measure = () => {
 			if (!containerRef) return;
@@ -57,7 +55,6 @@
 			style:left={getPosition(i).left}
 			style:top={getPosition(i).top}
 			style:transform={getPosition(i).transform}
-			style:transition="all {transitionParams.duration}ms"
 		>
 			<div class="slider-item-content"></div>
 		</div>
@@ -65,16 +62,9 @@
 
 	<div class="slider-controls">
 		{#each demoItems as _, i}
-			<div
-				class="slider-control-button"
-				onpointerenter={() => (active = i)}
-				style:background="{active === i
-					? `linear-gradient(to bottom, ${color1}, ${color2})`
-					: 'linear-gradient(to bottom, #fff, #fff)'};"
-				style:color="{active === i ? '#fff' : '#000'};"
-			>
+			<button onpointerenter={() => (active = i)} class={active === i ? 'active' : ''}>
 				{i + 1}
-			</div>
+			</button>
 		{/each}
 	</div>
 </div>
