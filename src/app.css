@@ -408,7 +408,6 @@ nav:hover .button-cta {
 	padding: 0 64px 0 208px;
 	gap: 20px;
 	background-color: var(--grey-10);
-	z-index: 100;
 }
 
 .right {
@@ -624,7 +623,6 @@ nav:hover .button-cta {
 	position: relative;
 	height: 100%;
 	width: 50%;
-	background-color: lightblue;
 }
 
 .slider-item {
@@ -664,4 +662,24 @@ nav:hover .button-cta {
 .slider-controls button.active {
 	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
 	color: var(--grey-10);
+}
+
+/* CONTAINER */
+.container {
+	box-sizing: border-box;
+	width: 50%;
+	height: 100%;
+	display: flex;
+	padding: 88px;
+	justify-content: center;
+	align-items: center;
+}
+
+.container div {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 512px !important;
+	aspect-ratio: 1;
+	background-color: var(--color-bg);
+	padding: 16px;
 }
