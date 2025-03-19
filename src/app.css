@@ -603,3 +603,48 @@ nav:hover .button-cta {
 
 @media (prefers-reduced-motion: no-preference) {
 }
+
+/* Slider component styles */
+.slider-container {
+	overflow: hidden;
+	position: relative;
+	height: 300px;
+	width: 50%;
+}
+
+.slider-item {
+	position: absolute;
+	background-color: #fff;
+	padding: 8px;
+	border-radius: 6px;
+	box-shadow:
+		0px 0px 1px rgba(0, 0, 0, 0.05),
+		0px 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.slider-item-content {
+	width: 240px;
+	height: 150px;
+	background-color: red;
+}
+
+.slider-controls {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	display: flex;
+	gap: 16px;
+}
+
+.slider-control-button {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	cursor: pointer;
+	display: flex;
+	padding-bottom: 1px;
+	align-items: center;
+	justify-content: center;
+	font-size: 18px;
+	transition: all 300ms;
+}

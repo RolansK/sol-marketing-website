@@ -50,52 +50,28 @@
 	}
 </script>
 
-<div
-	bind:this={containerRef}
-	style="overflow: hidden; position: relative; height: 300px; width: 50%"
->
+<div bind:this={containerRef} class="slider-container">
 	{#each demoItems as _, i}
 		<div
-			style:position="absolute"
-			style:background-color="#fff"
-			style:padding="8px"
-			style:border-radius="6px"
-			style:box-shadow="0px 0px 1px rgba(0, 0, 0, 0.05), 0px 8px 16px rgba(0, 0, 0, 0.1)"
+			class="slider-item"
 			style:left={getPosition(i).left}
 			style:top={getPosition(i).top}
 			style:transform={getPosition(i).transform}
 			style:transition="all {transitionParams.duration}ms"
 		>
-			<div style="width: {itemWidth}px; height: 150px; background-color: red;"></div>
+			<div class="slider-item-content"></div>
 		</div>
 	{/each}
 
-	<div
-		style="position: absolute; 
-               top: 50%; 
-               left: 50%; 
-               transform: translate(-50%, {Math.min(maxWidth, containerWidth - padding * 2) / 2 +
-			32}px); 
-               display: flex; 
-               gap: 16px;"
-	>
+	<div class="slider-controls">
 		{#each demoItems as _, i}
 			<div
+				class="slider-control-button"
 				onpointerenter={() => (active = i)}
-				style="width: 40px; 
-                       height: 40px; 
-                       border-radius: 50%; 
-                       background: {active === i
+				style:background="{active === i
 					? `linear-gradient(to bottom, ${color1}, ${color2})`
-					: 'linear-gradient(to bottom, #fff, #fff)'};
-                       cursor: pointer; 
-                       display: flex; 
-                       padding-bottom: 1px; 
-                       align-items: center; 
-                       justify-content: center; 
-                       color: {active === i ? '#fff' : '#000'}; 
-                       font-size: 18px; 
-                       transition: all {transitionParams.duration}ms;"
+					: 'linear-gradient(to bottom, #fff, #fff)'};"
+				style:color="{active === i ? '#fff' : '#000'};"
 			>
 				{i + 1}
 			</div>
