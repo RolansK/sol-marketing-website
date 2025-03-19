@@ -4,6 +4,7 @@
 	import Shapes from '$lib/sections/Shapes.svelte';
 	import Gradients from '$lib/sections/Gradients.svelte';
 	import Dots from '$lib/sections/Dots.svelte';
+	import Tiles from '$lib/sections/Tiles.svelte';
 </script>
 
 <svelte:head>
@@ -19,3 +20,4 @@
 <Shapes />
 <Gradients />
 <Dots />
+<Tiles />
