@@ -872,10 +872,11 @@ nav:hover .button-cta {
 }
 
 .faq-question svg.rotated {
-	transform: rotate(90deg);
+	transform: rotate(45deg);
 }
 
-.faq-question:hover {
+.faq-question:hover,
+.faq-question.active:hover {
 	color: var(--grey-5);
 }
 
@@ -888,10 +889,23 @@ nav:hover .button-cta {
 }
 
 .faq-answer {
+	overflow: hidden;
+	max-height: 0;
+	transition:
+		max-height 0.3s ease,
+		padding 0.3s ease;
+	padding: 0;
+}
+
+.faq-answer.active {
+	max-height: 125px;
 	padding: 0 0 16px 0;
-	transition: var(--transition-2);
 }
 
 .faq-answer p {
 	color: var(--color-text-2);
+}
+
+.faq-question span.rotated svg {
+	transform: rotate(90deg);
 }

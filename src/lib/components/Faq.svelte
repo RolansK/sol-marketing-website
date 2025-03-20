@@ -44,15 +44,13 @@
 	<h1>FAQ</h1>
 	{#each faqs as faq, i}
 		<div class="faq-item">
-			<button class="faq-question" class:active={activeIndex === i} on:click={() => toggleFaq(i)}>
-				<Plus />
+			<button class="faq-question" class:active={activeIndex === i} onclick={() => toggleFaq(i)}>
+				<span class={activeIndex === i ? 'rotated' : ''}><Plus /></span>
 				{faq.question}
 			</button>
-			{#if activeIndex === i}
-				<div class="faq-answer">
-					<p>{faq.answer}</p>
-				</div>
-			{/if}
+			<div class="faq-answer {activeIndex === i ? 'active' : ''}">
+				<p>{faq.answer}</p>
+			</div>
 		</div>
 	{/each}
 </div>
