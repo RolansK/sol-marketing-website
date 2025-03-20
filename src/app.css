@@ -688,6 +688,7 @@ nav:hover .button-cta {
 /* FEATURES */
 .features-container {
 	display: flex;
+	gap: 0;
 	padding: 156px 96px 164px 168px;
 }
 
@@ -789,6 +790,7 @@ nav:hover .button-cta {
 	border-radius: 6px;
 	box-shadow: var(--shadow-1), var(--shadow-grey);
 	background-color: var(--grey-10);
+	z-index: 1;
 }
 
 .pricing-card h1 {
@@ -837,27 +839,17 @@ nav:hover .button-cta {
 	box-sizing: border-box;
 	position: relative;
 	width: 360px;
-	height: 481px;
+	height: fit-content;
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
 	padding: 48px;
 	border-radius: 6px;
-	box-shadow: var(--shadow-1), var(--shadow-grey);
-	background-color: var(--grey-10);
-}
-
-.faq-items {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	overflow-y: auto;
-	max-height: 360px;
+	border: 2px solid var(--grey-10);
 }
 
 .faq-item {
 	width: 100%;
-	border-bottom: 1px solid var(--beige-9);
 }
 
 .faq-question {
@@ -875,15 +867,20 @@ nav:hover .button-cta {
 }
 
 .faq-question svg {
-	transition: transform var(--transition-1);
+	transition: var(--transition-1);
+	fill: var(--color-text);
 }
 
 .faq-question svg.rotated {
-	transform: rotate(180deg);
+	transform: rotate(90deg);
 }
 
 .faq-question:hover {
-	color: var(--beige-5);
+	color: var(--grey-5);
+}
+
+.faq-question:hover svg {
+	fill: var(--grey-5);
 }
 
 .faq-question.active {
