@@ -1,6 +1,5 @@
 <script>
 	import Plus from '$lib/icons/plus.svelte';
-	import { slide } from 'svelte/transition';
 
 	const faqs = [
 		{
@@ -33,10 +32,12 @@
 		}
 	];
 
-	let activeIndex = $state(-1);
+	let activeIndices = $state([]);
 
 	function toggleFaq(index) {
-		activeIndex = activeIndex === index ? -1 : index;
+		activeIndices = activeIndices.includes(index)
+			? activeIndices.filter((i) => i !== index)
+			: [...activeIndices, index];
 	}
 </script>
 
@@ -44,11 +45,15 @@
 	<h1>FAQ</h1>
 	{#each faqs as faq, i}
 		<div class="faq-item">
-			<button class="faq-question" class:active={activeIndex === i} onclick={() => toggleFaq(i)}>
-				<span class={activeIndex === i ? 'rotated' : ''}><Plus /></span>
+			<button
+				class="faq-question"
+				class:active={activeIndices.includes(i)}
+				onclick={() => toggleFaq(i)}
+			>
+				<span class={activeIndices.includes(i) ? 'rotated' : ''}><Plus /></span>
 				<h3>{faq.question}</h3>
 			</button>
-			<div class="faq-answer {activeIndex === i ? 'active' : ''}">
+			<div class="faq-answer {activeIndices.includes(i) ? 'active' : ''}">
 				<p>{faq.answer}</p>
 			</div>
 		</div>

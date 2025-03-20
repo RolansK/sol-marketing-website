@@ -908,12 +908,12 @@ nav:hover .button-cta {
 	transition:
 		max-height 0.3s ease,
 		padding 0.3s ease;
-	padding: 0;
+	padding: 0 0 0px 48px;
 }
 
 .faq-answer.active {
 	max-height: 125px;
-	padding: 0 0 16px 0;
+	padding: 0 0 20px 48px;
 }
 
 .faq-answer p {
