@@ -838,14 +838,20 @@ nav:hover .button-cta {
 .faq-container {
 	box-sizing: border-box;
 	position: relative;
-	width: 360px;
+	width: 100%;
 	height: fit-content;
+	max-width: 504px;
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
-	padding: 48px;
+	gap: 0px;
+	padding: 142px 48px 48px 48px;
 	border-radius: 6px;
 	border: 2px solid var(--grey-10);
+}
+
+.faq-container h1 {
+	position: absolute;
+	inset: 48px auto auto 48px;
 }
 
 .faq-item {
@@ -867,6 +873,8 @@ nav:hover .button-cta {
 }
 
 .faq-question svg {
+	width: 24px;
+	height: 24px;
 	transition: var(--transition-1);
 	fill: var(--color-text);
 }
