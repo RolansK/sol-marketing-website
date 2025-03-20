@@ -4,12 +4,13 @@
 	const faqs = [
 		{
 			question: 'How do I request a feature?',
-			answer: 'Use the contact form in the plugin settings or simply email us.'
+			answer:
+				'Use the contact form in the plugin settings or simply <a href="mailto:support@teyah.design" target="_blank" rel="noopener">email us.</a>'
 		},
 		{
 			question: 'How do I report a bug?',
 			answer:
-				'Same as requesting a feature - use the contact form in the plugin settings or simply email us.'
+				'Same as requesting a feature - use the contact form in the plugin settings or simply <a href="mailto:support@teyah.design" target="_blank" rel="noopener">email us.</a>'
 		},
 		{
 			question: 'How fast do you reply to emails?',
@@ -18,7 +19,7 @@
 		{
 			question: 'Can I use Sol in my Framer template?',
 			answer:
-				'If you are planning to use it in templates, please email us. Use in templates without our permission is not allowed.'
+				'If you are planning to use it in templates, please <a href="mailto:support@teyah.design" target="_blank" rel="noopener">email us.</a> Use in templates without our permission is not allowed.'
 		},
 		{
 			question: 'Are animations gifs or videos?',
@@ -28,7 +29,7 @@
 		{
 			question: 'Can I get notified about updates?',
 			answer:
-				'Yes! We will let you know via email once a new update is out. You can also check our X/Twitter account.'
+				'Yes! We will let you know via email once a new update is out. You can also check our <a href="https://x.com/teyah_design" target="_blank" rel="noopener">X/Twitter</a> account.'
 		}
 	];
 
@@ -51,10 +52,10 @@
 				onclick={() => toggleFaq(i)}
 			>
 				<span class={activeIndices.includes(i) ? 'rotated' : ''}><Plus /></span>
-				<h3>{faq.question}</h3>
+				<h3>{@html faq.question}</h3>
 			</button>
 			<div class="faq-answer {activeIndices.includes(i) ? 'active' : ''}">
-				<p>{faq.answer}</p>
+				<p>{@html faq.answer}</p>
 			</div>
 		</div>
 	{/each}

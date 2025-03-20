@@ -919,3 +919,13 @@ nav:hover .button-cta {
 .faq-question span.rotated svg {
 	transform: rotate(45deg);
 }
+
+.faq-question a {
+	color: var(--orange-6);
+	text-decoration: none;
+	transition: var(--transition-1);
+}
+
+.faq-question a:hover {
+	opacity: 0.8;
+}
