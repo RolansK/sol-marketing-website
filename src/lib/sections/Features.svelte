@@ -4,44 +4,84 @@
 	import Eye from '$lib/icons/eye.svelte';
 
 	let activeIndex = $state(0);
+
+	const features = [
+		{
+			title: 'Customizable in Framer',
+			description:
+				'All the components are fully customizable right on canvas through controls in the sidebar. Color styles are also fully supported.',
+			shape: {
+				ratio: 3.6,
+				m: 10,
+				n1: 1.7,
+				n2: -0.4,
+				n3: 0.7,
+				fillColor: '#00000000',
+				strokeColor: '#7D7D7E',
+				activeStrokeColor: '#E53817'
+			}
+		},
+		{
+			title: 'Dependency free',
+			description:
+				'Sol does not rely on 3rd party JavaScript libraries. It is built on standard web technologies, keeping your website size down.',
+			shape: {
+				ratio: 0.3,
+				m: 8,
+				n1: 2.9,
+				n2: 10,
+				n3: 2.4,
+				fillColor: '#00000000',
+				strokeColor: '#7D7D7E',
+				activeStrokeColor: '#E53817'
+			}
+		},
+		{
+			title: 'Fast. On mobile, too',
+			description:
+				'Components are optimized to be fast and easy on resources. This means they maintain good framerates - even on budget phones and laptops.',
+			shape: {
+				ratio: 1,
+				m: 6,
+				n1: 10,
+				n2: 50,
+				n3: 10,
+				fillColor: '#00000000',
+				strokeColor: '#7D7D7E',
+				activeStrokeColor: '#E53817'
+			}
+		}
+	];
 </script>
 
 <section class="features-container">
 	<div class="features">
-		<span onpointerenter={() => (activeIndex = 0)} class:active={activeIndex === 0}>
-			<div class="features-shape">
-				<Super />
-			</div>
-			<h2>Customizable in Framer</h2>
-			<p>
-				All the components are fully customizable right on canvas through controls in the sidebar.
-				Color styles are also fully supported.
-			</p>
-		</span>
-		<span onpointerenter={() => (activeIndex = 1)} class:active={activeIndex === 1}>
-			<div class="features-shape">
-				<Super />
-			</div>
-			<h2>Dependency free</h2>
-			<p>
-				Sol does not rely on 3rd party JavaScript libraries. It is built on standard web
-				technologies, keeping your website size down.
-			</p>
-		</span>
-		<span onpointerenter={() => (activeIndex = 2)} class:active={activeIndex === 2}>
-			<div class="features-shape">
-				<Super />
-			</div>
-			<h2>Fast. On mobile, too</h2>
-			<p>
-				Components are optimized to be fast and easy on resources. This means they maintain good
-				framerates - even on budget phones and laptops.
-			</p>
-		</span>
+		{#each features as feature, i}
+			<span onpointerenter={() => (activeIndex = i)} class:active={activeIndex === i}>
+				<div class="features-shape">
+					<Super
+						ratio={feature.shape.ratio}
+						m={feature.shape.m}
+						n1={feature.shape.n1}
+						n2={feature.shape.n2}
+						n3={feature.shape.n3}
+						fillColor={feature.shape.fillColor}
+						strokeColor={activeIndex === i
+							? feature.shape.activeStrokeColor
+							: feature.shape.strokeColor}
+						strokeWidth={1}
+					/>
+				</div>
+				<h2>{feature.title}</h2>
+				<p>{feature.description}</p>
+			</span>
+		{/each}
 		<div class="features-controls">
-			<button onpointerenter={() => (activeIndex = 0)} class:active={activeIndex === 0}>1</button>
-			<button onpointerenter={() => (activeIndex = 1)} class:active={activeIndex === 1}>2</button>
-			<button onpointerenter={() => (activeIndex = 2)} class:active={activeIndex === 2}>3</button>
+			{#each features as _, i}
+				<button onpointerenter={() => (activeIndex = i)} class:active={activeIndex === i}
+					>{i + 1}</button
+				>
+			{/each}
 		</div>
 	</div>
 </section>

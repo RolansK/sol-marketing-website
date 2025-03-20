@@ -393,7 +393,6 @@ nav:hover .button-cta {
 
 /* Components */
 .components {
-	box-sizing: border-box;
 	display: flex;
 	gap: 0px;
 	padding: 0px 0px 0px 72px;
