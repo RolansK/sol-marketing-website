@@ -38,8 +38,10 @@
 				framerates - even on budget phones and laptops.
 			</p>
 		</span>
-	</div>
-	<div class="features-controls">
-		<button></button>
+		<div class="features-controls">
+			<button onpointerenter={() => (activeIndex = 0)} class:active={activeIndex === 0}>1</button>
+			<button onpointerenter={() => (activeIndex = 1)} class:active={activeIndex === 1}>2</button>
+			<button onpointerenter={() => (activeIndex = 2)} class:active={activeIndex === 2}>3</button>
+		</div>
 	</div>
 </section>
