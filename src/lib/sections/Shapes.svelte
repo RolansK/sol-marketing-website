@@ -42,8 +42,8 @@
 			animationId,
 			dragging = false;
 		const spring = {
-			stiffness: 0.05,
-			damping: 0.85,
+			stiffness: 0.08,
+			damping: 0.92,
 			precision: 0.01
 		};
 
@@ -57,6 +57,7 @@
 
 		const pointerDown = (e) => {
 			e.preventDefault();
+			el.classList.add('dragging');
 			cancelAnimationFrame(animationId);
 			dragging = true;
 			el.style.cursor = 'grabbing';
@@ -87,6 +88,7 @@
 			};
 
 			const pointerUp = () => {
+				el.classList.remove('dragging');
 				dragging = false;
 				el.style.cursor = 'grab';
 				let currentX = node.xPercent,

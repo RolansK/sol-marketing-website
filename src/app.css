@@ -447,7 +447,11 @@ nav:hover .button-cta {
 	user-select: none;
 	overflow: hidden;
 	padding: 2px;
-	transition: var(--transition-2);
+	transition: transform var(--transition-2);
+}
+
+.node-container.dragging {
+	transition: none;
 }
 
 .node-container:hover {
