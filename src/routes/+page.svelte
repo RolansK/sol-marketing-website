@@ -5,6 +5,7 @@
 	import Gradients from '$lib/sections/Gradients.svelte';
 	import Dots from '$lib/sections/Dots.svelte';
 	import Tiles from '$lib/sections/Tiles.svelte';
+	import Features from '$lib/sections/Features.svelte';
 </script>
 
 <svelte:head>
@@ -21,3 +22,4 @@
 <Gradients />
 <Dots />
 <Tiles />
+<Features />
