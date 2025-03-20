@@ -147,7 +147,7 @@
     void main() {
     vec2 coord = vPixelCoord;
         
-    if (uPixelScale == 1.0) {
+    if (uPixelScale != 1.0) {
         vec2 pixelSize = vec2(max(1.0, floor(uPixelScale)));
         coord = floor(vPixelCoord / pixelSize) * pixelSize + pixelSize * 0.5;
     }

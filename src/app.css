@@ -24,6 +24,7 @@
 	--orange-8: #ffab94;
 	--orange-9: #ffded4;
 	--orange-6: #ff4724;
+	--orange-3: #751200;
 
 	--color-bg: var(--grey-9);
 	--color-button: var(--beige-9);
@@ -921,16 +922,15 @@ nav:hover .button-cta {
 	color: var(--color-text-2);
 }
 
+.faq-answer a {
+	color: var(--orange-6);
+	text-decoration: none;
+}
+
+.faq-answer a:hover {
+	color: var(--orange-3);
+}
+
 .faq-question span.rotated svg {
 	transform: rotate(45deg);
-}
-
-.faq-question a {
-	color: var(--orange-6) !important;
-	text-decoration: none;
-	transition: var(--transition-1);
-}
-
-.faq-question a:hover {
-	opacity: 0.8;
 }

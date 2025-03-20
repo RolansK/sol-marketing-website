@@ -12,6 +12,43 @@
 
 	const demoItems = [1, 2, 3];
 
+	const gradientConfig = {
+		perlin: {
+			colors: [
+				{ color: '#C6BBFC', position: 0.25 },
+				{ color: '#965EF3', position: 0.4 },
+				{ color: '#5A03A0', position: 0.6 },
+				{ color: '#300646', position: 0.75 }
+			],
+			dpi: 2,
+			grainScale: 10,
+			grainSpeed: 25,
+			pixelScale: 22
+		},
+		perlinWave: {
+			colors: [
+				{ color: '#fae6e6', position: 0 },
+				{ color: '#e03100', position: 0.35 },
+				{ color: '#6e008a', position: 0.87 },
+				{ color: '#0e0014', position: 1 }
+			],
+			dpi: 2,
+			waveType: 0,
+			waveScale: 40,
+			pixelScale: 1
+		},
+		radial: {
+			colors: [
+				{ color: '#F9A8CF', position: 0 },
+				{ color: '#965EF3', position: 0.5 },
+				{ color: '#300646', position: 1 }
+			],
+			dpi: 2,
+			waveSpeed: 2,
+			pixelScale: 1
+		}
+	};
+
 	onMount(() => {
 		const measure = () => {
 			if (!containerRef) return;
@@ -63,11 +100,15 @@
 			style:transform={getPosition(i).transform}
 		>
 			{#if i === 0}
-				<GPerlin width={`${itemWidth}px`} height={`${itemWidth}px`} />
+				<GPerlin {...gradientConfig.perlin} width={`${itemWidth}px`} height={`${itemWidth}px`} />
 			{:else if i === 1}
-				<GPerlinWave width={`${itemWidth}px`} height={`${itemWidth}px`} />
+				<GPerlinWave
+					{...gradientConfig.perlinWave}
+					width={`${itemWidth}px`}
+					height={`${itemWidth}px`}
+				/>
 			{:else if i === 2}
-				<GRadial width={`${itemWidth}px`} height={`${itemWidth}px`} />
+				<GRadial {...gradientConfig.radial} width={`${itemWidth}px`} height={`${itemWidth}px`} />
 			{/if}
 		</div>
 	{/each}

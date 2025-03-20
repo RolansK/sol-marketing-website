@@ -95,7 +95,7 @@
         }
 
         void main() {
-            vec2 coord = uPixelScale == 1.0 ? floor(vPixelCoord / max(vec2(1.0), floor(uPixelScale))) * max(vec2(1.0), floor(uPixelScale)) + max(vec2(1.0), floor(uPixelScale)) * 0.5 : vPixelCoord;
+            vec2 coord = uPixelScale != 1.0 ? floor(vPixelCoord / max(vec2(1.0), floor(uPixelScale))) * max(vec2(1.0), floor(uPixelScale)) + max(vec2(1.0), floor(uPixelScale)) * 0.5 : vPixelCoord;
             
             float normalizedX = cartesianToPolar(coord, uResolution * 0.5).x;
             
