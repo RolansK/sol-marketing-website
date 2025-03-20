@@ -689,6 +689,11 @@ nav:hover .button-cta {
 	padding: 16px;
 }
 
+/* TILES */
+.tiles {
+	border-bottom: 2px solid var(--grey-10);
+}
+
 /* FEATURES */
 .features-container {
 	display: flex;
@@ -921,7 +926,7 @@ nav:hover .button-cta {
 }
 
 .faq-question a {
-	color: var(--orange-6);
+	color: var(--orange-6) !important;
 	text-decoration: none;
 	transition: var(--transition-1);
 }

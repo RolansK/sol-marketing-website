@@ -2,7 +2,7 @@
 	import Tiles from '$lib/components/webgl/Tiles.svelte';
 </script>
 
-<section class="components nopadding">
+<section class="components nopadding tiles">
 	<div class="container">
 		<div>
 			<Tiles width="100%" height="100%" />
