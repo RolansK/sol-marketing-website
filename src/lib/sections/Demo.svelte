@@ -3,7 +3,7 @@
 	import GPerlinWave from '$lib/components/webgl/GPerlinWave.svelte';
 </script>
 
-<section class="demo">
+<section id="demo" class="demo">
 	<GPerlinWave
 		width="100vw"
 		height="100vh"

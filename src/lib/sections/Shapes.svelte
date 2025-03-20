@@ -171,7 +171,7 @@
 	});
 </script>
 
-<section class="components nopadding">
+<section id="components" class="components nopadding">
 	<span class="left">
 		<h2>Create a shape.<br />Any shape</h2>
 		<p>

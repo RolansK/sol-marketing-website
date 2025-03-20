@@ -54,7 +54,7 @@
 	];
 </script>
 
-<section class="features-container">
+<section id="features" class="features-container">
 	<div class="features">
 		{#each features as feature, i}
 			<span onpointerenter={() => (activeIndex = i)} class:active={activeIndex === i}>

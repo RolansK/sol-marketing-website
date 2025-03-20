@@ -2,9 +2,10 @@
 	import Check from '$lib/icons/check.svelte';
 	import Envelope from '$lib/icons/envelope.svelte';
 	import Faq from '$lib/components/Faq.svelte';
+	import Button from '$lib/components/Button.svelte';
 </script>
 
-<section class="features-container">
+<section id="faq" class="features-container">
 	<div class="pricing-card">
 		<h1>Pricing</h1>
 		<span>
@@ -17,7 +18,11 @@
 		<li><Check />Priority email support;</li>
 		<li><Check />Unlimited use in personal and client projects;</li>
 		<li><Envelope />Contact for use in templates.</li>
-		<button class="button-primary">Get Sol</button>
+		<Button
+			title="Get Sol"
+			className="button-primary"
+			url="https://www.framer.com/marketplace/plugins/sol/"
+		/>
 	</div>
 	<Faq />
 </section>

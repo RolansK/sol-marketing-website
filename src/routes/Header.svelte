@@ -11,9 +11,14 @@
 </script>
 
 <nav>
-	<ButtonNav icon={Play} title="Demo" />
-	<ButtonNav icon={PuzzlePiece} title="Components" />
-	<ButtonNav icon={Star} title="Features" />
-	<ButtonNav icon={SealQuestion} title="FAQ" />
-	<ButtonCta icon={Sparkle} title="Get Sol" class="bottom" />
+	<ButtonNav icon={Play} title="Demo" url="#demo" />
+	<ButtonNav icon={PuzzlePiece} title="Components" url="#components" />
+	<ButtonNav icon={Star} title="Features" url="#features" />
+	<ButtonNav icon={SealQuestion} title="FAQ" url="#faq" />
+	<ButtonCta
+		icon={Sparkle}
+		title="Get Sol"
+		class="bottom"
+		url="https://www.framer.com/marketplace/plugins/sol/"
+	/>
 </nav>
