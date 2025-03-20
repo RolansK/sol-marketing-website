@@ -19,7 +19,9 @@
 
 	--pink-9: #ffdbeb;
 	--pink-6: #ff30ad;
+	--pink-7: #ff69b8;
 
+	--orange-8: #ffab94;
 	--orange-9: #ffded4;
 	--orange-6: #ff4724;
 
@@ -770,4 +772,129 @@ nav:hover .button-cta {
 .features-controls button.active {
 	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
 	color: var(--grey-10);
+}
+
+/* PRICING */
+.pricing-card {
+	box-sizing: border-box;
+	position: relative;
+	width: 360px;
+	height: 481px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: end;
+	gap: 4px;
+	padding: 48px 48px 108px 48px;
+	border-radius: 6px;
+	box-shadow: var(--shadow-1), var(--shadow-grey);
+	background-color: var(--grey-10);
+}
+
+.pricing-card h1 {
+	position: absolute;
+	inset: 48px auto auto 48px;
+}
+
+.pricing-card span {
+	position: absolute;
+	inset: 145px auto auto 48px;
+	display: flex;
+	align-items: end;
+}
+
+.pricing-card button {
+	position: absolute;
+	inset: auto auto 40px 48px;
+}
+
+.pricing-divider {
+	position: absolute;
+	inset: 193px auto auto 48px;
+	height: 2px;
+	width: 92px;
+	background-image: linear-gradient(to right, var(--orange-8), var(--pink-7));
+}
+
+.pricing-card svg {
+	min-width: 20px;
+	min-height: 20px;
+	width: 20px;
+	height: 20px;
+	margin-top: 1px;
+	fill: var(--color-text);
+}
+
+.pricing-card li {
+	list-style-type: none;
+	width: 100%;
+	display: flex;
+	gap: 8px;
+}
+
+/* FAQ */
+.faq-container {
+	box-sizing: border-box;
+	position: relative;
+	width: 360px;
+	height: 481px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	padding: 48px;
+	border-radius: 6px;
+	box-shadow: var(--shadow-1), var(--shadow-grey);
+	background-color: var(--grey-10);
+}
+
+.faq-items {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	overflow-y: auto;
+	max-height: 360px;
+}
+
+.faq-item {
+	width: 100%;
+	border-bottom: 1px solid var(--beige-9);
+}
+
+.faq-question {
+	width: 100%;
+	padding: 12px 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background: none;
+	text-align: left;
+	color: var(--color-text);
+	font-family: var(--font-body);
+	font-size: var(--font-size-body);
+	transition: var(--transition-1);
+}
+
+.faq-question svg {
+	transition: transform var(--transition-1);
+}
+
+.faq-question svg.rotated {
+	transform: rotate(180deg);
+}
+
+.faq-question:hover {
+	color: var(--beige-5);
+}
+
+.faq-question.active {
+	color: var(--color-text);
+}
+
+.faq-answer {
+	padding: 0 0 16px 0;
+	transition: var(--transition-2);
+}
+
+.faq-answer p {
+	color: var(--color-text-2);
 }

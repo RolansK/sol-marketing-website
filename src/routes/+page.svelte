@@ -6,6 +6,7 @@
 	import Dots from '$lib/sections/Dots.svelte';
 	import Tiles from '$lib/sections/Tiles.svelte';
 	import Features from '$lib/sections/Features.svelte';
+	import Pricing from '$lib/sections/Pricing.svelte';
 </script>
 
 <svelte:head>
@@ -23,3 +24,4 @@
 <Dots />
 <Tiles />
 <Features />
+<Pricing />
