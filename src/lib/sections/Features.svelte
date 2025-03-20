@@ -2,11 +2,13 @@
 	import Button from '$lib/components/Button.svelte';
 	import Super from '$lib/components/svg/Super.svelte';
 	import Eye from '$lib/icons/eye.svelte';
+
+	let activeIndex = $state(null);
 </script>
 
 <section class="features-container">
 	<div class="features">
-		<span>
+		<span onpointerenter={() => (activeIndex = 0)} class:active={activeIndex === 0}>
 			<div class="features-shape">
 				<Super />
 			</div>
@@ -16,7 +18,7 @@
 				Color styles are also fully supported.
 			</p>
 		</span>
-		<span>
+		<span onpointerenter={() => (activeIndex = 1)} class:active={activeIndex === 1}>
 			<div class="features-shape">
 				<Super />
 			</div>
@@ -26,7 +28,7 @@
 				technologies, keeping your website size down.
 			</p>
 		</span>
-		<span>
+		<span onpointerenter={() => (activeIndex = 2)} class:active={activeIndex === 2}>
 			<div class="features-shape">
 				<Super />
 			</div>
@@ -37,7 +39,7 @@
 			</p>
 		</span>
 	</div>
-	<div class="slider-controls">
+	<div class="features-controls">
 		<button></button>
 	</div>
 </section>
