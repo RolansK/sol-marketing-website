@@ -3,7 +3,7 @@
 	import Super from '$lib/components/svg/Super.svelte';
 	import Eye from '$lib/icons/eye.svelte';
 
-	let activeIndex = $state(null);
+	let activeIndex = $state(0);
 </script>
 
 <section class="features-container">
