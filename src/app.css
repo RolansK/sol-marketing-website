@@ -73,7 +73,11 @@ h2 {
 }
 
 h3 {
-	font-size: 20px;
+	font-size: 24px;
+	line-height: 100%;
+	font-variation-settings:
+		'wght' 385,
+		'opsz' 15;
 	margin: 0;
 }
 
@@ -843,7 +847,6 @@ nav:hover .button-cta {
 	max-width: 504px;
 	display: flex;
 	flex-direction: column;
-	gap: 0px;
 	padding: 142px 48px 48px 48px;
 	border-radius: 6px;
 	border: 2px solid var(--grey-10);
@@ -859,10 +862,12 @@ nav:hover .button-cta {
 }
 
 .faq-question {
+	box-sizing: border-box;
 	width: 100%;
-	padding: 12px 0;
+	padding: 20px;
+	gap: 8px;
 	display: flex;
-	justify-content: space-between;
+	justify-content: start;
 	align-items: center;
 	background: none;
 	text-align: left;
@@ -873,6 +878,7 @@ nav:hover .button-cta {
 }
 
 .faq-question svg {
+	margin-top: 8px;
 	width: 24px;
 	height: 24px;
 	transition: var(--transition-1);

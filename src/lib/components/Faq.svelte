@@ -46,7 +46,7 @@
 		<div class="faq-item">
 			<button class="faq-question" class:active={activeIndex === i} onclick={() => toggleFaq(i)}>
 				<span class={activeIndex === i ? 'rotated' : ''}><Plus /></span>
-				{faq.question}
+				<h3>{faq.question}</h3>
 			</button>
 			<div class="faq-answer {activeIndex === i ? 'active' : ''}">
 				<p>{faq.answer}</p>
