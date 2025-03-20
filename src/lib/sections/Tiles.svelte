@@ -1,11 +1,55 @@
 <script>
 	import Tiles from '$lib/components/webgl/Tiles.svelte';
+
+	let {
+		width = '100%',
+		height = '100%',
+		gap = 5,
+		offsetToggle = 'row',
+		offsetPercent = 0,
+		offsetRow = 2,
+		state1 = {
+			color: '#FFAB94',
+			size: 1.75,
+			radius: 100,
+			rotX: 0,
+			rotY: 0,
+			rotZ: 0
+		},
+		state2 = {
+			color: '#FF30AD',
+			size: 5,
+			radius: 100,
+			rotX: 0,
+			rotY: 0,
+			rotZ: 0
+		},
+		noiseType = 0,
+		noiseScale = 2.25,
+		noiseSpeed = 28,
+		dpi = 2,
+		fps = 120
+	} = $props();
 </script>
 
 <section class="components nopadding tiles">
 	<div class="container">
 		<div>
-			<Tiles width="100%" height="100%" />
+			<Tiles
+				{width}
+				{height}
+				{gap}
+				{offsetToggle}
+				{offsetPercent}
+				{offsetRow}
+				{state1}
+				{state2}
+				{noiseType}
+				{noiseScale}
+				{noiseSpeed}
+				{dpi}
+				{fps}
+			/>
 		</div>
 	</div>
 
