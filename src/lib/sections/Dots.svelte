@@ -37,7 +37,7 @@
 	} = $props();
 </script>
 
-<section class="components nopadding">
+<section class="components">
 	<span class="left">
 		<h2>Woah, what<br />is that?</h2>
 		<p>

@@ -4,7 +4,7 @@
 	let forceGraphContainer;
 </script>
 
-<section class="components nopadding">
+<section class="components">
 	<Slider />
 
 	<span class="right">

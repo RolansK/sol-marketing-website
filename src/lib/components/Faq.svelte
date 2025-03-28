@@ -45,7 +45,7 @@
 <div class="faq-container">
 	<h1>FAQ</h1>
 	{#each faqs as faq, i}
-		<div class="faq-item">
+		<div>
 			<button
 				class="faq-question"
 				class:active={activeIndices.includes(i)}

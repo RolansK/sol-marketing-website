@@ -32,7 +32,7 @@
 	} = $props();
 </script>
 
-<section class="components nopadding tiles">
+<section class="components tiles">
 	<div class="container">
 		<div>
 			<Tiles

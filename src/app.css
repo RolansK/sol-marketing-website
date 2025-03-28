@@ -1,3 +1,4 @@
+@import './reset.css';
 @import '@fontsource-variable/source-serif-4';
 @import '@fontsource-variable/source-serif-4/opsz.css';
 @import '@fontsource/source-serif-4/400-italic.css';
@@ -47,7 +48,6 @@
 
 body {
 	min-height: 100vh;
-	margin: 0;
 	background-color: var(--color-bg);
 
 	background-size: 100vw auto;
@@ -60,7 +60,6 @@ h1 {
 	font-variation-settings:
 		'wght' 385,
 		'opsz' 15;
-	margin: 0;
 }
 
 h2 {
@@ -70,7 +69,6 @@ h2 {
 	font-variation-settings:
 		'wght' 385,
 		'opsz' 15;
-	margin: 0;
 }
 
 h3 {
@@ -79,14 +77,12 @@ h3 {
 	font-variation-settings:
 		'wght' 385,
 		'opsz' 15;
-	margin: 0;
 }
 
 p {
 	font-size: var(--font-size-body);
 	letter-spacing: -1%;
 	line-height: 138%;
-	margin: 0;
 }
 
 span {
@@ -121,7 +117,6 @@ button {
 }
 
 nav {
-	box-sizing: border-box;
 	position: fixed;
 	overflow: hidden;
 	width: 72px;
@@ -145,7 +140,6 @@ nav:hover {
 
 section {
 	position: relative;
-	box-sizing: border-box;
 	display: flex;
 	gap: 0px;
 	height: 100vh;
@@ -281,7 +275,6 @@ nav:hover .button-cta {
 /* HERO */
 .hero {
 	height: 75vh;
-	display: flex;
 	padding-left: 144px;
 }
 
@@ -365,8 +358,6 @@ nav:hover .button-cta {
 
 /* DEMO-VIDEO */
 .demo {
-	box-sizing: border-box;
-	display: flex;
 	padding: 0px 72px 0px 144px;
 }
 
@@ -383,7 +374,6 @@ nav:hover .button-cta {
 }
 
 .left {
-	box-sizing: border-box;
 	height: 100%;
 	width: 50%;
 	display: flex;
@@ -396,7 +386,6 @@ nav:hover .button-cta {
 }
 
 .right {
-	box-sizing: border-box;
 	height: 100%;
 	width: 50%;
 	display: flex;
@@ -484,7 +473,6 @@ nav:hover .button-cta {
 
 /* CONTAINER */
 .container {
-	box-sizing: border-box;
 	width: 50%;
 	height: 100%;
 	display: flex;
@@ -494,7 +482,6 @@ nav:hover .button-cta {
 }
 
 .container div {
-	box-sizing: border-box;
 	width: 100%;
 	max-width: 512px !important;
 	aspect-ratio: 1;
@@ -509,8 +496,6 @@ nav:hover .button-cta {
 
 /* FEATURES */
 .features-container {
-	display: flex;
-	gap: 0;
 	padding: 156px 96px 164px 168px;
 }
 
@@ -537,7 +522,7 @@ nav:hover .button-cta {
 .features span {
 	flex-grow: 1;
 	position: relative;
-	width: 192px;
+	width: 288px;
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
@@ -582,9 +567,7 @@ nav:hover .button-cta {
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
-	display: flex;
 	padding-bottom: 1px;
-	align-items: center;
 	justify-content: center;
 	font-family: var(--font-body);
 	font-size: 18px;
@@ -599,7 +582,6 @@ nav:hover .button-cta {
 
 /* PRICING */
 .pricing-card {
-	box-sizing: border-box;
 	position: relative;
 	min-width: 360px;
 	width: 360px;
@@ -659,13 +641,8 @@ nav:hover .button-cta {
 
 /* FAQ */
 .faq-container {
-	box-sizing: border-box;
 	position: relative;
-	width: 100%;
-	height: fit-content;
 	max-width: 504px;
-	display: flex;
-	flex-direction: column;
 	padding: 142px 48px 48px 48px;
 	border-radius: 6px;
 	border: 2px solid var(--grey-10);
@@ -678,16 +655,9 @@ nav:hover .button-cta {
 	inset: 48px auto auto 48px;
 }
 
-.faq-item {
-	width: 100%;
-}
-
 .faq-question {
-	box-sizing: border-box;
-	width: 100%;
 	padding: 20px 20px 20px 0px;
 	gap: 8px;
-	justify-content: start;
 	align-items: start;
 	background: none;
 	text-align: left;
@@ -727,7 +697,7 @@ nav:hover .button-cta {
 }
 
 .faq-answer.active {
-	max-height: 120px;
+	max-height: 108px;
 	padding: 0 0 20px 32px;
 }
 
@@ -749,72 +719,9 @@ nav:hover .button-cta {
 }
 
 @media (min-width: 720px) and (max-width: 1055px) {
-	nav {
-		width: 40%;
-		padding: 0 max(calc(20% - 146px), 24px);
-	}
-
-	.gradient-line {
-		width: max(40%, 340px);
-	}
-
-	.button-graphic {
-		width: 144px;
-		height: 144px;
-		padding: 48px;
-	}
-
-	.button-graphic:hover {
-		width: 168px;
-		height: 168px;
-	}
-
-	.contact-grid {
-		width: 168px;
-		height: 168px;
-	}
 }
 
 @media (max-width: 719px) {
-	.app {
-		flex-direction: column-reverse;
-		min-height: auto;
-	}
-
-	main {
-		height: 50dvh;
-	}
-
-	nav {
-		box-sizing: border-box;
-		height: 50dvh;
-		padding: 0 max(calc(50% - 134px), 48px) 10vh max(calc(50% - 134px), 48px);
-	}
-
-	section {
-		padding: 10vh 0 0 max(calc(50% - 134px), 48px);
-		justify-content: start;
-	}
-
-	.button-graphic {
-		width: 144px;
-		height: 144px;
-		padding: 48px;
-	}
-
-	.button-graphic:hover {
-		width: 168px;
-		height: 168px;
-	}
-
-	.contact-grid {
-		width: 168px;
-		height: 168px;
-	}
-
-	.gradient-line {
-		width: 24px;
-	}
 }
 
 @media (prefers-reduced-motion: no-preference) {
