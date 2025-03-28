@@ -147,7 +147,7 @@ section {
 	position: relative;
 	box-sizing: border-box;
 	display: flex;
-	gap: 10px;
+	gap: 0px;
 	height: 100vh;
 	justify-content: center;
 	align-items: center;
@@ -372,9 +372,14 @@ nav:hover .button-cta {
 
 /* COMPONENTS SECTIONS */
 .components {
-	display: flex;
-	gap: 0px;
 	padding: 0px 0px 0px 72px;
+}
+
+.components h2,
+.components p {
+	width: 100%;
+	min-width: 320px;
+	max-width: 348px;
 }
 
 .left {
@@ -408,11 +413,9 @@ nav:hover .button-cta {
 	overflow: hidden;
 	height: 100%;
 	width: 50%;
-	padding: 0px;
-	margin: 0px;
 }
 
-.node-container {
+.node {
 	position: absolute;
 	cursor: grab;
 	touch-action: none;
@@ -422,109 +425,16 @@ nav:hover .button-cta {
 	transition: transform var(--transition-2);
 }
 
-.node-container.dragging {
+.node.dragging {
 	transition: none;
 }
 
-.node-container:hover {
-	transform: scale(1.1) rotate(15deg);
-}
-
-.node-container:active {
-	cursor: grabbing;
-}
-
-.node {
-	position: absolute;
-	background-color: var(--grey-1);
-	border: 1px solid var(--grey-1);
-	border-radius: 50%;
-	transition: background-color 0.3s var(--easing-1);
-	cursor: grab;
-	transform-origin: center center;
-}
-
 .node:hover {
-	background-color: var(--beige-5);
+	transform: scale(1.1) rotate(15deg);
 }
 
 .node:active {
 	cursor: grabbing;
-}
-
-.components h2,
-.components p {
-	width: 100%;
-	min-width: 320px;
-	max-width: 348px;
-}
-
-.contact-grid {
-	position: relative;
-	width: 200px;
-	height: 200px;
-	border: 1px solid var(--beige-3);
-}
-
-.contact-grid span {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	opacity: 0;
-	transition: opacity var(--transition-1);
-	text-wrap: nowrap;
-	user-select: none;
-}
-
-.contact-grid span.visible {
-	opacity: 1;
-}
-
-.contact-grid button {
-	position: absolute;
-	width: 48px;
-	height: 48px;
-	background-color: var(--color-bg);
-	justify-content: center;
-	transition: var(--transition-2);
-	color: var(--beige-5);
-	transform: translate(-50%, -50%);
-}
-
-.contact-grid button:nth-child(5) {
-	left: 0;
-	top: 50%;
-}
-
-.contact-grid button:nth-child(6) {
-	left: 0;
-	top: 50%;
-}
-
-.contact-grid button:nth-child(7) {
-	left: 50%;
-	top: 0;
-}
-
-.contact-grid button:nth-child(8) {
-	left: 100%;
-	top: 50%;
-}
-
-.contact-grid button:nth-child(9) {
-	left: 50%;
-	top: 100%;
-}
-
-.contact-grid button:hover {
-	color: var(--beige-9);
-	width: 72px;
-	height: 72px;
-}
-
-.contact-grid button svg {
-	fill: currentColor;
 }
 
 /* SLIDER */

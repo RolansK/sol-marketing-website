@@ -10,7 +10,7 @@
 </script>
 
 <svelte:head>
-	<title>Teyah</title>
+	<title>Sol - visual plugin for Framer</title>
 	<meta
 		name="description"
 		content="A small studio building design tools for curious creatives with care and love."

@@ -183,7 +183,7 @@
 	<div class="force-graph" bind:this={forceGraphContainer}>
 		{#each nodes as node (node.id)}
 			<div
-				class="node-container"
+				class="node"
 				use:dragAction={node}
 				style="
 					width: {node.r * 2}px;
