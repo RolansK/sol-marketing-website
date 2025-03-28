@@ -88,7 +88,6 @@ p {
 span {
 	color: var(--color-text);
 	font-size: var(--font-size-body);
-	font-family: var(--font-body);
 }
 
 a {
@@ -201,7 +200,6 @@ nav:hover .button-nav span {
 	border-radius: 20px;
 	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
 	color: var(--grey-10);
-	font-family: var(--font-body);
 	font-size: var(--font-size-body);
 	transition: var(--transition-1);
 }
@@ -258,7 +256,6 @@ nav:hover .button-cta {
 	border: 1px solid var(--grey-1);
 	border-radius: 20px;
 	color: var(--grey-1);
-	font-family: var(--font-body);
 	font-size: var(--font-size-body);
 	transition: var(--transition-1);
 }
@@ -319,7 +316,6 @@ nav:hover .button-cta {
 	top: 4px;
 	font-style: italic;
 	letter-spacing: -1%;
-	font-family: 'Source Serif 4', serif;
 	font-size: var(--font-size-body);
 }
 
@@ -460,7 +456,6 @@ nav:hover .button-cta {
 	padding-bottom: 1px;
 	align-items: center;
 	justify-content: center;
-	font-family: var(--font-body);
 	font-size: 18px;
 	background: var(--grey-10);
 	color: var(--grey-1);
@@ -569,7 +564,6 @@ nav:hover .button-cta {
 	border-radius: 50%;
 	padding-bottom: 1px;
 	justify-content: center;
-	font-family: var(--font-body);
 	font-size: 18px;
 	background: var(--grey-10);
 	color: var(--grey-1);
@@ -662,7 +656,6 @@ nav:hover .button-cta {
 	background: none;
 	text-align: left;
 	color: var(--color-text);
-	font-family: var(--font-body);
 	font-size: var(--font-size-body);
 	transition: var(--transition-1);
 }
