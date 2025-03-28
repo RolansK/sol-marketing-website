@@ -1,19 +1,24 @@
 <script>
 	import { page } from '$app/stores';
-	import TeyahLogo from '$lib/assets/teyah-logo-full.svelte';
+	import ButtonNav from '$lib/components/ButtonNav.svelte';
+	import ButtonCta from '$lib/components/ButtonCta.svelte';
+
+	import Play from '$lib/icons/play.svelte';
+	import PuzzlePiece from '$lib/icons/puzzle-piece.svelte';
+	import Star from '$lib/icons/star.svelte';
+	import SealQuestion from '$lib/icons/seal-question.svelte';
+	import Sparkle from '$lib/icons/sparkle.svelte';
 </script>
 
 <nav>
-	<TeyahLogo />
-	<p>
-		A small studio building design tools for curious creatives with care and love. Based in the
-		Netherlands.
-	</p>
-	<div class="nav-links">
-		<a href="/" aria-current={$page.url.pathname === '/' ? 'page' : undefined}>Home</a>
-		<a href="/contact" aria-current={$page.url.pathname === '/contact' ? 'page' : undefined}
-			>Contact</a
-		>
-		<a href="/about" aria-current={$page.url.pathname === '/about' ? 'page' : undefined}>About</a>
-	</div>
+	<ButtonNav icon={Play} title="Demo" url="#demo" />
+	<ButtonNav icon={PuzzlePiece} title="Components" url="#components" />
+	<ButtonNav icon={Star} title="Features" url="#features" />
+	<ButtonNav icon={SealQuestion} title="FAQ" url="#faq" />
+	<ButtonCta
+		icon={Sparkle}
+		title="Get Sol"
+		class="bottom"
+		url="https://www.framer.com/marketplace/plugins/sol/"
+	/>
 </nav>

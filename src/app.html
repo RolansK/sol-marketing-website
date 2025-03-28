@@ -8,5 +8,16 @@
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
+		<script src="https://unpkg.com/lenis@1.2.3/dist/lenis.min.js"></script>
+		<script>
+			window.lenis = new Lenis({
+				duration: 2,
+				easing: (t) => Math.min(1, 1.001 - Math.pow(2, -12 * t)),
+				normalizeWheel: true,
+				smoothTouch: false,
+				autoRaf: true,
+				autoResize: true
+			});
+		</script>
 	</body>
 </html>
