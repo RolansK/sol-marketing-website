@@ -113,6 +113,8 @@ main {
 }
 
 button {
+	display: flex;
+	align-items: center;
 	border: none;
 	cursor: pointer;
 	user-select: none;
@@ -162,19 +164,10 @@ iframe {
 	box-shadow: var(--shadow-1);
 }
 
-.nav-links {
-	padding: 0;
-	margin: -12px 0 0 -12px;
-	height: 48px;
-	display: flex;
-}
-
-/* ButtonNav */
+/* BUTTON NAV */
 .button-nav {
 	height: 48px;
 	width: 182px;
-	display: flex;
-	align-items: center;
 	gap: 8px;
 	padding-left: 8px;
 	background: none;
@@ -205,12 +198,10 @@ nav:hover .button-nav span {
 	color: var(--color-text);
 }
 
-/* ButtonCta */
+/* BUTTON CTA */
 .button-cta {
 	width: 40px;
 	height: 40px;
-	display: flex;
-	align-items: center;
 	gap: 8px;
 	padding-left: 10px;
 	border-radius: 20px;
@@ -255,13 +246,11 @@ nav:hover .button-cta {
 	bottom: 14px;
 }
 
-/* button-primary */
+/* BUTTON PRIMARY */
 .button-primary {
 	width: fit-content;
 	height: 40px;
-	display: flex;
 	padding: 20px;
-	align-items: center;
 	justify-content: center;
 	border-radius: 20px;
 	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
@@ -280,13 +269,11 @@ nav:hover .button-cta {
 	opacity: 0.8;
 }
 
-/* button-secondary */
+/* BUTTON SECONDARY */
 .button-secondary {
 	width: fit-content;
 	height: 40px;
-	display: flex;
 	padding: 20px;
-	align-items: center;
 	justify-content: center;
 	background: none;
 	border: 1px solid var(--grey-1);
@@ -306,7 +293,7 @@ nav:hover .button-cta {
 	opacity: 0.8;
 }
 
-/* Hero */
+/* HERO */
 .hero {
 	height: 75vh;
 	display: flex;
@@ -391,14 +378,14 @@ nav:hover .button-cta {
 	bottom: 0px;
 }
 
-/* Demo */
+/* DEMO-VIDEO */
 .demo {
 	box-sizing: border-box;
 	display: flex;
 	padding: 0px 72px 0px 144px;
 }
 
-/* Components */
+/* COMPONENTS SECTIONS */
 .components {
 	display: flex;
 	gap: 0px;
@@ -513,10 +500,8 @@ nav:hover .button-cta {
 	position: absolute;
 	width: 48px;
 	height: 48px;
-	display: flex;
 	background-color: var(--color-bg);
 	justify-content: center;
-	align-items: center;
 	transition: var(--transition-2);
 	color: var(--beige-5);
 	transform: translate(-50%, -50%);
@@ -557,79 +542,7 @@ nav:hover .button-cta {
 	fill: currentColor;
 }
 
-@media (min-width: 720px) and (max-width: 1055px) {
-	nav {
-		width: 40%;
-		padding: 0 max(calc(20% - 146px), 24px);
-	}
-
-	.gradient-line {
-		width: max(40%, 340px);
-	}
-
-	.button-graphic {
-		width: 144px;
-		height: 144px;
-		padding: 48px;
-	}
-
-	.button-graphic:hover {
-		width: 168px;
-		height: 168px;
-	}
-
-	.contact-grid {
-		width: 168px;
-		height: 168px;
-	}
-}
-
-@media (max-width: 719px) {
-	.app {
-		flex-direction: column-reverse;
-		min-height: auto;
-	}
-
-	main {
-		height: 50dvh;
-	}
-
-	nav {
-		box-sizing: border-box;
-		height: 50dvh;
-		padding: 0 max(calc(50% - 134px), 48px) 10vh max(calc(50% - 134px), 48px);
-	}
-
-	section {
-		padding: 10vh 0 0 max(calc(50% - 134px), 48px);
-		justify-content: start;
-	}
-
-	.button-graphic {
-		width: 144px;
-		height: 144px;
-		padding: 48px;
-	}
-
-	.button-graphic:hover {
-		width: 168px;
-		height: 168px;
-	}
-
-	.contact-grid {
-		width: 168px;
-		height: 168px;
-	}
-
-	.gradient-line {
-		width: 24px;
-	}
-}
-
-@media (prefers-reduced-motion: no-preference) {
-}
-
-/* Slider component styles */
+/* SLIDER */
 .slider-container {
 	overflow: hidden;
 	position: relative;
@@ -879,7 +792,6 @@ nav:hover .button-cta {
 	width: 100%;
 	padding: 20px 20px 20px 0px;
 	gap: 8px;
-	display: flex;
 	justify-content: start;
 	align-items: start;
 	background: none;
@@ -939,4 +851,76 @@ nav:hover .button-cta {
 
 .faq-question span.rotated svg {
 	transform: rotate(45deg);
+}
+
+@media (min-width: 720px) and (max-width: 1055px) {
+	nav {
+		width: 40%;
+		padding: 0 max(calc(20% - 146px), 24px);
+	}
+
+	.gradient-line {
+		width: max(40%, 340px);
+	}
+
+	.button-graphic {
+		width: 144px;
+		height: 144px;
+		padding: 48px;
+	}
+
+	.button-graphic:hover {
+		width: 168px;
+		height: 168px;
+	}
+
+	.contact-grid {
+		width: 168px;
+		height: 168px;
+	}
+}
+
+@media (max-width: 719px) {
+	.app {
+		flex-direction: column-reverse;
+		min-height: auto;
+	}
+
+	main {
+		height: 50dvh;
+	}
+
+	nav {
+		box-sizing: border-box;
+		height: 50dvh;
+		padding: 0 max(calc(50% - 134px), 48px) 10vh max(calc(50% - 134px), 48px);
+	}
+
+	section {
+		padding: 10vh 0 0 max(calc(50% - 134px), 48px);
+		justify-content: start;
+	}
+
+	.button-graphic {
+		width: 144px;
+		height: 144px;
+		padding: 48px;
+	}
+
+	.button-graphic:hover {
+		width: 168px;
+		height: 168px;
+	}
+
+	.contact-grid {
+		width: 168px;
+		height: 168px;
+	}
+
+	.gradient-line {
+		width: 24px;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
 }
