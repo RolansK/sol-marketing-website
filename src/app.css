@@ -793,6 +793,7 @@ nav:hover .button-cta {
 .pricing-card {
 	box-sizing: border-box;
 	position: relative;
+	min-width: 360px;
 	width: 360px;
 	height: 481px;
 	display: flex;
@@ -827,7 +828,7 @@ nav:hover .button-cta {
 .pricing-divider {
 	position: absolute;
 	inset: 193px auto auto 48px;
-	height: 2px;
+	height: 1.5px;
 	width: 92px;
 	background-image: linear-gradient(to right, var(--orange-8), var(--pink-7));
 }
@@ -860,6 +861,8 @@ nav:hover .button-cta {
 	padding: 142px 48px 48px 48px;
 	border-radius: 6px;
 	border: 2px solid var(--grey-10);
+	background-color: var(--grey-9);
+	box-shadow: var(--shadow-grey);
 }
 
 .faq-container h1 {
@@ -874,11 +877,11 @@ nav:hover .button-cta {
 .faq-question {
 	box-sizing: border-box;
 	width: 100%;
-	padding: 20px;
+	padding: 20px 20px 20px 0px;
 	gap: 8px;
 	display: flex;
 	justify-content: start;
-	align-items: center;
+	align-items: start;
 	background: none;
 	text-align: left;
 	color: var(--color-text);
@@ -888,7 +891,6 @@ nav:hover .button-cta {
 }
 
 .faq-question svg {
-	margin-top: 8px;
 	width: 24px;
 	height: 24px;
 	transition: var(--transition-1);
@@ -914,12 +916,12 @@ nav:hover .button-cta {
 	transition:
 		max-height var(--transition-2),
 		padding var(--transition-2);
-	padding: 0 0 0px 48px;
+	padding: 0 0 0px 32px;
 }
 
 .faq-answer.active {
 	max-height: 120px;
-	padding: 0 0 20px 48px;
+	padding: 0 0 20px 32px;
 }
 
 .faq-answer p {
