@@ -20,7 +20,7 @@
 		<li><Envelope />Contact for use in templates.</li>
 		<Button
 			title="Get Sol"
-			className="button-primary"
+			className="button-cta"
 			url="https://www.framer.com/marketplace/plugins/sol/"
 		/>
 	</div>

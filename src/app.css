@@ -206,7 +206,15 @@ nav:hover .button-nav span {
 	padding-left: 10px;
 	border-radius: 20px;
 	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
+	color: var(--grey-10);
+	font-family: var(--font-body);
+	font-size: var(--font-size-body);
 	transition: var(--transition-1);
+}
+
+:not(nav) > .button-cta {
+	width: fit-content;
+	padding: 0px 20px 0px 20px;
 }
 
 .button-cta svg {
@@ -244,29 +252,6 @@ nav:hover .button-cta {
 .bottom {
 	position: absolute;
 	bottom: 14px;
-}
-
-/* BUTTON PRIMARY */
-.button-primary {
-	width: fit-content;
-	height: 40px;
-	padding: 20px;
-	justify-content: center;
-	border-radius: 20px;
-	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
-	color: var(--grey-10);
-	font-family: var(--font-body);
-	font-size: var(--font-size-body);
-	transition: var(--transition-1);
-}
-
-.button-primary:hover {
-	opacity: 0.9;
-	border-radius: 4px;
-}
-
-.button-primary:active {
-	opacity: 0.8;
 }
 
 /* BUTTON SECONDARY */

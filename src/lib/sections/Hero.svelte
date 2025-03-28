@@ -16,7 +16,7 @@
 		<h1>&nbsp;plugin</h1>
 		<h1>for Framer</h1>
 
-		<Button title="Watch the demo" className="button-primary" url="#demo" />
+		<Button title="Watch the demo" className="button-cta" url="#demo" />
 		<Button title="Follow on X" className="button-secondary" url="https://x.com/teyah_design" />
 	</div>
 </section>
