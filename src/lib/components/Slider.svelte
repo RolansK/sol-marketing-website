@@ -7,8 +7,14 @@
 	let active = $state(0);
 	let containerWidth = $state(0);
 	let containerRef;
+	let breakpoint = $state('desktop');
 
-	const { itemWidth = 240, gap = 0.25, padding = 104, maxWidth = 448 } = $props();
+	const props = $props();
+
+	let itemWidth = $state(240);
+	let gap = $state(0.25);
+	let padding = $state(104);
+	let maxWidth = $state(448);
 
 	const demoItems = [1, 2, 3];
 
@@ -49,17 +55,44 @@
 		}
 	};
 
+	function updateBreakpoint() {
+		if (window.innerWidth > 1055) {
+			breakpoint = 'desktop';
+			itemWidth = 240;
+			gap = 0.25;
+			padding = 104;
+			maxWidth = 448;
+		} else if (window.innerWidth >= 720) {
+			breakpoint = 'tablet';
+			itemWidth = 200;
+			gap = 0.25;
+			padding = 56;
+			maxWidth = 320;
+		} else {
+			breakpoint = 'mobile';
+			itemWidth = 200;
+			gap = 0.25;
+			padding = 32;
+			maxWidth = 280;
+		}
+	}
+
 	onMount(() => {
 		const measure = () => {
 			if (!containerRef) return;
 			containerWidth = containerRef.offsetWidth;
+			updateBreakpoint();
 		};
 
 		measure();
 		const observer = new ResizeObserver(measure);
 		observer.observe(containerRef);
+		window.addEventListener('resize', updateBreakpoint);
 
-		return () => observer.disconnect();
+		return () => {
+			observer.disconnect();
+			window.removeEventListener('resize', updateBreakpoint);
+		};
 	});
 
 	function getPosition(i) {
