@@ -180,7 +180,7 @@
 		</p>
 	</span>
 
-	<div class="force-graph" bind:this={forceGraphContainer}>
+	<div class="node-graph" bind:this={forceGraphContainer}>
 		{#each nodes as node (node.id)}
 			<div
 				class="node"
