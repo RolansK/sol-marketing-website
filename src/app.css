@@ -432,11 +432,14 @@ nav:hover .button-cta {
 }
 
 .controls {
+	display: flex;
+	gap: 16px;
+}
+
+.slider-container .controls {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	display: flex;
-	gap: 16px;
 }
 
 .controls button {
@@ -455,28 +458,6 @@ nav:hover .button-cta {
 	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
 	color: var(--grey-10);
 }
-
-/* COMBINE SLIDER AND FEATURES CONTROLS AS THEY ARE ESSENTIALLY THE SAME */
-
-/* .features-controls {
-	display: flex;
-	gap: 16px;
-}
-
-.features-controls button {
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	padding-bottom: 1px;
-	justify-content: center;
-	background: var(--grey-10);
-	color: var(--grey-1);
-}
-
-.features-controls button.active {
-	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
-	color: var(--grey-10);
-} */
 
 /* CONTAINER */
 .container {
@@ -564,26 +545,6 @@ nav:hover .button-cta {
 	inset: 48px 0px 0px 48px;
 	width: 96px;
 	height: 108px;
-}
-
-.features-controls {
-	display: flex;
-	gap: 16px;
-}
-
-.features-controls button {
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	padding-bottom: 1px;
-	justify-content: center;
-	background: var(--grey-10);
-	color: var(--grey-1);
-}
-
-.features-controls button.active {
-	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
-	color: var(--grey-10);
 }
 
 /* PRICING */

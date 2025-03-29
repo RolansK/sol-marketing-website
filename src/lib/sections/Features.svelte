@@ -77,7 +77,7 @@
 			</span>
 		{/each}
 	</div>
-	<div class="features-controls">
+	<div class="controls">
 		{#each features as _, i}
 			<button onpointerenter={() => (activeIndex = i)} class:active={activeIndex === i}
 				>{i + 1}</button
