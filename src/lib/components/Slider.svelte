@@ -106,7 +106,6 @@
 
 		return {
 			left: `${left}px`,
-			top: '50%',
 			transform: `translate(${translateX}px, -50%) scale(${scale})`
 		};
 	}
@@ -117,8 +116,6 @@
 		const translateY = (itemWidth * scale) / 2 + 32;
 
 		return {
-			top: '50%',
-			left: '50%',
 			transform: `translate(-50%, ${translateY}px)`
 		};
 	}
@@ -129,7 +126,6 @@
 		<div
 			class="slider-item"
 			style:left={getPosition(i).left}
-			style:top={getPosition(i).top}
 			style:transform={getPosition(i).transform}
 		>
 			{#if i === 0}
@@ -146,12 +142,7 @@
 		</div>
 	{/each}
 
-	<div
-		class="slider-controls"
-		style:top={getControlsPosition().top}
-		style:left={getControlsPosition().left}
-		style:transform={getControlsPosition().transform}
-	>
+	<div class="controls" style:transform={getControlsPosition().transform}>
 		{#each demoItems as _, i}
 			<button onpointerenter={() => (active = i)} class={active === i ? 'active' : ''}>
 				{i + 1}

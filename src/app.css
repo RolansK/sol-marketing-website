@@ -423,6 +423,7 @@ nav:hover .button-cta {
 
 .slider-item {
 	position: absolute;
+	top: 50%;
 	background-color: var(--grey-10);
 	padding: 6px;
 	border-radius: var(--radius-1);
@@ -430,16 +431,15 @@ nav:hover .button-cta {
 	transition: var(--transition-2);
 }
 
-.slider-controls {
+.controls {
 	position: absolute;
-	bottom: 20px;
+	top: 50%;
 	left: 50%;
-	transform: translateX(-50%);
 	display: flex;
 	gap: 16px;
 }
 
-.slider-controls button {
+.controls button {
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
@@ -451,10 +451,32 @@ nav:hover .button-cta {
 	color: var(--grey-1);
 }
 
-.slider-controls button.active {
+.controls button.active {
 	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
 	color: var(--grey-10);
 }
+
+/* COMBINE SLIDER AND FEATURES CONTROLS AS THEY ARE ESSENTIALLY THE SAME */
+
+/* .features-controls {
+	display: flex;
+	gap: 16px;
+}
+
+.features-controls button {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	padding-bottom: 1px;
+	justify-content: center;
+	background: var(--grey-10);
+	color: var(--grey-1);
+}
+
+.features-controls button.active {
+	background: linear-gradient(to top, var(--grey-1), var(--grey-3));
+	color: var(--grey-10);
+} */
 
 /* CONTAINER */
 .container {
@@ -766,12 +788,7 @@ nav:hover .button-cta {
 		padding: 6px;
 	}
 
-	.slider-controls {
-		bottom: 20px;
-		gap: 16px;
-	}
-
-	.slider-controls button.active {
+	.controls button.active {
 		background: linear-gradient(to top, var(--grey-1), var(--grey-3));
 		color: var(--grey-10);
 	}
