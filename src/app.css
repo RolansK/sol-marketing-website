@@ -865,25 +865,11 @@ nav:hover .button-cta {
 @media (max-width: 719px) {
 	/* NAV */
 	nav {
-		position: fixed;
-		overflow: hidden;
 		top: 0px;
 		left: 0px;
 		right: 0px;
 		width: 100%;
 		height: 60px;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		background-color: var(--grey-10);
-		padding: 16px !important;
-		box-shadow: var(--shadow-1);
-		z-index: 10;
-		transition: var(--transition-1);
-	}
-
-	nav:hover {
-		width: 182px;
 	}
 
 	/* HERO */
@@ -894,47 +880,6 @@ nav:hover .button-cta {
 	.grid {
 		left: 0px;
 		width: 100vw;
-	}
-
-	.hero div {
-		height: 206px;
-	}
-
-	.hero div span {
-		position: absolute;
-		left: 118px;
-		top: 4px;
-		font-style: italic;
-		letter-spacing: -1%;
-	}
-
-	.hero div h1 {
-		top: 50px;
-	}
-
-	.hero div h1:nth-of-type(2) {
-		left: 186px;
-	}
-
-	.hero div h1:nth-of-type(3) {
-		top: 100px;
-	}
-
-	.hero div svg {
-		width: 46px;
-		height: 46px;
-		top: 53px;
-		left: 141px;
-	}
-
-	.hero div button {
-		position: absolute;
-		bottom: 0px;
-	}
-
-	.hero div button:nth-of-type(2) {
-		left: 170px;
-		bottom: 0px;
 	}
 
 	/* DEMO-VIDEO */
@@ -1019,13 +964,6 @@ nav:hover .button-cta {
 		transform: translateX(-33.333%);
 	}
 
-	.features h2,
-	.features p {
-		text-wrap: balance;
-		width: 296px;
-		opacity: 0;
-	}
-
 	.features span {
 		position: relative;
 		flex: 0 0 33.333%;
@@ -1034,6 +972,13 @@ nav:hover .button-cta {
 		background-color: var(--grey-10);
 		border-radius: var(--radius-1);
 		box-shadow: var(--shadow-1), var(--shadow-grey);
+	}
+
+	/* FAQ */
+	.features-container:has(.faq-container) {
+		flex-direction: column;
+		height: fit-content;
+		gap: 32px;
 	}
 }
 
