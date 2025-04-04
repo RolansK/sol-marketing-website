@@ -8,7 +8,7 @@
 	}
 </script>
 
-<button onclick={toggleMenu} class="hamburger" class:open={isOpen}>
+<button onclick={toggleMenu} class="hamburger" class:open={isOpen} aria-label="Toggle menu">
 	<div class:open={isOpen}></div>
 	<div class:open={isOpen}></div>
 </button>
