@@ -2,12 +2,11 @@
 	let {
 		isOpen,
 		hamburgerClick,
-		unit = 'rem',
-		width = 6,
-		height = 4,
-		lineHeight = 0.8,
-		contain = false,
-		lineBorderRadius = 0.4
+		unit = 'px',
+		width = 32,
+		height = 24,
+		lineHeight = 2,
+		contain = false
 	} = $props();
 
 	let offset = $derived(height / 2 - lineHeight / 2);
@@ -29,13 +28,8 @@
 		style:width={isOpen && contain
 			? Math.sqrt(2 * Math.pow(width > height ? height : width, 2)) - lineHeight + unit
 			: width + unit}
-		style:border-radius={lineBorderRadius + unit}
 	></div>
-	<div
-		class="hamburger-line l"
-		style:height={lineHeight + unit}
-		style:border-radius={lineBorderRadius + unit}
-	></div>
+	<div class="hamburger-line l" style:height={lineHeight + unit}></div>
 	<div
 		class="hamburger-line"
 		style:height={lineHeight + unit}
@@ -43,6 +37,5 @@
 		style:width={isOpen && contain
 			? Math.sqrt(2 * Math.pow(width > height ? height : width, 2)) - lineHeight + unit
 			: width + unit}
-		style:border-radius={lineBorderRadius + unit}
 	></div>
 </div>
