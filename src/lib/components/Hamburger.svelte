@@ -20,17 +20,14 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div onclick={toggleMenu} class="hamburger-container" class:isOpen>
+<div onclick={toggleMenu} class="hamburger" class:isOpen>
 	<div
-		class="hamburger-line"
 		style:transform={isOpen ? `translate(0, ${offset}${unit}) rotate(45deg)` : ''}
 		style:width={isOpen && contain
 			? Math.sqrt(2 * Math.pow(width > height ? height : width, 2)) - lineHeight + unit
 			: width + unit}
 	></div>
-	<div class="hamburger-line l" style:height={lineHeight + unit}></div>
 	<div
-		class="hamburger-line"
 		style:transform={isOpen ? `translate(0, -${offset}${unit}) rotate(-45deg)` : ''}
 		style:width={isOpen && contain
 			? Math.sqrt(2 * Math.pow(width > height ? height : width, 2)) - lineHeight + unit

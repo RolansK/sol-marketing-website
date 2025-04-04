@@ -683,7 +683,7 @@ nav:hover .button-cta {
 }
 
 /* HAMBURGER */
-.hamburger-container {
+.hamburger {
 	position: absolute;
 	top: 12px;
 	right: 12px;
@@ -698,16 +698,12 @@ nav:hover .button-cta {
 	cursor: pointer;
 }
 
-.hamburger-line {
+.hamburger div {
 	height: 2px;
 	width: 100%;
 	transform: rotate(0deg);
 	transform-origin: center;
 	background-color: var(--grey-1);
-}
-
-.hamburger-container.isOpen .hamburger-line:nth-child(2) {
-	opacity: 0;
 }
 
 @media (max-width: 1055px) {
