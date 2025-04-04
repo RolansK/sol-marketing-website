@@ -9,7 +9,7 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"lint": "eslint .",
-		"pages:build": "npm ci && npm run build",
+		"pages:build": "npm run build",
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
@@ -28,5 +28,8 @@
 		"@fontsource-variable/source-serif-4": "^5.2.5",
 		"@fontsource/source-serif-4": "^5.1.1",
 		"d3": "^7.9.0"
+	},
+	"optionalDependencies": {
+		"@rollup/rollup-linux-x64-gnu": "^4.9.1"
 	}
 }
