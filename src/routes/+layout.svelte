@@ -4,8 +4,6 @@
 	import Grid from '$lib/icons/grid.svelte';
 	import '../app.css';
 	import Hamburger from '$lib/components/Hamburger.svelte';
-	import { initLenis } from '$lib/utils/lenis';
-	import { onMount } from 'svelte';
 
 	let { children } = $props();
 	let isNavOpen = $state(false);
@@ -17,10 +15,6 @@
 	function closeNav() {
 		isNavOpen = false;
 	}
-
-	onMount(() => {
-		initLenis();
-	});
 </script>
 
 <div class="app">
