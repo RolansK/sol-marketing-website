@@ -685,25 +685,30 @@ nav:hover .button-cta {
 /* HAMBURGER */
 .hamburger {
 	position: absolute;
-	top: 12px;
-	right: 12px;
-	width: 32px;
-	height: 24px;
+	inset: 12px 12px auto auto;
+	width: 44px;
+	height: 44px;
 	display: flex;
+	padding: 15px 12px 15px 12px;
 	flex-direction: column;
 	justify-content: space-between;
-	align-items: center;
-	transition: 1s ease-in-out;
+	background: none;
 	z-index: 10;
-	cursor: pointer;
 }
 
 .hamburger div {
 	height: 2px;
 	width: 100%;
-	transform: rotate(0deg);
-	transform-origin: center;
 	background-color: var(--grey-1);
+	transition: var(--transition-2);
+}
+
+.hamburger div.open:first-child {
+	transform: translateY(6px) rotate(45deg);
+}
+
+.hamburger div.open:last-child {
+	transform: translateY(-6px) rotate(-45deg);
 }
 
 @media (max-width: 1055px) {
