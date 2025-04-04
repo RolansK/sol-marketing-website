@@ -15,8 +15,15 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div onclick={hamburgerClick} class:isOpen style:width={width + unit} style:height={height + unit}>
+<div
+	onclick={hamburgerClick}
+	class="hamburger-container"
+	class:isOpen
+	style:width={width + unit}
+	style:height={height + unit}
+>
 	<div
+		class="hamburger-line"
 		style:height={lineHeight + unit}
 		style:transform={isOpen ? `translate(0, ${offset}${unit}) rotate(45deg)` : ''}
 		style:width={isOpen && contain
@@ -25,11 +32,12 @@
 		style:border-radius={lineBorderRadius + unit}
 	></div>
 	<div
-		class="l"
+		class="hamburger-line l"
 		style:height={lineHeight + unit}
 		style:border-radius={lineBorderRadius + unit}
 	></div>
 	<div
+		class="hamburger-line"
 		style:height={lineHeight + unit}
 		style:transform={isOpen ? `translate(0, -${offset}${unit}) rotate(-45deg)` : ''}
 		style:width={isOpen && contain
@@ -38,26 +46,3 @@
 		style:border-radius={lineBorderRadius + unit}
 	></div>
 </div>
-
-<style>
-	div {
-		margin: 0 auto;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		align-items: center;
-		transition: 1s ease-in-out;
-		background-color: var(--bg-hamburger);
-		& div {
-			margin: 0;
-			width: 100%;
-			transform: rotate(0deg);
-			transform-origin: center;
-			background-color: var(--bg-line);
-		}
-	}
-
-	.isOpen div:nth-child(2) {
-		opacity: 0;
-	}
-</style>
