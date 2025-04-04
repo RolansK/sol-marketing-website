@@ -6,14 +6,19 @@
 	import Hamburger from '$lib/components/Hamburger.svelte';
 
 	let { children } = $props();
+	let isNavOpen = $state(false);
+
+	function handleHamburgerClick(isOpen) {
+		isNavOpen = isOpen;
+	}
 </script>
 
 <div class="app">
-	<Header />
+	<Header isOpen={isNavOpen} />
 	<main>
 		<Grid />
 		<LogoBig />
-		<Hamburger />
+		<Hamburger hamburgerClick={handleHamburgerClick} />
 		{@render children()}
 	</main>
 </div>

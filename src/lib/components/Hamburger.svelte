@@ -4,7 +4,7 @@
 
 	function toggleMenu() {
 		isOpen = !isOpen;
-		if (hamburgerClick) hamburgerClick();
+		if (hamburgerClick) hamburgerClick(isOpen);
 	}
 </script>
 

@@ -8,9 +8,12 @@
 	import Star from '$lib/icons/star.svelte';
 	import SealQuestion from '$lib/icons/seal-question.svelte';
 	import Sparkle from '$lib/icons/sparkle.svelte';
+
+	let { isOpen = false } = $props();
 </script>
 
-<nav>
+<nav class:open={isOpen}>
+	<div class="mobile-mask"></div>
 	<ButtonNav icon={Play} title="Demo" url="#demo" />
 	<ButtonNav icon={PuzzlePiece} title="Components" url="#components" />
 	<ButtonNav icon={Star} title="Features" url="#features" />
