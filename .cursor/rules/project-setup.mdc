@@ -14,6 +14,9 @@ The project uses Bun as its package manager and JavaScript runtime, not NPM.
 The project does NOT use TypeScript, opting for JavaScript instead. This is extremely important!
 
 # Svelte 5
-The project uses Svelte 5 in runes mode. Keep that in mind at all times as certain Svelte 4 code and approaches are incompatible with Svelte 5.
+The project uses Svelte 5 in runes mode. Keep that in mind at all times. Svelte 4 code and approaches are often incompatible with Svelte 5.
+
+# Runes
+Never put $state inside $props.
 
 

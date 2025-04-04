@@ -1,11 +1,4 @@
-<svg
-	width="calc(100vw - 72px)"
-	height="100vh"
-	style="position: fixed; z-index: -1; left: 72px;"
-	stroke="#ffffff"
-	stroke-width="1"
-	overflow="visible"
->
+<svg class="grid">
 	<line x1="0%" y1="0" x2="0%" y2="100%" />
 	<line x1="7.14%" y1="0" x2="7.14%" y2="100%" />
 	<line x1="14.28%" y1="0" x2="14.28%" y2="100%" />

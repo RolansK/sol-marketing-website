@@ -1,7 +1,11 @@
 <script>
-	const { icon, title = 'Demo', url = '' } = $props();
+	const { icon, title = 'Demo', url = '', onclick = null } = $props();
 
 	function handleClick(event) {
+		if (onclick) {
+			onclick(event);
+		}
+
 		if (url) {
 			if (url.startsWith('#')) {
 				event.preventDefault();

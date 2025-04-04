@@ -54,7 +54,7 @@
 	];
 </script>
 
-<section id="features" class="features-container">
+<section id="features" class="features-container mobile-feature-{activeIndex}">
 	<div class="features">
 		{#each features as feature, i}
 			<span onpointerenter={() => (activeIndex = i)} class:active={activeIndex === i}>
@@ -76,12 +76,12 @@
 				<p>{feature.description}</p>
 			</span>
 		{/each}
-		<div class="features-controls">
-			{#each features as _, i}
-				<button onpointerenter={() => (activeIndex = i)} class:active={activeIndex === i}
-					>{i + 1}</button
-				>
-			{/each}
-		</div>
+	</div>
+	<div class="controls">
+		{#each features as _, i}
+			<button onpointerenter={() => (activeIndex = i)} class:active={activeIndex === i}
+				>{i + 1}</button
+			>
+		{/each}
 	</div>
 </section>

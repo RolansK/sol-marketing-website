@@ -1,7 +1,11 @@
 <script>
-	const { icon, title = 'Demo', class: className = '', url = '' } = $props();
+	const { icon, title = 'Demo', class: className = '', url = '', onclick = null } = $props();
 
 	function handleClick(event) {
+		if (onclick) {
+			onclick(event);
+		}
+
 		if (url) {
 			if (url.startsWith('#')) {
 				event.preventDefault();
@@ -24,7 +28,13 @@
 	}
 </script>
 
-<button class="button-cta {className}" onclick={handleClick}>
+<button
+	class="button-cta {className}"
+	onclick={(e) => {
+		e.preventDefault();
+		handleClick(e);
+	}}
+>
 	{#if icon}
 		{@const Icon = icon}
 		<Icon class="icon" />

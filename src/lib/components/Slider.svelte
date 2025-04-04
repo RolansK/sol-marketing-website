@@ -7,8 +7,14 @@
 	let active = $state(0);
 	let containerWidth = $state(0);
 	let containerRef;
+	let breakpoint = $state('desktop');
 
-	const { itemWidth = 240, gap = 0.25, padding = 104, maxWidth = 448 } = $props();
+	const props = $props();
+
+	let itemWidth = $state(240);
+	let gap = $state(0.25);
+	let padding = $state(104);
+	let maxWidth = $state(448);
 
 	const demoItems = [1, 2, 3];
 
@@ -49,17 +55,44 @@
 		}
 	};
 
+	function updateBreakpoint() {
+		if (window.innerWidth > 1055) {
+			breakpoint = 'desktop';
+			itemWidth = 240;
+			gap = 0.25;
+			padding = 104;
+			maxWidth = 448;
+		} else if (window.innerWidth >= 720) {
+			breakpoint = 'tablet';
+			itemWidth = 200;
+			gap = 0.25;
+			padding = 56;
+			maxWidth = 320;
+		} else {
+			breakpoint = 'mobile';
+			itemWidth = 200;
+			gap = 0.25;
+			padding = 32;
+			maxWidth = 280;
+		}
+	}
+
 	onMount(() => {
 		const measure = () => {
 			if (!containerRef) return;
 			containerWidth = containerRef.offsetWidth;
+			updateBreakpoint();
 		};
 
 		measure();
 		const observer = new ResizeObserver(measure);
 		observer.observe(containerRef);
+		window.addEventListener('resize', updateBreakpoint);
 
-		return () => observer.disconnect();
+		return () => {
+			observer.disconnect();
+			window.removeEventListener('resize', updateBreakpoint);
+		};
 	});
 
 	function getPosition(i) {
@@ -73,7 +106,6 @@
 
 		return {
 			left: `${left}px`,
-			top: '50%',
 			transform: `translate(${translateX}px, -50%) scale(${scale})`
 		};
 	}
@@ -84,8 +116,6 @@
 		const translateY = (itemWidth * scale) / 2 + 32;
 
 		return {
-			top: '50%',
-			left: '50%',
 			transform: `translate(-50%, ${translateY}px)`
 		};
 	}
@@ -96,7 +126,6 @@
 		<div
 			class="slider-item"
 			style:left={getPosition(i).left}
-			style:top={getPosition(i).top}
 			style:transform={getPosition(i).transform}
 		>
 			{#if i === 0}
@@ -113,12 +142,7 @@
 		</div>
 	{/each}
 
-	<div
-		class="slider-controls"
-		style:top={getControlsPosition().top}
-		style:left={getControlsPosition().left}
-		style:transform={getControlsPosition().transform}
-	>
+	<div class="controls" style:transform={getControlsPosition().transform}>
 		{#each demoItems as _, i}
 			<button onpointerenter={() => (active = i)} class={active === i ? 'active' : ''}>
 				{i + 1}

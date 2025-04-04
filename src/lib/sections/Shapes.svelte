@@ -148,7 +148,7 @@
 		setTimeout(() => {
 			nodes = shapesConfig.map((c, i) => ({
 				id: i,
-				r: 45 + Math.floor(Math.random() * 11),
+				r: 40 + Math.floor(Math.random() * 8),
 				xPercent: c.xPercent,
 				yPercent: c.yPercent,
 				originalX: c.xPercent,
@@ -180,7 +180,7 @@
 		</p>
 	</span>
 
-	<div class="force-graph" bind:this={forceGraphContainer}>
+	<div class="node-graph" bind:this={forceGraphContainer}>
 		{#each nodes as node (node.id)}
 			<div
 				class="node"

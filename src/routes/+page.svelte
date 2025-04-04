@@ -13,7 +13,7 @@
 	<title>Sol - visual plugin for Framer</title>
 	<meta
 		name="description"
-		content="A small studio building design tools for curious creatives with care and love."
+		content="The ultimate graphics plugin for Framer. Create interactive grids, gradients, squircles and blobs with a couple of clicks, all without leaving the canvas."
 	/>
 </svelte:head>
 
