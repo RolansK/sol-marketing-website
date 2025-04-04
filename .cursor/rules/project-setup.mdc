@@ -8,7 +8,7 @@ alwaysApply: true
 Operating system used is Windows. Only use terminal commands etc., that are compatible with Windows.
 
 # JS runtime
-The project uses Bun as its package manager and JavaScript runtime, not NPM.
+The project uses NPM as its package manager and JavaScript runtime.
 
 # No TypeScript
 The project does NOT use TypeScript, opting for JavaScript instead. This is extremely important!
