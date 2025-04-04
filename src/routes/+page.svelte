@@ -1,35 +1,27 @@
 <script>
-	import ButtonGraphic from '$lib/components/ButtonGraphic.svelte';
-
-	const purpleColors = [
-		{ color: '#FAE6E6', position: 0 },
-		{ color: '#E43817', position: 0.35 },
-		{ color: '#5A03A0', position: 0.87 },
-		{ color: '#300646', position: 1 }
-	];
-
-	const orangeColors = [
-		{ color: '#F2EDED', position: 0 },
-		{ color: '#0E8EE0', position: 0.53 },
-		{ color: '#F2EDED', position: 0.62 },
-		{ color: '#40AB55', position: 0.83 },
-		{ color: '#EFAC17', position: 1 }
-	];
+	import Hero from '$lib/sections/Hero.svelte';
+	import Demo from '$lib/sections/Demo.svelte';
+	import Shapes from '$lib/sections/Shapes.svelte';
+	import Gradients from '$lib/sections/Gradients.svelte';
+	import Dots from '$lib/sections/Dots.svelte';
+	import Tiles from '$lib/sections/Tiles.svelte';
+	import Features from '$lib/sections/Features.svelte';
+	import Pricing from '$lib/sections/Pricing.svelte';
 </script>
 
 <svelte:head>
-	<title>Teyah</title>
+	<title>Sol - visual plugin for Framer</title>
 	<meta
 		name="description"
-		content="A small studio building design tools for curious creatives with care and love."
+		content="The ultimate graphics plugin for Framer. Create interactive grids, gradients, squircles and blobs with a couple of clicks, all without leaving the canvas."
 	/>
 </svelte:head>
 
-<section>
-	<ButtonGraphic text="Sol" href="https://sol.design" colors={purpleColors} />
-	<ButtonGraphic
-		text="Ara"
-		href="https://framer.com/marketplace/plugins/ara"
-		colors={orangeColors}
-	/>
-</section>
+<Hero />
+<Demo />
+<Shapes />
+<Gradients />
+<Dots />
+<Tiles />
+<Features />
+<Pricing />
