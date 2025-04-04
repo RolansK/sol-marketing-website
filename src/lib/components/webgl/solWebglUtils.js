@@ -41,21 +41,16 @@ export function initWebGL(canvas, vertexShader, fragmentShader, uniformNames = [
 }
 
 export function parseColor(color) {
-	const div = document.createElement('div');
-	div.style.color = color;
-	document.body.appendChild(div);
-	const [r, g, b, a] = getComputedStyle(div)
-		.color.match(/\d+(\.\d+)?/g)
-		.map(Number);
-	document.body.removeChild(div);
+	const tmp = new Option().style;
+	tmp.color = color;
+	const [r, g, b, a] = (tmp.color.match(/\d+(\.\d+)?/g) || [0, 0, 0, 1]).map(Number);
 	return [r / 255, g / 255, b / 255, a ?? 1];
 }
 
 export const getTimestamp = () => performance.now() / 1000;
 
 export function mapRange(value, min = 1, max = 10) {
-	const t = (value - min) / (max - min);
-	return (1 - t) * 10 + t * 1;
+	return 10 - 9 * ((value - min) / (max - min));
 }
 
 export function calculateGridSize(canvas, cellSize, magnet = 0) {
@@ -86,10 +81,10 @@ export function setUniforms(gl, canvas, uniforms = {}) {
 	}
 
 	const set = {
-		float: (name, value) => value != null && loc[name] && gl.uniform1f(loc[name], value),
-		int: (name, value) => value != null && loc[name] && gl.uniform1i(loc[name], value),
-		vec2: (name, x, y) => loc[name] && gl.uniform2f(loc[name], x, y),
-		vec4: (name, values) => loc[name] && gl.uniform4fv(loc[name], values)
+		float: (name, value) => loc[name] && value != null && gl.uniform1f(loc[name], value),
+		int: (name, value) => loc[name] && value != null && gl.uniform1i(loc[name], value),
+		vec2: (name, x, y) => gl.uniform2f(loc[name], x, y),
+		vec4: (name, values) => gl.uniform4fv(loc[name], values)
 	};
 
 	set.vec2('uResolution', canvas.width, canvas.height);
@@ -259,7 +254,7 @@ export function setupGL(canvas, vertexShader, fragmentShader, renderFunction, fp
 	};
 
 	if (!initWebGLContext()) {
-		return null; // Return null if initialization failed
+		return null;
 	}
 
 	canvas.addEventListener('webglcontextlost', eventHandlers.contextLost);
@@ -279,46 +274,30 @@ export function setupGL(canvas, vertexShader, fragmentShader, renderFunction, fp
 }
 
 export function setupPointerTracking(canvas, uniforms) {
-	const handlePointerMove = (e) => {
-		const rect = canvas.getBoundingClientRect();
-		uniforms.pointerPosition = {
-			x: e.clientX - rect.left,
-			y: rect.bottom - e.clientY
-		};
+	const events = {
+		move: (e) => {
+			const rect = canvas.getBoundingClientRect();
+			uniforms.pointerPosition = {
+				x: e.clientX - rect.left,
+				y: rect.bottom - e.clientY
+			};
+		},
+		enter: () => (uniforms.pointerHover = [1, getTimestamp()]),
+		leave: () => (uniforms.pointerHover = [0, getTimestamp()])
 	};
 
-	const handlePointerEnter = () => {
-		uniforms.pointerHover = [1, getTimestamp()];
-	};
+	const listeners = [
+		['pointermove', events.move],
+		['pointerdown', events.move],
+		['pointerup', events.leave],
+		['pointercancel', events.leave],
+		['pointerenter', events.enter],
+		['pointerleave', events.leave],
+		['touchstart', events.enter],
+		['touchend', events.leave],
+		['touchcancel', events.leave]
+	];
 
-	const handlePointerLeave = () => {
-		uniforms.pointerHover = [0, getTimestamp()];
-	};
-
-	const handlePointerDown = (e) => {
-		handlePointerEnter();
-		handlePointerMove(e);
-	};
-
-	canvas.addEventListener('pointermove', handlePointerMove);
-	canvas.addEventListener('pointerdown', handlePointerDown);
-	canvas.addEventListener('pointerup', handlePointerLeave);
-	canvas.addEventListener('pointercancel', handlePointerLeave);
-	canvas.addEventListener('pointerenter', handlePointerEnter);
-	canvas.addEventListener('pointerleave', handlePointerLeave);
-	canvas.addEventListener('touchstart', handlePointerEnter);
-	canvas.addEventListener('touchend', handlePointerLeave);
-	canvas.addEventListener('touchcancel', handlePointerLeave);
-
-	return () => {
-		canvas.removeEventListener('pointermove', handlePointerMove);
-		canvas.removeEventListener('pointerdown', handlePointerDown);
-		canvas.removeEventListener('pointerup', handlePointerLeave);
-		canvas.removeEventListener('pointercancel', handlePointerLeave);
-		canvas.removeEventListener('pointerenter', handlePointerEnter);
-		canvas.removeEventListener('pointerleave', handlePointerLeave);
-		canvas.removeEventListener('touchstart', handlePointerEnter);
-		canvas.removeEventListener('touchend', handlePointerLeave);
-		canvas.removeEventListener('touchcancel', handlePointerLeave);
-	};
+	listeners.forEach(([e, h]) => canvas.addEventListener(e, h));
+	return () => listeners.forEach(([e, h]) => canvas.removeEventListener(e, h));
 }
