@@ -1,6 +1,7 @@
 <script>
+	let isOpen = $state(false);
+
 	let {
-		isOpen,
 		hamburgerClick,
 		unit = 'px',
 		width = 32,
@@ -10,20 +11,18 @@
 	} = $props();
 
 	let offset = $derived(height / 2 - lineHeight / 2);
+
+	function toggleMenu() {
+		isOpen = !isOpen;
+		if (hamburgerClick) hamburgerClick();
+	}
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div
-	onclick={hamburgerClick}
-	class="hamburger-container"
-	class:isOpen
-	style:width={width + unit}
-	style:height={height + unit}
->
+<div onclick={toggleMenu} class="hamburger-container" class:isOpen>
 	<div
 		class="hamburger-line"
-		style:height={lineHeight + unit}
 		style:transform={isOpen ? `translate(0, ${offset}${unit}) rotate(45deg)` : ''}
 		style:width={isOpen && contain
 			? Math.sqrt(2 * Math.pow(width > height ? height : width, 2)) - lineHeight + unit
@@ -32,7 +31,6 @@
 	<div class="hamburger-line l" style:height={lineHeight + unit}></div>
 	<div
 		class="hamburger-line"
-		style:height={lineHeight + unit}
 		style:transform={isOpen ? `translate(0, -${offset}${unit}) rotate(-45deg)` : ''}
 		style:width={isOpen && contain
 			? Math.sqrt(2 * Math.pow(width > height ? height : width, 2)) - lineHeight + unit

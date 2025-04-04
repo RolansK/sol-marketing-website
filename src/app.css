@@ -684,16 +684,22 @@ nav:hover .button-cta {
 
 /* HAMBURGER */
 .hamburger-container {
-	margin: 0 auto;
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	width: 32px;
+	height: 24px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
 	transition: 1s ease-in-out;
+	z-index: 10;
+	cursor: pointer;
 }
 
-.hamburger-container .hamburger-line {
-	margin: 0;
+.hamburger-line {
+	height: 2px;
 	width: 100%;
 	transform: rotate(0deg);
 	transform-origin: center;
