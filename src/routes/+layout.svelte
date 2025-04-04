@@ -4,7 +4,6 @@
 	import Grid from '$lib/icons/grid.svelte';
 	import '../app.css';
 	import Hamburger from '$lib/components/Hamburger.svelte';
-	import { onMount, onDestroy } from 'svelte';
 
 	let { children } = $props();
 	let isNavOpen = $state(false);
@@ -13,21 +12,13 @@
 		isNavOpen = isOpen;
 	}
 
-	function handleToggleNav(event) {
-		isNavOpen = event.detail;
+	function closeNav() {
+		isNavOpen = false;
 	}
-
-	onMount(() => {
-		document.addEventListener('togglenav', handleToggleNav);
-	});
-
-	onDestroy(() => {
-		document.removeEventListener('togglenav', handleToggleNav);
-	});
 </script>
 
 <div class="app">
-	<Header isOpen={isNavOpen} />
+	<Header isOpen={isNavOpen} {closeNav} />
 	<main>
 		<Grid />
 		<LogoBig />

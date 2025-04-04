@@ -10,16 +10,14 @@
 	import SealQuestion from '$lib/icons/seal-question.svelte';
 	import Sparkle from '$lib/icons/sparkle.svelte';
 
-	let { isOpen = false } = $props();
+	let { isOpen = false, closeNav } = $props();
 
 	function toggleMenu() {
-		const event = new CustomEvent('togglenav', { detail: !isOpen });
-		document.dispatchEvent(event);
-	}
-
-	function closeMenu() {
-		const event = new CustomEvent('togglenav', { detail: false });
-		document.dispatchEvent(event);
+		if (isOpen) {
+			closeNav();
+		} else {
+			isOpen = true;
+		}
 	}
 </script>
 
@@ -27,15 +25,15 @@
 
 <nav class:open={isOpen}>
 	<div class="mobile-mask"></div>
-	<ButtonNav icon={Play} title="Demo" url="#demo" onclick={closeMenu} />
-	<ButtonNav icon={PuzzlePiece} title="Components" url="#components" onclick={closeMenu} />
-	<ButtonNav icon={Star} title="Features" url="#features" onclick={closeMenu} />
-	<ButtonNav icon={SealQuestion} title="FAQ" url="#faq" onclick={closeMenu} />
+	<ButtonNav icon={Play} title="Demo" url="#demo" onclick={closeNav} />
+	<ButtonNav icon={PuzzlePiece} title="Components" url="#components" onclick={closeNav} />
+	<ButtonNav icon={Star} title="Features" url="#features" onclick={closeNav} />
+	<ButtonNav icon={SealQuestion} title="FAQ" url="#faq" onclick={closeNav} />
 	<ButtonCta
 		icon={Sparkle}
 		title="Get Sol"
 		class="bottom"
 		url="https://www.framer.com/marketplace/plugins/sol/"
-		onclick={closeMenu}
+		onclick={closeNav}
 	/>
 </nav>
