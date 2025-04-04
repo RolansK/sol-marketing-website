@@ -2,8 +2,7 @@
 	let { hamburgerClick, isOpen = false } = $props();
 
 	function toggleMenu() {
-		isOpen = !isOpen;
-		if (hamburgerClick) hamburgerClick(isOpen);
+		if (hamburgerClick) hamburgerClick(!isOpen);
 	}
 </script>
 

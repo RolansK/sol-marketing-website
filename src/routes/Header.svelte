@@ -12,8 +12,14 @@
 
 	let { isOpen = false } = $props();
 
-	function toggleMenu(newState) {
-		isOpen = newState !== undefined ? newState : !isOpen;
+	function toggleMenu() {
+		const event = new CustomEvent('togglenav', { detail: !isOpen });
+		document.dispatchEvent(event);
+	}
+
+	function closeMenu() {
+		const event = new CustomEvent('togglenav', { detail: false });
+		document.dispatchEvent(event);
 	}
 </script>
 
@@ -21,20 +27,15 @@
 
 <nav class:open={isOpen}>
 	<div class="mobile-mask"></div>
-	<ButtonNav icon={Play} title="Demo" url="#demo" onclick={() => toggleMenu(false)} />
-	<ButtonNav
-		icon={PuzzlePiece}
-		title="Components"
-		url="#components"
-		onclick={() => toggleMenu(false)}
-	/>
-	<ButtonNav icon={Star} title="Features" url="#features" onclick={() => toggleMenu(false)} />
-	<ButtonNav icon={SealQuestion} title="FAQ" url="#faq" onclick={() => toggleMenu(false)} />
+	<ButtonNav icon={Play} title="Demo" url="#demo" onclick={closeMenu} />
+	<ButtonNav icon={PuzzlePiece} title="Components" url="#components" onclick={closeMenu} />
+	<ButtonNav icon={Star} title="Features" url="#features" onclick={closeMenu} />
+	<ButtonNav icon={SealQuestion} title="FAQ" url="#faq" onclick={closeMenu} />
 	<ButtonCta
 		icon={Sparkle}
 		title="Get Sol"
 		class="bottom"
 		url="https://www.framer.com/marketplace/plugins/sol/"
-		onclick={() => toggleMenu(false)}
+		onclick={closeMenu}
 	/>
 </nav>
