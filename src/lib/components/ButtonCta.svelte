@@ -24,7 +24,13 @@
 	}
 </script>
 
-<button class="button-cta {className}" onclick={handleClick}>
+<button
+	class="button-cta {className}"
+	onclick={(e) => {
+		e.preventDefault();
+		handleClick(e);
+	}}
+>
 	{#if icon}
 		{@const Icon = icon}
 		<Icon class="icon" />

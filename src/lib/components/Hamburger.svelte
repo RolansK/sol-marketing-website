@@ -1,6 +1,5 @@
 <script>
-	let isOpen = $state(false);
-	let { hamburgerClick } = $props();
+	let { hamburgerClick, isOpen = false } = $props();
 
 	function toggleMenu() {
 		isOpen = !isOpen;
